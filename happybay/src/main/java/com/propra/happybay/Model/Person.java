@@ -11,9 +11,11 @@ import java.util.List;
 @Entity
 public class Person {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     Long id;
     String name;
+    String password;
     String kontakt;
     String adresse;
     @OneToMany(cascade = CascadeType.ALL)

@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -17,9 +19,18 @@ public class HappyBayController {
     @Autowired
     GeraetRepository geraetRepository;
     @GetMapping("/")
-    public String index(Model model){
+    public String mainpage(Model model){
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
+    }
+    @GetMapping("/addUser")
+    public String addUser  (Model model){
+        return "addUser";
+    }
+    @GetMapping("/login")
+    public String login(Model model, Principal user){
+        model.addAttribute("username",user.getName());
+        return "login";
     }
 }
