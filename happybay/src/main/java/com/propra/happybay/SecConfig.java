@@ -27,7 +27,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST,"/add").permitAll()
-                .antMatchers(HttpMethod.GET,"/confirmationAdd").permitAll()
+                .antMatchers("/confirmationAdd").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/addUser").permitAll()
                 .antMatchers("/user").hasRole("USER")
@@ -37,5 +37,4 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.userDetailsService(userDetailsService);
         http.csrf().disable();
     }
-
 }

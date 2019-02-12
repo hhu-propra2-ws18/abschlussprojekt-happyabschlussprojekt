@@ -8,11 +8,8 @@
 </head>
 <body>
 
-<p class="navbar" style="background-color: deepskyblue;">
-    <a href="/" class="navbar-brand" style="color: white">
-        <strong>Registrierung</strong>
-    </a>
-</p>
+<div th:replace="index.html :: hauptseite"></div>
+<div th:replace="index.html :: navigation"></div>
 
 <form action="/add" method="post">
     <div class="form-group">

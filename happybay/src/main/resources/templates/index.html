@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-<div class="navbar" style="background-color: deepskyblue;">
-    <a href="/index" class="navbar-brand" style="color: white">
-        <strong>HappyBay</strong>
+<div th:fragment="hauptseite" class="navbar" style="background-color: deepskyblue;">
+    <a href="/" class="navbar-brand" style="color: white">
+        <img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px" width="50px">
     </a>
 </div>
-<div style="text-align: right">
+<div th:fragment="navigation" style="text-align: right">
     <a class="btn btn-outline-primary"
        href="/admin">Admin</a>
     <div sec:authorize="isAnonymous()">
         <a class="btn btn-primary"
-        href="/login">Anmelden</a>
-        <a class="btn btn-outline-primary"
-        href="/addUser">Registrieren</a>
+           href="/login">Anmelden</a>
+        <a class="btn btn-outline-primary btn-sm"
+           href="/addUser">Registrieren</a>
     </div>
     <div sec:authorize="isAuthenticated()">
         <a class="btn btn-outline-primary"
-        href="/logout">Logout</a>
+           href="/logout">Logout</a>
         <a class="btn btn-outline-primary"
-        href="/user">Profil</a>
+           href="@{/PersonInfo/{id}(id=${person.getId()})}">Profil</a>
     </div>
 </div>
+
 <div th:fragment="footer" class="alert alert-secondary">
     <p>© Made by Happy-Gruppe</p>
 </div>

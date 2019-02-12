@@ -7,11 +7,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-<p class="navbar" style="background-color: deepskyblue;">
-    <a href="/" class="navbar-brand" style="color: white">
-        <strong>Startseite</strong>
-    </a>
-</p>
+<div th:replace="index.html :: hauptseite"></div>
+<div th:replace="index.html :: navigation"></div>
 <h3 th:text="${person.name}"><b>Name</b></h3>
 <ul class="list-group list-group-flush">
     <li class="list-group-item" th:text="'Username: ' + ${person.username}" >Username</li>

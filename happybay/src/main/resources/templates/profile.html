@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-<div class="navbar" style="background-color: black;">
-    <a href="/" class="navbar-brand" style="color: white">
-        <strong>PersonInfo</strong>
-    </a>
+<div th:replace="index.html :: hauptseite"></div>
+
+<div style="background-color:blue ;text-align: center ">
+    <img class="img-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="200px" width="200px">
 </div>
 
 <div style="background-color:black ;text-align: center ">
@@ -21,23 +21,26 @@
     <div class="card-header">
         <ul class="nav nav-tabs nav-pills nav-fill">
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/PersonInfo/Profile}" style="background-color: black">Profile</a>
+                <a class="nav-link active" th:href="@{/PersonInfo/Profile/{id}(id=${user.getId()})}" style="background-color: black">Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/PersonInfo/MyThings}" style="background-color: black">My Things</a>
+                <a class="nav-link active" th:href="@{/PersonInfo/MyThings/{id}(id=${user.getId()})}" style="background-color: black">My Things</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/PersonInfo/RentThings}" style="background-color: black">Already Rent Things</a>
+                <a class="nav-link active" th:href="@{/PersonInfo/RentThings/{id}(id=${user.getId()})}" style="background-color: black">Already Rent Things</a>
             </li>
         </ul>
     </div>
 </div>
 
 <div class="card-body">
-    <p class="card-text">Name:Hao Tian</p>
-    <p class="card-text">Tel.:01747013362</p>
-    <p class="card-text">adress:Bahnstr.40</p>
+    <p class="card-text" th:text="'Name: '+ ${user.getName()}"></p>
+    <p class="card-text" th:text="'Contact:' + ${user.getKontakt()}"></p>
+    <p class="card-text" th:text="'Adresse:' + ${user.getAdresse()}"></p>
+    <p class="card-text" th:text="'Username:' + ${user.getUsername()}"></p>
+    <p class="card-text" th:text="'Role:' + ${user.getRole()}"></p>
 </div>
+
 <div th:replace="index.html :: footer"></div>
 </body>
 </html>

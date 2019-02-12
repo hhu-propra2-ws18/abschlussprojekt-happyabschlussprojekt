@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
@@ -25,7 +26,11 @@ public class HappyBayController {
     public PasswordEncoder encoder;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model,Principal person){
+        if (person != null) {
+            Person person1 = personRepository.findByUsername(person.getName()).get();
+            model.addAttribute("person",person1);
+        }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -59,24 +64,33 @@ public class HappyBayController {
     }
 
 
-    @GetMapping("/PersonInfo")
-    public String userInfo(Model m, Principal person) {
-        m.addAttribute("username", person.getName());
-        return "PersonInfo";
+    @GetMapping("/PersonInfo/{id}")
+    public String user(Model model,@PathVariable Long id) {
+        if (id != null) {
+            Person person = personRepository.findById(id).get();
+            model.addAttribute("user", person);
+        }
+        return "personInfo";
     }
 
-    @GetMapping("/PersonInfo/Profile")
-    public String profile(Model model){
+    @GetMapping("/PersonInfo/Profile/{id}")
+    public String profile(Model model,@PathVariable Long id){
+        Person person = personRepository.findById(id).get();
+        model.addAttribute("user", person);
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/MyThings")
-    public String myThings(Model model){
+    @GetMapping("/PersonInfo/MyThings/{id}")
+    public String myThings(Model model,@PathVariable Long id){
+        Person person = personRepository.findById(id).get();
+        model.addAttribute("user", person);
         return "myThings";
     }
 
-    @GetMapping("/PersonInfo/RentThings")
-    public String rentThings(Model model){
+    @GetMapping("/PersonInfo/RentThings/{id}")
+    public String rentThings(Model model,@PathVariable Long id){
+        Person person = personRepository.findById(id).get();
+        model.addAttribute("user", person);
         return "rentThings";
     }
 }
