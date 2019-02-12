@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierung</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+
+<p class="navbar" style="background-color: deepskyblue;">
+    <a href="/" class="navbar-brand" style="color: white">
+        <strong>Registrierung</strong>
+    </a>
+</p>
+
+<form action="/add" method="post">
+    <div class="form-group">
+        <label>Vorname:</label>
+        <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
+        <label>Nachname:</label>
+        <input type="text" name="nachname" class="form-control" placeholder="Nachnahme"><br>
+        <label>Kontaktdaten:</label>
+        <input type="email" name="kontakt" class="form-control" aria-describedby="emailHelp" placeholder="Email"><br>
+        <label>Adresse:</label>
+        <input type="text" name="kontakt" class="form-control" placeholder="Adresse"><br>
+        <label>Username:</label>
+        <input type="text" name="jahreslohn" class="form-control" placeholder="Username"><br>
+        <label>Password:</label>
+        <input type="password" name="password" class="form-control" placeholder="Password"><br>
+        <label>Bitte bestätige Dein Password:</label>
+        <input type="password" name="passwordConfirmation" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </div>
+
+    </div>
+</form>
+<div class="alert alert-secondary">
+    <p>© Made by Happy-Gruppe</p>
+</div>
+</body>
+</html>
