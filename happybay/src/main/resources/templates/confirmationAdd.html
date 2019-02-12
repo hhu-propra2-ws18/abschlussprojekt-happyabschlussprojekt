@@ -19,9 +19,6 @@
     <li class="list-group-item" th:text="'Adresse: ' + ${person.adresse}">Adresse</li>
 </ul>
 </div>
-<div class="alert alert-secondary">
-
-    <p>© Made by Happy-Gruppe</p>
-</div>
+<div th:replace="index.html :: footer"></div>
 </body>
 </html>
