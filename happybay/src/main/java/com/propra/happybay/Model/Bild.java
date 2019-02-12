@@ -5,12 +5,13 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.sql.Blob;
 
 @Data
 @Entity
 public class Bild {
     @Id
     @GeneratedValue
-    Long Id;
-    String binary;
+    Long id;
+    Blob bild;
 }
