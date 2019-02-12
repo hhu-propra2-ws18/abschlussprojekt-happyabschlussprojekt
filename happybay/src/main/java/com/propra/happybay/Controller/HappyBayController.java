@@ -36,7 +36,7 @@ public class HappyBayController {
         return "addUser";
     }
 
-    @PostMapping("/add")
+    @GetMapping("/add")
     public String addToDatabase(@ModelAttribute("person")Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
