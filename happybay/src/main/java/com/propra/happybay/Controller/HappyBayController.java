@@ -5,6 +5,7 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,8 @@ public class HappyBayController {
     PersonRepository personRepository;
     @Autowired
     GeraetRepository geraetRepository;
-    //@Autowired
-    //UpdatePersonsService updatePersonsService;
+    @Autowired
+    public PasswordEncoder encoder;
 
     @GetMapping("/")
     public String index(Model model){
@@ -44,6 +45,7 @@ public class HappyBayController {
     public String addToDatabase(@ModelAttribute("person")Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
+        person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
         person.setPassword("");
         model.addAttribute("person", person);

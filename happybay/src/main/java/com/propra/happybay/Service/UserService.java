@@ -26,8 +26,6 @@ public class UserService implements org.springframework.security.core.userdetail
                     .password(user.getPassword())
                     .authorities(user.getRole())
                     .build();
-            System.out.println(user.getRole());
-            System.out.println(user.getPassword());
             return userDetails;
         }
         throw new UsernameNotFoundException("Invalid username");
