@@ -57,6 +57,10 @@ public class HappyBayController {
         m.addAttribute("username", person.getName());
         return "profile";
     }
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
 
 
     @GetMapping("/PersonInfo")
