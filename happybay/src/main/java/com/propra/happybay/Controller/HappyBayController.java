@@ -24,6 +24,11 @@ public class HappyBayController {
     @Autowired
     public PasswordEncoder encoder;
 
+    public HappyBayController(PersonRepository personRepository, GeraetRepository geraetRepository) {
+        this.personRepository=personRepository;
+        this.geraetRepository=geraetRepository;
+    }
+
     @GetMapping("/")
     public String index(Model model){
         List<Geraet> geraete = geraetRepository.findAll();
@@ -58,9 +63,9 @@ public class HappyBayController {
         return "profile";
     }
 
-    @GetMapping("/user/Profile")
+    @GetMapping("/user/ThierThings")
     public String profile(Model model){
-        return "profile";
+        return "thierThings";
     }
 
     @GetMapping("/user/MyThings")
