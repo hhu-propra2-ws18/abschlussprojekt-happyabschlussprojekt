@@ -21,7 +21,7 @@
     <a class="btn btn-outline-primary"
        href="/logout">Logout</a>
     <a class="btn btn-outline-primary"
-       href="/PersonInfo">Profil</a>
+       th:href="@{/PersonInfo/{id}(id=${person.getId()})}">Profil</a>
 </div>
 
 <div class="alert alert-secondary">
