@@ -12,10 +12,14 @@ import java.util.List;
 public class Person {
     @Id
     @GeneratedValue
-    Long id;
-    String name;
-    String kontakt;
-    String adresse;
+    private Long id;
+    private String name;
+    private String kontakt;
+    private String adresse;
+    private String username;
+    private String password;
+    private String role;
+
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> verleihen;
     @OneToMany(cascade = CascadeType.ALL)
