@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,10 +26,6 @@ public class HappyBayController {
 
     @GetMapping("/")
     public String index(Model model){
-        List<Person> persons = personRepository.findAll();
-        System.out.println(persons.get(0).getRole());
-        System.out.println(persons.get(0).getUsername());
-        System.out.println(persons.get(0).getPassword());
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -41,7 +36,7 @@ public class HappyBayController {
         return "addUser";
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public String addToDatabase(@ModelAttribute("person")Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
@@ -60,6 +55,28 @@ public class HappyBayController {
     @GetMapping("/user")
     public String user(Model m, Principal person) {
         m.addAttribute("username", person.getName());
-        return "user";
+        return "profile";
+    }
+
+
+    @GetMapping("/PersonInfo")
+    public String userInfo(Model m, Principal person) {
+        m.addAttribute("username", person.getName());
+        return "PersonInfo";
+    }
+
+    @GetMapping("/PersonInfo/Profile")
+    public String profile(Model model){
+        return "profile";
+    }
+
+    @GetMapping("/PersonInfo/MyThings")
+    public String myThings(Model model){
+        return "myThings";
+    }
+
+    @GetMapping("/PersonInfo/RentThings")
+    public String rentThings(Model model){
+        return "rentThings";
     }
 }
