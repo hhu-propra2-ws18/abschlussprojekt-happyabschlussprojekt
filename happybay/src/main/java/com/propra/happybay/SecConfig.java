@@ -35,6 +35,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().permitAll();
         http.logout().permitAll();
         http.userDetailsService(userDetailsService);
+        http.csrf().disable();
     }
 
 }

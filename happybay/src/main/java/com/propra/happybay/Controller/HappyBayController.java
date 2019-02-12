@@ -28,11 +28,9 @@ public class HappyBayController {
     @GetMapping("/")
     public String index(Model model){
         List<Person> persons = personRepository.findAll();
-        System.out.println(persons.get(0).getRole());
-        System.out.println(persons.get(0).getUsername());
-        System.out.println(persons.get(0).getPassword());
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
+
         return "index";
     }
 
@@ -41,7 +39,7 @@ public class HappyBayController {
         return "addUser";
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public String addToDatabase(@ModelAttribute("person")Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
