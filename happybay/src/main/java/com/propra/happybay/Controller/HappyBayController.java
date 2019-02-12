@@ -40,7 +40,7 @@ public class HappyBayController {
     }
 
     @GetMapping("/add")
-    public String addToDatabase(@ModelAttribute("person")Person person,
+    public String addToDatabase(@ModelAttribute("person") Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
@@ -55,10 +55,25 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/user")
+    @GetMapping("/PersonInfo")
     public String user(Model m, Principal person) {
         m.addAttribute("username", person.getName());
-        return "user";
+        return "PersonInfo";
+    }
+
+    @GetMapping("/PersonInfo/Profile")
+    public String profile(Model model){
+        return "Profile";
+    }
+
+    @GetMapping("/PersonInfo/MyThings")
+    public String myThings(Model model){
+        return "myThings";
+    }
+
+    @GetMapping("/PersonInfo/RentThings")
+    public String rentThings(Model model){
+        return "rentThings";
     }
 
     @GetMapping("/geraet")
