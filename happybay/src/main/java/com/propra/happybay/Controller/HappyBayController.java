@@ -58,24 +58,17 @@ public class HappyBayController {
         return "profile";
     }
 
-
-    @GetMapping("/PersonInfo")
-    public String userInfo(Model m, Principal person) {
-        m.addAttribute("username", person.getName());
-        return "PersonInfo";
-    }
-
-    @GetMapping("/PersonInfo/Profile")
+    @GetMapping("/user/Profile")
     public String profile(Model model){
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/MyThings")
+    @GetMapping("/user/MyThings")
     public String myThings(Model model){
         return "myThings";
     }
 
-    @GetMapping("/PersonInfo/RentThings")
+    @GetMapping("/user/RentThings")
     public String rentThings(Model model){
         return "rentThings";
     }
