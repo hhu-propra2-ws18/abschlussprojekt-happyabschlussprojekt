@@ -24,4 +24,6 @@ public class Person {
     List<Geraet> verleihen;
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> ausleihen;
+    @OneToOne
+    Bild foto;
 }

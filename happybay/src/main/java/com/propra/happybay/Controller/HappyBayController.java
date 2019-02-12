@@ -10,10 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -25,12 +24,11 @@ public class HappyBayController {
     @Autowired
     public PasswordEncoder encoder;
 
+
+
     @GetMapping("/")
     public String index(Model model){
         List<Person> persons = personRepository.findAll();
-        System.out.println(persons.get(0).getRole());
-        System.out.println(persons.get(0).getUsername());
-        System.out.println(persons.get(0).getPassword());
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -62,4 +60,20 @@ public class HappyBayController {
         m.addAttribute("username", person.getName());
         return "user";
     }
+
+    @GetMapping("/geraet")
+    public String test(Model model){
+        Geraet geraet = new Geraet();
+        geraet.setVerfuegbar(true);
+        geraet.setTitel("iPhone Xs MAX");
+        geraet.setOeffdatum(Date.valueOf("2019-1-15"));
+        geraet.setKosten(20);
+        geraet.setKaution(1400);
+        geraet.setBesitzer(new Person());
+        geraet.setBeschreibung("6,5\" Super Retina Display – das bislang größte iPhone Display. Weiterentwickeltes Face ID. Der intelligenteste, leistungsstärkste Smartphone Chip. Und ein revolutionäres Dual-Kamerasystem. Das iPhone XS Max ist alles, was du am iPhone liebst, und mehr.");
+        geraet.setAbholort("Dusseldorf");
+        model.addAttribute("geraet",geraet);
+        return "geraet";
+    }
+
 }

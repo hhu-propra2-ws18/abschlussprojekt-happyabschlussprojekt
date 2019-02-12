@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${geraet.getTitel()}">Defaut Geraet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js" integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xgCgl/PQGuFsvShjr74PBp" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="navbar" style="background-color: #66ccff;">
+        <a href="/" class="navbar-brand" style="color: white">
+            <strong>HappyBay</strong>
+        </a>
+    </div>
+
+    <label th:text="'Release Date: '+${geraet.getOeffdatum()}" style="alignment: left; color: darkgrey">Release Date: 2018-1-1</label>
+    <div style="text-align: center">
+        <img src="https://www.hdcarwallpapers.com/download/2020_ford_mustang_shelby_gt500_4k_3-1920x1080.jpg" style="max-height: 400px;max-width: 800px"/>
+    </div>
+    <div style="alignment: left; padding-left: 22%; padding-top: 10px; padding-right: 22%">
+        <h2 th:text="${geraet.getKosten()}+'€/Tag'" style="color: darkorange"></h2>
+        <label th:text="'Kaution: '+${geraet.getKaution()}+'€'" style="color: darkgrey"></label>
+
+        <!--Hier muss man noch action hinfuegen.-->
+        <a class="btn btn-outline-primary" href="/" style="margin-left: 78%">Jetzt Beantragen</a>
+
+        <h4 th:text="${geraet.getTitel()}"></h4>
+        <label th:text="${geraet.getBeschreibung()}"></label>
+    </div>
+
+    <div class="alert alert-secondary">
+        <p>© Made by Happy-Gruppe</p>
+    </div>
+</body>
+</html>
