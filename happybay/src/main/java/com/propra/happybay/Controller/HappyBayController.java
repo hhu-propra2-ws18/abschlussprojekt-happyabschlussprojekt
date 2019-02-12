@@ -22,4 +22,23 @@ public class HappyBayController {
         model.addAttribute("geraete",geraete);
         return "index";
     }
+
+    @GetMapping("/PersonInfo")
+    public String personInfo(Model model){
+        return "PersonInfo";
+    }
+
+    @GetMapping("/PersonInfo/Profile")
+    public String profile(Model model){
+        return "Profile";
+    }
+
+    @GetMapping("/PersonInfo/MyThings")
+    public String myThings(Model model){
+        return "myThings";
+    }
+    @GetMapping("/PersonInfo/RentThings")
+    public String rentThings(Model model){
+        return "rentThings";
+    }
 }
