@@ -1,6 +1,7 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,6 @@ public class HappyBayController {
     @GetMapping("/")
     public String index(Model model){
         List<Person> persons = personRepository.findAll();
-        System.out.println(persons.get(0).getRole());
-        System.out.println(persons.get(0).getUsername());
-        System.out.println(persons.get(0).getPassword());
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -41,7 +39,7 @@ public class HappyBayController {
     }
 
     @GetMapping("/add")
-    public String addToDatabase(@ModelAttribute("person")Person person,
+    public String addToDatabase(@ModelAttribute("person") Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
@@ -56,14 +54,9 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/user")
+    @GetMapping("/PersonInfo")
     public String user(Model m, Principal person) {
         m.addAttribute("username", person.getName());
-        return "user";
-    }
-
-    @GetMapping("/PersonInfo")
-    public String personInfo(Model model){
         return "PersonInfo";
     }
 
@@ -76,6 +69,7 @@ public class HappyBayController {
     public String myThings(Model model){
         return "myThings";
     }
+
     @GetMapping("/PersonInfo/RentThings")
     public String rentThings(Model model){
         return "rentThings";
