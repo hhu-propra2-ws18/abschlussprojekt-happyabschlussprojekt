@@ -10,12 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -62,38 +59,9 @@ public class HappyBayController {
     @GetMapping("/user")
     public String user(Model m, Principal person) {
         m.addAttribute("username", person.getName());
-        return "PersonInfo";
+        return "profile";
     }
 
-    @GetMapping("/PersonInfo/Profile")
-    public String profile(Model model){
-        return "Profile";
-    }
-
-    @GetMapping("/PersonInfo/MyThings")
-    public String myThings(Model model){
-        return "myThings";
-    }
-
-    @GetMapping("/PersonInfo/RentThings")
-    public String rentThings(Model model){
-        return "rentThings";
-    }
-
-    @GetMapping("/geraet")
-    public String test(Model model){
-        Geraet geraet = new Geraet();
-        geraet.setVerfuegbar(true);
-        geraet.setTitel("iPhone Xs MAX");
-        geraet.setOeffdatum(Date.valueOf("2019-1-15"));
-        geraet.setKosten(20);
-        geraet.setKaution(1400);
-        geraet.setBesitzer(new Person());
-        geraet.setBeschreibung("6,5\" Super Retina Display – das bislang größte iPhone Display. Weiterentwickeltes Face ID. Der intelligenteste, leistungsstärkste Smartphone Chip. Und ein revolutionäres Dual-Kamerasystem. Das iPhone XS Max ist alles, was du am iPhone liebst, und mehr.");
-        geraet.setAbholort("Dusseldorf");
-        model.addAttribute("geraet",geraet);
-        return "geraet";
-    }
 
     @GetMapping("/PersonInfo")
     public String person(Model model, Principal principal) {
@@ -128,7 +96,14 @@ public class HappyBayController {
     }
 
     @GetMapping("/addGeraet")
-    public String addGeraet() {
+    public String addGeraet(Model model) {
         return "addGeraet";
+    }
+
+    @GetMapping("/geraet")
+    public String geraet(Model model){
+        Geraet geraet = new Geraet();
+        model.addAttribute("geraet", geraet);
+        return "geraet";
     }
 }

@@ -3,29 +3,29 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-<div th:replace="profile.html :: profile"></div>
+    <div th:replace="profile.html :: profile"></div>
 
-<ul th:fragment="navigation" class="nav nav-tabs">
-        <li sec:authorize="isAnonymous()" class="nav-item">
-            <a class="nav-link" th:href="@{/PersonInfo}">Anmelden</a>
-        </li>
-        <li sec:authorize="isAnonymous()" class="nav-item">
-            <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
-        </li>
-        <li>
-            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/PersonInfo}">Dein Profil</a>
-        </li>
-        <li class="nav-item ml-auto">
-            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Logout</a>
-        </li>
-</ul>
+    <ul th:fragment="navigation" class="nav nav-tabs">
+            <li sec:authorize="isAnonymous()" class="nav-item">
+                <a class="nav-link" th:href="@{/PersonInfo}">Anmelden</a>
+            </li>
+            <li sec:authorize="isAnonymous()" class="nav-item">
+                <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
+            </li>
+            <li>
+                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/PersonInfo}">Dein Profil</a>
+            </li>
+            <li class="nav-item ml-auto">
+                <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Logout</a>
+            </li>
+    </ul>
 
-<div th:fragment="footer" class="alert alert-secondary" style="position: fixed; bottom: 0; width: 100%">
-    <p>© Made by Happy-Gruppe</p>
-</div>
+    <div th:fragment="footer" class="alert alert-secondary" style="position: relative; width: 100%">
+        <p>© Made by Happy-Gruppe</p>
+    </div>
 </body>
 </html>
