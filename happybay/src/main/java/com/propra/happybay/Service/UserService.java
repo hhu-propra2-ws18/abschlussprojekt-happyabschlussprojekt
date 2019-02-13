@@ -31,3 +31,4 @@ public class UserService implements org.springframework.security.core.userdetail
         throw new UsernameNotFoundException("Invalid username");
     }
 }
+

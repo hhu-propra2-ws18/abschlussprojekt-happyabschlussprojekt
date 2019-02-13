@@ -12,6 +12,8 @@
 <div th:replace="profile.html :: profile"></div>
 <div th:replace="index.html :: navigation"></div>
 
+<p th:if="${bindingResult} != null" th:text="${bindingResult}"></p>
+
 <form action="/add" method="post">
     <div class="form-group" style="margin: 15px">
         <label>Vorname:</label>
@@ -27,8 +29,8 @@
         <label>Password:</label>
         <input type="password" name="password" class="form-control" placeholder="Password"><br>
         <label>Bitte bestätige Dein Password:</label>
-        <input type="password" name="passwordConfirmation" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <input type="password" name="passwordConfirm" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
+        <button class="btn btn-primary" type="submit" style="position: relative; z-index: 10">Submit</button>
     </div>
 
     </div>
