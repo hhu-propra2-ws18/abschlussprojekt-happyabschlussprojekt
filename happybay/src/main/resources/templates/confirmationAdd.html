@@ -5,13 +5,12 @@
     <meta charset="UTF-8">
     <title>Bestätigung der Registrierung</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-<p class="navbar" style="background-color: deepskyblue;">
-    <a href="/" class="navbar-brand" style="color: white">
-        <strong>Startseite</strong>
-    </a>
-</p>
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="index.html :: navigation"></div>
+
 <h3 th:text="${person.name}"><b>Name</b></h3>
 <ul class="list-group list-group-flush">
     <li class="list-group-item" th:text="'Username: ' + ${person.username}" >Username</li>
@@ -19,9 +18,6 @@
     <li class="list-group-item" th:text="'Adresse: ' + ${person.adresse}">Adresse</li>
 </ul>
 </div>
-<div class="alert alert-secondary">
-
-    <p>© Made by Happy-Gruppe</p>
-</div>
+<div th:replace="index.html :: footer"></div>
 </body>
 </html>

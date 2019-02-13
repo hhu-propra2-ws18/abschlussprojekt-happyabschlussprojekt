@@ -27,11 +27,12 @@ public class HappyBayController {
     @Autowired
     public PasswordEncoder encoder;
 
-
-
     @GetMapping("/")
-    public String index(Model model){
-        List<Person> persons = personRepository.findAll();
+    public String index(Model model,Principal person){
+        if (person != null) {
+            Person person1 = personRepository.findByUsername(person.getName()).get();
+            model.addAttribute("person",person1);
+        }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -42,8 +43,8 @@ public class HappyBayController {
         return "addUser";
     }
 
-    @GetMapping("/add")
-    public String addToDatabase(@ModelAttribute("person") Person person,
+    @PostMapping("/add")
+    public String addToDatabase(@ModelAttribute("person")Person person,
                                 Model model) {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
@@ -58,7 +59,7 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/PersonInfo")
+    @GetMapping("/user")
     public String user(Model m, Principal person) {
         m.addAttribute("username", person.getName());
         return "PersonInfo";
@@ -94,15 +95,40 @@ public class HappyBayController {
         return "geraet";
     }
 
-
-
-    @GetMapping("/addGeraet")
-    public String addGeraet(){
-        return "addGeraet";
+    @GetMapping("/PersonInfo")
+    public String person(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "personInfo";
     }
 
-    @PostMapping("/addGeraet")
-    public String addProject(@ModelAttribute(name = "geraet") Geraet geraet){
-        return "change_success";
+    @GetMapping("/PersonInfo/Profile")
+    public String profile(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "profile";
+    }
+
+    @GetMapping("/PersonInfo/MyThings")
+    public String myThings(Model model, Principal principal){
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "myThings";
+    }
+
+    @GetMapping("/PersonInfo/RentThings")
+    public String rentThings(Model model, Principal principal){
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "rentThings";
+    }
+
+    @GetMapping("/addGeraet")
+    public String addGeraet() {
+        return "addGeraet";
     }
 }
