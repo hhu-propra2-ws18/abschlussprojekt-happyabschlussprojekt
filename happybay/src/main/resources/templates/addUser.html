@@ -4,6 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Registrierung</title>
+    <style>
+        .errorMessages {
+        display: none;
+        list-style-type: disc;
+        margin: 0 10px 15px 10px;
+        padding: 8px 35px 8px 30px;
+        color: #B94A48;
+        background-color: #F2DEDE;
+        border: 2px solid #EED3D7;
+        border-radius: 4px;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
@@ -13,10 +26,10 @@
         <strong>Registrierung</strong>
     </a>
 </p>
-
-<form action="/add" method="post">
-    <div class="form-group">
-        <label>Vorname:</label>
+<p th:if="${bindingResult} != null" th:text="${bindingResult}"></p>
+<form action="/add" th:object="${person}" method="post">
+    <ul class="errorMessages"></ul>
+    <div class="form-group ${status.error ? 'has-error' : ''">
         <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
         <label>Nachname:</label>
         <input type="text" name="nachname" class="form-control" placeholder="Nachnahme"><br>
@@ -25,14 +38,12 @@
         <label>Adresse:</label>
         <input type="text" name="adresse" class="form-control" placeholder="Adresse"><br>
         <label>Username:</label>
-        <input type="text" name="username" class="form-control" placeholder="Username"><br>
+        <input type="text" name="username" class="form-control" placeholder="Username" ><br>
         <label>Password:</label>
-        <input type="password" name="password" class="form-control" placeholder="Password"><br>
+        <input type="password" name="password" class="form-control" placeholder="Password" ><br>
         <label>Bitte bestätige Dein Password:</label>
-        <input type="password" name="passwordConfirmation" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
+        <input type="password" name="passwordConfirm" class="form-control" placeholder="Bitte wiederhole Dein Password" ><br>
         <button class="btn btn-primary" type="submit">Submit</button>
-    </div>
-
     </div>
 </form>
 <div th:replace="index.html :: footer"></div>
