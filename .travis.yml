@@ -1,6 +1,7 @@
+before_install: docker pull mysql:lastest
+before_script: docker run -d -name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=happybay mysql:lastest
 before_script: cd happybay
 language: java
 jdk:
   - oraclejdk8
-script:
-  - TERM=dumb ./gradlew check
+
