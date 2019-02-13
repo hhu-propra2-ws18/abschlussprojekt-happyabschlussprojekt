@@ -4,10 +4,13 @@ import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.UserService;
+import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +26,11 @@ public class HappyBayController {
     GeraetRepository geraetRepository;
     @Autowired
     public PasswordEncoder encoder;
+    @Autowired
+    private UserValidator userValidator;
 
     @GetMapping("/")
-    public String index(Model model,Principal person){
+    public String index(Model model, Principal person){
         if (person != null) {
             Person person1 = personRepository.findByUsername(person.getName()).get();
             model.addAttribute("person",person1);
@@ -41,8 +46,13 @@ public class HappyBayController {
     }
 
     @PostMapping("/add")
-    public String addToDatabase(@ModelAttribute("person")Person person,
+    public String addToDatabase(@ModelAttribute("person")Person person, BindingResult bindingResult,
                                 Model model) {
+        userValidator.validate(person, bindingResult);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("bindingResult", bindingResult);
+            return "addUser";
+        }
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
@@ -99,4 +109,15 @@ public class HappyBayController {
     public String addGeraet() {
         return "addGeraet";
     }
+
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout){
+        if (error != null)
+            model.addAttribute("error", "Your username and password is invalid.");
+
+        if (logout != null)
+            model.addAttribute("message", "You have been logged out successfully.");
+        return "login";
+    }
+
 }

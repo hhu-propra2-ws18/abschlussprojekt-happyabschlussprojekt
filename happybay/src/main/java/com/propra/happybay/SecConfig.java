@@ -32,9 +32,9 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/addUser").permitAll()
                 .antMatchers("/user").hasRole("USER")
                 .anyRequest().authenticated();
-        http.formLogin().permitAll();
         http.logout().permitAll();
         http.userDetailsService(userDetailsService);
         http.csrf().disable();
+        http.formLogin().loginPage("/login").permitAll();
     }
 }
