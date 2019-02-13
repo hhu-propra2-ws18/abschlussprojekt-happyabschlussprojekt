@@ -37,6 +37,8 @@ public class HappyBayController {
         }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
+        List<Person> personList = personRepository.findAll();
+        System.out.println(personList);
         return "index";
     }
 
@@ -91,7 +93,16 @@ public class HappyBayController {
 
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("person", person);
         return "changeProfile";
+    }
+
+    @PostMapping("/PersonInfo/Profile/ChangeProfile")
+    public String chageProfile(@ModelAttribute("person") Person person, Principal principal) {
+        personRepository.save(person);
+        return "confirmationAdd";
     }
 
     @GetMapping("/PersonInfo/MyThings")
@@ -132,5 +143,15 @@ public class HappyBayController {
             model.addAttribute("message", "You have been logged out successfully.");
         return "login";
     }
+
+    @GetMapping("/geraet")
+    public String geraet(Model model) {
+        Geraet geraet = new Geraet();
+        model.addAttribute("geraet", geraet);
+        return "geraet";
+    }
+
+
+
 
 }
