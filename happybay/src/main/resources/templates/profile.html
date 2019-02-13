@@ -49,7 +49,8 @@
 <div class="card-body text-center" style="background-color: darkgrey">
     <ul class="list-inline card-text">
         <li class="list-inline-item font-weight-bold" style="color: white">NAME:</li>
-        <li class="list-inline-item" style="color: white" th:text="${user.getName()}"></li>
+        <li class="list-inline-item" style="color: white"
+            th:text="${user.getVorname() + ' ' + user.getNachname()}"></li>
     </ul>
     <ul class="list-inline card-text">
         <li class="list-inline-item font-weight-bold" style="color: white">CONTACT:</li>
