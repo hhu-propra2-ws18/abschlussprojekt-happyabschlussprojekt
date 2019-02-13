@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
@@ -7,24 +8,27 @@
 </head>
 <body>
 <div class="navbar" style="background-color: deepskyblue;">
-    <a href="/" class="navbar-brand" style="color: white">
+    <a href="/index" class="navbar-brand" style="color: white">
         <strong>HappyBay</strong>
     </a>
 </div>
 <div style="text-align: right">
-    <a class="btn btn-primary"
-       href="/login">Anmelden</a>
-    <a class="btn btn-outline-primary"
-       href="/addUser">Registrieren</a>
     <a class="btn btn-outline-primary"
        href="/admin">Admin</a>
-    <a class="btn btn-outline-primary"
-       href="/logout">Logout</a>
-    <a class="btn btn-outline-primary"
-       th:href="@{/PersonInfo/{id}(id=${person.getId()})}">Profil</a>
+    <div sec:authorize="isAnonymous()">
+        <a class="btn btn-primary"
+        href="/login">Anmelden</a>
+        <a class="btn btn-outline-primary"
+        href="/addUser">Registrieren</a>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+        <a class="btn btn-outline-primary"
+        href="/logout">Logout</a>
+        <a class="btn btn-outline-primary"
+        href="/user">Profil</a>
+    </div>
 </div>
-
-<div class="alert alert-secondary">
+<div th:fragment="footer" class="alert alert-secondary">
     <p>© Made by Happy-Gruppe</p>
 </div>
 </body>

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -28,7 +27,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.GET,"/add").permitAll()
-                .antMatchers(HttpMethod.GET,"/confirmationAdd").permitAll()
+                .antMatchers(HttpMethod.POST,"/confirmationAdd").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/addUser").permitAll()
                 .antMatchers("/PersonInfo").hasRole("USER")
