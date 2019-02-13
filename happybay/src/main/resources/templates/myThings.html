@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
@@ -10,20 +10,21 @@
 <div th:replace="profile.html :: profile"></div>
 <div th:replace="profile.html :: navigation"></div>
 
-<p style="text-align: left; margin: 10px">
-    <a class="btn btn-primary btn-sm" style="align: left"
-       href="/addGeraet">Neues Gerät hinzufügen</a>
-</p>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" style="color: white" th:href="@{/addGeraet}">
+            <img src="http://pnga.mypng.cn/2153/77-circle-plus.png" height="40px" width="40px">
+        </a>
+    </li>
+    <li class="nav-item ml-auto" th:fragment="remind">
+        <a class="nav-link" style="color: white" th:href="@{/myRemind}">
+            <img src="https://pic.52112.com/icon/256/20180709/17508/888451.png" height="40px" width="40px">
+        </a>
+    </li>
+</ul>
 
-<div class="card-body">
-    <div class="card-body">
-        <p class="card-text" th:text="'My things here'"></p>
-    </div>
-</div>
-
-<div class="card-body">
-    <p class="card-text">Some thing shows here.</p>
-
+<div class="card-body" style="text-align: center">
+    <h2 class="card-text" th:text="'Hier ist leer jetzt...'"></h2>
 </div>
 
 <div th:replace="index.html :: footer"></div>

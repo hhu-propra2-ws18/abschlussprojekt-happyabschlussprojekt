@@ -79,6 +79,11 @@ public class HappyBayController {
         return "profile";
     }
 
+    @GetMapping("/PersonInfo/Profile/ChangeProfile")
+    public String changeImg(Model model, Principal principal) {
+        return "changeProfile";
+    }
+
     @GetMapping("/PersonInfo/MyThings")
     public String myThings(Model model, Principal principal){
         String name = principal.getName();
@@ -95,15 +100,16 @@ public class HappyBayController {
         return "rentThings";
     }
 
-    @GetMapping("/addGeraet")
-    public String addGeraet(Model model) {
-        return "addGeraet";
+    @GetMapping("myRemind")
+    public String myRemind(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "myRemind";
     }
 
-    @GetMapping("/geraet")
-    public String geraet(Model model){
-        Geraet geraet = new Geraet();
-        model.addAttribute("geraet", geraet);
-        return "geraet";
+    @GetMapping("/addGeraet")
+    public String addGeraet() {
+        return "addGeraet";
     }
 }

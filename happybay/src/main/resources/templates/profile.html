@@ -6,34 +6,69 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
-<body>
-    <nav th:fragment="profile" class="nav" style="background-color: deepskyblue;">
-        <a href="/" class="nav-link" style="color: white; align: left">
-            <img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px" width="50px">
+<body style="background-color: darkgrey">
+<nav th:fragment="profile" class="nav" style="background-color: darkgrey;">
+    <a href="/" class="nav-link" style="color: white; align: left">
+        <img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px"
+             width="50px">
+    </a>
+</nav>
+
+<ul th:fragment="navigation" class="nav nav-tabs" style="background-color: darkgrey">
+    <li class="nav-item">
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/Profile}">Meine Daten</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/MyThings}">Meine Geräte</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/RentThings}">Meine Ausleihen</a>
+    </li>
+    <li class="nav-item ml-auto">
+        <a class="nav-link" style="color: white" th:href="@{/logout}">Logout</a>
+    </li>
+</ul>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/PersonInfo/Profile/ChangeProfile}">
+            <img src="https://image.flaticon.com/icons/svg/69/69455.svg" height="40px" width="40px">
         </a>
-    </nav>
+    </li>
+    <div th:replace="myThings.html :: remind"></div>
+</ul>
 
-    <ul th:fragment="navigation" class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/PersonInfo/Profile}">Meine Daten</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/PersonInfo/MyThings}">Meine Geräte</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/PersonInfo/RentThings}">Meine Ausleihen</a>
-        </li>
-        <li class="nav-item ml-auto">
-            <a class="nav-link" th:href="@{/logout}">Logout</a>
-        </li>
+<div style="background-color:darkgrey ;text-align: center; padding-top:50px">
+    <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
+        <img class="img-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="200px"
+             width="200px">
+    </a>
+</div>
+
+
+<div class="card-body text-center" style="background-color: darkgrey">
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">NAME:</li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getName()}"></li>
     </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">CONTACT:</li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getKontakt()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">ADRESSE:</li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getAdresse()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">USERNAME:</li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getUsername()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">ROLE:</li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getRole()}"></li>
+    </ul>
+</div>
 
-    <div class="card-body">
-        <p class="card-text" th:text="'Username:' + ${user.username}"></p>
-        <p class="card-text" th:text="'Kontakt:' + ${user.kontakt}"></p>
-        <p class="card-text" th:text="'Adresse:' + ${user.adresse}"></p>
-    </div>
-
-    <div th:replace="index.html :: footer"></div>
+<div th:replace="index.html :: footer"></div>
 </body>
 </html>
