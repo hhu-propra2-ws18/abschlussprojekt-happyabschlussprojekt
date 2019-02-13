@@ -20,6 +20,6 @@ public class Geraet {
     Person besitzer;
     int kosten;
     int kaution;
-    String abholort;
+    String abholOrt;
 }
 

@@ -21,7 +21,7 @@ public class Person {
     private String role;
 
     @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> verleihen;
+    List<Geraet> myThings;
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> ausleihen;
 }
