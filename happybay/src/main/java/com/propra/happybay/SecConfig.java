@@ -26,8 +26,8 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.GET,"/add").permitAll()
-                .antMatchers(HttpMethod.POST,"/confirmationAdd").permitAll()
+                .antMatchers(HttpMethod.POST,"/add").permitAll()
+                .antMatchers("/confirmationAdd").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/addUser").permitAll()
                 .antMatchers("/PersonInfo").hasRole("USER")
@@ -35,6 +35,6 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().permitAll();
         http.logout().permitAll();
         http.userDetailsService(userDetailsService);
+        http.csrf().disable();
     }
-
 }
