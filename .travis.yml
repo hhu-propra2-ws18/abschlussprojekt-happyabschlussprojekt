@@ -1,3 +1,4 @@
+before_script: cd Happybay
 language: java
 jdk:
   - oraclejdk8
