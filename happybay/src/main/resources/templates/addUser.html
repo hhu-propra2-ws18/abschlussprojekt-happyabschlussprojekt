@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <title>Registrierung</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
 
-<div th:replace="index.html :: hauptseite"></div>
+<div th:replace="profile.html :: profile"></div>
 <div th:replace="index.html :: navigation"></div>
 
 <form action="/add" method="post">
-    <div class="form-group">
+    <div class="form-group" style="margin: 15px">
         <label>Vorname:</label>
         <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
         <label>Nachname:</label>

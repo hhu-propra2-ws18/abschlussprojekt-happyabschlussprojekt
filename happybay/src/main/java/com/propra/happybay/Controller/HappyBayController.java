@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
@@ -64,33 +63,40 @@ public class HappyBayController {
     }
 
 
-    @GetMapping("/PersonInfo/{id}")
-    public String user(Model model,@PathVariable Long id) {
-        if (id != null) {
-            Person person = personRepository.findById(id).get();
-            model.addAttribute("user", person);
-        }
+    @GetMapping("/PersonInfo")
+    public String person(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
         return "personInfo";
     }
 
-    @GetMapping("/PersonInfo/Profile/{id}")
-    public String profile(Model model,@PathVariable Long id){
-        Person person = personRepository.findById(id).get();
+    @GetMapping("/PersonInfo/Profile")
+    public String profile(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/MyThings/{id}")
-    public String myThings(Model model,@PathVariable Long id){
-        Person person = personRepository.findById(id).get();
+    @GetMapping("/PersonInfo/MyThings")
+    public String myThings(Model model, Principal principal){
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "myThings";
     }
 
-    @GetMapping("/PersonInfo/RentThings/{id}")
-    public String rentThings(Model model,@PathVariable Long id){
-        Person person = personRepository.findById(id).get();
+    @GetMapping("/PersonInfo/RentThings")
+    public String rentThings(Model model, Principal principal){
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "rentThings";
+    }
+
+    @GetMapping("/addGeraet")
+    public String addGeraet() {
+        return "addGeraet";
     }
 }
