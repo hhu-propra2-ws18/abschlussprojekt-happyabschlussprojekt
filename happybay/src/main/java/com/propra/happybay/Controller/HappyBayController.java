@@ -79,9 +79,9 @@ public class HappyBayController {
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/Profile/ChangeImg")
+    @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal) {
-        return "changeImg";
+        return "changeProfile";
     }
 
     @GetMapping("/PersonInfo/MyThings")
@@ -98,6 +98,14 @@ public class HappyBayController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "rentThings";
+    }
+
+    @GetMapping("myRemind")
+    public String myRemind(Model model, Principal principal){
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "myRemind";
     }
 
     @GetMapping("/addGeraet")
