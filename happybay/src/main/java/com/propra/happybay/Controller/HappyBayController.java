@@ -10,9 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -91,4 +94,15 @@ public class HappyBayController {
         return "geraet";
     }
 
+
+
+    @GetMapping("/addGeraet")
+    public String addGeraet(){
+        return "addGeraet";
+    }
+
+    @PostMapping("/addGeraet")
+    public String addProject(@ModelAttribute(name = "geraet") Geraet geraet){
+        return "change_success";
+    }
 }
