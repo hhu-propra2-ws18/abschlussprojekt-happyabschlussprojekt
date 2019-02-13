@@ -79,6 +79,11 @@ public class HappyBayController {
         return "profile";
     }
 
+    @GetMapping("/PersonInfo/Profile/ChangeImg")
+    public String changeImg(Model model, Principal principal) {
+        return "changeImg";
+    }
+
     @GetMapping("/PersonInfo/MyThings")
     public String myThings(Model model, Principal principal){
         String name = principal.getName();

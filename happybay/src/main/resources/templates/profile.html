@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -6,32 +7,56 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
-<body>
-<nav th:fragment="profile" class="nav" style="background-color: deepskyblue;">
+<body style="background-color: black">
+<nav th:fragment="profile" class="nav" style="background-color: black;">
     <a href="/" class="nav-link" style="color: white; align: left">
         <img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px" width="50px">
     </a>
 </nav>
 
-<ul th:fragment="navigation" class="nav nav-tabs">
+<ul th:fragment="navigation" class="nav nav-tabs" style="background-color: black">
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/PersonInfo/Profile}">Meine Daten</a>
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/Profile}">Meine Daten</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/PersonInfo/MyThings}">Meine Geräte</a>
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/MyThings}">Meine Geräte</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/PersonInfo/RentThings}">Meine Ausleihen</a>
+        <a class="nav-link" style="color: white" th:href="@{/PersonInfo/RentThings}">Meine Ausleihen</a>
     </li>
     <li class="nav-item ml-auto">
-        <a class="nav-link" th:href="@{/logout}">Logout</a>
+        <a class="nav-link" style="color: white" th:href="@{/logout}">Logout</a>
     </li>
 </ul>
 
-<div class="card-body">
-    <p class="card-text" th:text="'Username:' + ${user.username}"></p>
-    <p class="card-text" th:text="'Kontakt:' + ${user.kontakt}"></p>
-    <p class="card-text" th:text="'Adresse:' + ${user.adresse}"></p>
+<div style="background-color:black ;text-align: center; padding-top:50px">
+    <a th:href="@{/PersonInfo/Profile/ChangeImg}">
+        <img class="img-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="200px" width="200px">
+    </a>
+</div>
+
+
+<div class="card-body text-center" style="background-color: black">
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">NAME: </li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getName()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">CONTACT: </li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getKontakt()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">ADRESSE: </li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getAdresse()}"></li>
+    </ul>
+    <ul class="list-inline card-text" >
+        <li class="list-inline-item font-weight-bold" style="color: white">USERNAME: </li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getUsername()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold" style="color: white">ROLE: </li>
+        <li class="list-inline-item" style="color: white" th:text="${user.getRole()}"></li>
+    </ul>
 </div>
 
 <div th:replace="index.html :: footer"></div>
