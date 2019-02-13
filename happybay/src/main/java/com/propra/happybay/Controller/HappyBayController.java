@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,7 +31,14 @@ public class HappyBayController {
     private UserValidator userValidator;
 
     @GetMapping("/")
-    public String index(Model model, Principal person){
+    public String index(Model model,Principal person){
+        //Geraet geraet = new Geraet();
+        //geraet.setBeschreibung("All‑Screen Design. Die längste Batterielaufzeit bei einem iPhone. Die schnellste Performance. Fotos in Studioqualität.Das größte Super Retina Display. Die schnellste Performance mit dem A12 Bionic. Die sicherste Gesichtsauthentifizierung mit Face ID.");
+        //geraet.setKaution(10000);
+        //geraet.setKosten(100);
+        //geraet.setVerfuegbar(false);
+        //geraet.setTitel("iPhone X");
+        //geraetRepository.save(geraet);
         if (person != null) {
             Person person1 = personRepository.findByUsername(person.getName()).get();
             model.addAttribute("person",person1);
@@ -109,7 +117,12 @@ public class HappyBayController {
     public String myThings(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        List<Geraet> myThings = geraetRepository.findAll();
+        for(int i = 0;i<person.getMyThings().size();i++){
+            myThings.add(person.getMyThings().get(i));
+        }
         model.addAttribute("user", person);
+        model.addAttribute("myThings",myThings);
         return "myThings";
     }
 

@@ -23,8 +23,39 @@
     </li>
 </ul>
 
-<div class="card-body" style="text-align: center">
-    <h2 class="card-text" th:text="'Hier ist leer jetzt...'"></h2>
+<div class="row">
+    <div th:each="myThing: ${myThings}" class="col-sm-3">
+        <div class="clearfix" style="margin-bottom: 20px;">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${myThing.getBeschreibung()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">STATUS: </li>
+                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                    </ul>
+                    <a th:href="@{/}" class="card-link">Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 
 <div th:replace="index.html :: footer"></div>
