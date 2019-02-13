@@ -1,8 +1,9 @@
-before_install: 
+before_script: 
   - docker pull mysql
   - sudo apt-get update     
-before_install: docker run -d -name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=happybay mysql:lastest
-before_script: cd happybay
+  - docker run -d --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=happybay mysql:latest
+  - sleep 3m
+  - cd happybay
 language: java
 jdk:
   - oraclejdk8
