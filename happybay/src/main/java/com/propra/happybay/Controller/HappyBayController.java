@@ -143,4 +143,12 @@ public class HappyBayController {
             model.addAttribute("message", "You have been logged out successfully.");
         return "login";
     }
+
+    @GetMapping("/proPay")
+    public String proPay(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "proPay";
+    }
 }
