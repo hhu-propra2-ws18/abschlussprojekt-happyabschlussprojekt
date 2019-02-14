@@ -1,10 +1,12 @@
 package com.propra.happybay.Controller;
 
+import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Service.UserService;
+import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +30,10 @@ public class HappyBayController {
     public PasswordEncoder encoder;
     @Autowired
     private UserValidator userValidator;
+    @Autowired
+    private ProPayService proPayService;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @GetMapping("/")
     public String index(Model model, Principal person){
@@ -149,6 +155,9 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
         return "proPay";
     }
 }

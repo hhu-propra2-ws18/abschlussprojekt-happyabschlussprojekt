@@ -8,9 +8,8 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class Reservations {
+public class Reservation {
     @Id
-    @GeneratedValue
     private Long id;
-    private String amount;
+    private Double amount;
 }

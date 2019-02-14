@@ -13,11 +13,13 @@
 <div style="margin: 15px">
     <ul class="list-inline card-text">
         <li class="list-inline-item font-weight-bold">Kontostand:</li>
-        <li class="list-inline-item">100 €</li>
+        <li class="list-inline-item" th:text="${account.amount}">100 €</li>
     </ul>
     <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Reservierungen:</li>
-        <li class="list-inline-item">30 €</li>
+        <li class="list-inline-item font-weight-bold">Reservierungen: </li>
+        <li class="list-inline-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
+        <li class="list-inline-item" th:each="reservation : ${account.reservations}"
+            th:text="${reservation.amount}">30 €</li>
     </ul>
 </div>
 

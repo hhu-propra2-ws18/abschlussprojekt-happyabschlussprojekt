@@ -9,11 +9,8 @@ import java.util.List;
 @Entity
 public class Account {
     @Id
-    @GeneratedValue
-    private Long id;
-    private Long personId;
     private String account;
-    private double amount;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Reservations> reservations;
+    private Double amount;
+    @OneToMany
+    private List<Reservation> reservations;
 }
