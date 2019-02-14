@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Jetzt verleihen und Geld verdienen</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js" integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xgCgl/PQGuFsvShjr74PBp" crossorigin="anonymous"></script>
+</head>
+<body>
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="profile.html :: navigation"></div>
+
+<div class="container">
+    <div class="row" style="margin-left: 5px">
+        <h1>Verleihen Iher Gerät</h1>
+    </div>
+
+    <div class="card" style="padding: 10px; margin-inside: 10px; margin-bottom: 10px">
+        <label for="titel">Bilder Hochladen(Max. 15MB)</label>
+        <form  th:action="@{/addgeraet/bildupload}" method = "post" enctype="multipart/form-data">
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
+            <input class="btn btn-primary" style="margin-top: 10px" type = "submit" value = "Upload Files" />
+        </form>
+    </div>
+
+    <div class="card" style="padding: 10px; margin-bottom: 10px">
+        <form th:action="@{/addgeraet}" method="post">
+            <label for="titel">Titel:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" />
+
+            <label for="beschreibung">Beschreibung:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" />
+
+            <label for="kosten">kosten Pro Tag:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" />
+
+            <label for="kaution">Kaution:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" />
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        <div class="card-body">
+            <a href="/" class="card-link">Back</a>
+        </div>
+    </div>
+</div>
+<div th:replace="index.html :: footer"></div>
+
+</body>
+</html>

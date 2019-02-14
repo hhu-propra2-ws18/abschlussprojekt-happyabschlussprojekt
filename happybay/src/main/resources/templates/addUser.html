@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierung</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="index.html :: navigation"></div>
+<div class="col-6">
+    <div class="alert alert-danger" role="alert" th:if="${errorList} != null" th:each="error : ${errorList}">
+        <p th:if="${error} == 'Size.person.username'">Please use between 6 and 32 characters.</p>
+        <p th:if="${error} == 'Size.person.password'">Try one with at least 8 characters.</p>
+        <p th:if="${error} == 'Duplicate.person.username'">Someone already has that username.</p>
+        <p th:if="${error} == 'Diff.person.passwordConfirm'">These passwords don't match.</p>
+    </div>
+</div>
+<form action="/add" method="post">
+    <div class="form-group row" style="margin: 15px">
+        <div class="rol">
+            <label>Vorname:</label>
+            <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
+            <label>Nachname:</label>
+            <input type="text" name="nachname" class="form-control" placeholder="Nachnahme"><br>
+            <label>Kontaktdaten:</label>
+            <input type="email" name="kontakt" class="form-control" aria-describedby="emailHelp" placeholder="Email"><br>
+            <label>Adresse:</label>
+            <input type="text" name="adresse" class="form-control" placeholder="Adresse"><br>
+            <label>Username:</label>
+            <input type="text" name="username" class="form-control" placeholder="Username"><br>
+            <label>Password:</label>
+            <input type="password" name="password" class="form-control" placeholder="Password"><br>
+            <label>Bitte bestätige Dein Password:</label>
+            <input type="password" name="passwordConfirm" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
+            <button class="btn btn-primary" type="submit" style="position: relative">Submit</button>
+        </div>
+    </div>
+</form>
+<div th:replace="index.html :: footer"></div>
+</body>
+</html>
