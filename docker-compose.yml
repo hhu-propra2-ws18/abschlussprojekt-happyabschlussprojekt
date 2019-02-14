@@ -1,0 +1,30 @@
+version: "3.1"
+services:
+  proxy:
+    image: nginx:1.15-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./proxy/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./proxy/conf/domain.conf:/etc/nginx/domain.conf:ro
+
+  # ========================================
+  person:
+    build: ./happybay-scs
+    environment:
+      - DATABASE_HOST=persondb
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=personen
+    depends_on:
+      - happybaydb
+  happybaydb:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=happybay
+      - MYSQL_PASSWORD=root
+    volumes:
+      - ./datavolume_happybay:/var/lib/mysql
+  # ========================================
+

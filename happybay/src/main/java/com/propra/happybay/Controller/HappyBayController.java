@@ -4,10 +4,13 @@ import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.UserService;
+import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +44,6 @@ public class HappyBayController {
         }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
-        List<Person> personList = personRepository.findAll();
-        System.out.println(personList);
         return "index";
     }
 
@@ -163,4 +164,11 @@ public class HappyBayController {
 
 
 
+    @GetMapping("/proPay")
+    public String proPay(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "proPay";
+    }
 }
