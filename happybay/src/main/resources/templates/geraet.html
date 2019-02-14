@@ -47,7 +47,9 @@
         <label th:text="'Kaution: '+${geraet.getKaution()}+'€'" style="color: darkgrey"></label>
 
         <!--Hier muss man noch action hinfuegen.-->
-        <a class="btn btn-primary" href="/" style="margin-left: 78%">Jetzt Beantragen</a>
+        <form th:action="@{'/user/bezahlen/' +${geraet.getId()}}" >
+            <button class="btn btn-primary" type="submit">Miete</button>
+        </form>
         <h4 th:text="${geraet.getTitel()}"></h4>
         <label th:text="${geraet.getBeschreibung()}"></label>
     </div>

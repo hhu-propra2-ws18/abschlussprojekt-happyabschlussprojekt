@@ -27,7 +27,7 @@
     </div>
 
     <div class="card" style="padding: 10px; margin-bottom: 10px">
-        <form th:action="@{/addgeraet}" method="post">
+        <form th:action="@{/addGeraet}" th:object="${geraet}" method="post">
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" />
 
@@ -39,6 +39,9 @@
 
             <label for="kaution">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" />
+
+            <label for="kaution">Abholort:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" />
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>

@@ -3,9 +3,11 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.Transfer;
 import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.TransferRepository;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
@@ -34,22 +37,11 @@ public class HappyBayController {
     private ProPayService proPayService;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private TransferRepository transferRepository;
 
     @GetMapping("/")
-    public String index(Model model, Principal person){
-        if (person != null) {
-            Person person1 = personRepository.findByUsername(person.getName()).get();
-            model.addAttribute("person",person1);
-            Geraet newGeraet = new Geraet();
-            newGeraet.setTitel("Stuhl");
-            newGeraet.setBesitzer(person1);
-            newGeraet.setAbholort("Dusseldorf");
-            newGeraet.setKaution(30);
-            newGeraet.setKosten(10);
-            newGeraet.setVerfuegbar(true);
-            geraetRepository.save(newGeraet);
-            person1.getVerleihen().add(newGeraet);
-        }
+    public String index(Model model){
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -139,6 +131,13 @@ public class HappyBayController {
     public String addGeraet() {
         return "addGeraet";
     }
+    @PostMapping("/addGeraet")
+    public String confirmGeraet(@ModelAttribute("geraet")Geraet geraet,Principal principal) {
+        geraet.setVerfuegbar(true);
+        geraet.setBesitzer(personRepository.findByUsername(principal.getName()).get());
+        geraetRepository.save(geraet);
+        return "index";
+    }
 
     @GetMapping("/login")
     public String login(Model model, String error, String logout){
@@ -159,5 +158,26 @@ public class HappyBayController {
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
         return "proPay";
+    }
+    @GetMapping("/geraet/{id}")
+    public String geraet(@PathVariable Long id, Model model) {
+        Geraet geraet=geraetRepository.findById(id).get();
+        model.addAttribute("geraet",geraet);
+        return "geraet";
+    }
+    @GetMapping("/user/bezahlen/{id}")
+    public String bezahlen(Model model,Principal person,@PathVariable Long id){
+//        transferRepository.deleteAll();
+        String name= person.getName();
+        Person person1 =personRepository.findByUsername(name).get();
+        Geraet geraet=geraetRepository.findById(id).get();
+
+        Transfer newTransfer= new Transfer();
+        newTransfer.setAbsender(person1.getUsername());
+        newTransfer.setEmpfänger(geraet.getBesitzer().getUsername());
+        newTransfer.setAmount(geraet.getKosten());
+        transferRepository.save(newTransfer);
+        model.addAttribute(person1);
+        return "confirmBezahlen";
     }
 }

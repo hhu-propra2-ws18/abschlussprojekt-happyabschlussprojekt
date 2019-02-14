@@ -24,6 +24,41 @@
         </li>
 </ul>
 
+<div class="row">
+    <div th:each="myThing: ${geraete}" class="col-sm-3">
+        <div class="clearfix" style="margin-bottom: 20px;">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">STATUS: </li>
+                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                    </ul>
+                    <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
 margin: 0; width: 100%">
     <p>© Made by Happy-Gruppe</p>
