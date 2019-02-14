@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,6 +23,8 @@ public class HappyBayController {
     GeraetRepository geraetRepository;
     @Autowired
     public PasswordEncoder encoder;
+    @Autowired
+    private UserValidator userValidator;
 
     @GetMapping("/")
     public String index(Model model,Principal person){
@@ -40,6 +41,8 @@ public class HappyBayController {
         }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
+        List<Person> personList = personRepository.findAll();
+        System.out.println(personList);
         return "index";
     }
 
@@ -49,8 +52,13 @@ public class HappyBayController {
     }
 
     @PostMapping("/add")
-    public String addToDatabase(@ModelAttribute("person")Person person,
+    public String addToDatabase(@ModelAttribute("person")Person person, BindingResult bindingResult,
                                 Model model) {
+        userValidator.validate(person, bindingResult);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("bindingResult", bindingResult);
+            return "addUser";
+        }
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
@@ -89,7 +97,16 @@ public class HappyBayController {
 
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("person", person);
         return "changeProfile";
+    }
+
+    @PostMapping("/PersonInfo/Profile/ChangeProfile")
+    public String chageProfile(@ModelAttribute("person") Person person, Principal principal) {
+        personRepository.save(person);
+        return "confirmationAdd";
     }
 
     @GetMapping("/PersonInfo/MyThings")
@@ -114,7 +131,7 @@ public class HappyBayController {
     }
 
     @GetMapping("myRemind")
-    public String myRemind(Model model, Principal principal){
+    public String myRemind(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
@@ -125,4 +142,25 @@ public class HappyBayController {
     public String addGeraet() {
         return "addGeraet";
     }
+
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout){
+        if (error != null)
+            model.addAttribute("error", "Your username and password is invalid.");
+
+        if (logout != null)
+            model.addAttribute("message", "You have been logged out successfully.");
+        return "login";
+    }
+
+    @GetMapping("/geraet")
+    public String geraet(Model model) {
+        Geraet geraet = new Geraet();
+        model.addAttribute("geraet", geraet);
+        return "geraet";
+    }
+
+
+
+
 }

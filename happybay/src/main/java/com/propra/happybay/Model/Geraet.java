@@ -20,6 +20,9 @@ public class Geraet {
     Person besitzer;
     int kosten;
     int kaution;
-    String abholOrt;
+    String abholort;
+    Date oeffdatum;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Bild> bilder;
 }
 
