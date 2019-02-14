@@ -25,7 +25,7 @@ public class Person {
     private String color;
 
     @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> myThings;
+    List<Geraet> verleihen;
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> ausleihen;
     @OneToOne

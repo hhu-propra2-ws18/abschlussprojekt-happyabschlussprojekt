@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,20 +31,13 @@ public class HappyBayController {
     private UserValidator userValidator;
 
     @GetMapping("/")
-    public String index(Model model,Principal person){
-        //Geraet geraet = new Geraet();
-        //geraet.setBeschreibung("All‑Screen Design. Die längste Batterielaufzeit bei einem iPhone. Die schnellste Performance. Fotos in Studioqualität.Das größte Super Retina Display. Die schnellste Performance mit dem A12 Bionic. Die sicherste Gesichtsauthentifizierung mit Face ID.");
-        //geraet.setKaution(10000);
-        //geraet.setKosten(100);
-        //geraet.setVerfuegbar(false);
-        //geraet.setTitel("iPhone X");
-        //geraetRepository.save(geraet);
+    public String index(Model model, Principal person) {
         if (person != null) {
             Person person1 = personRepository.findByUsername(person.getName()).get();
-            model.addAttribute("person",person1);
+            model.addAttribute("person", person1);
         }
         List<Geraet> geraete = geraetRepository.findAll();
-        model.addAttribute("geraete",geraete);
+        model.addAttribute("geraete", geraete);
         return "index";
     }
 
@@ -53,7 +47,7 @@ public class HappyBayController {
     }
 
     @PostMapping("/add")
-    public String addToDatabase(@ModelAttribute("person")Person person, BindingResult bindingResult,
+    public String addToDatabase(@ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -80,7 +74,7 @@ public class HappyBayController {
     }
 
 
-    @GetMapping("/PersonInfo")
+    @GetMapping("/personInfo")
     public String person(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -88,7 +82,7 @@ public class HappyBayController {
         return "personInfo";
     }
 
-    @GetMapping("/PersonInfo/Profile")
+    @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -96,38 +90,28 @@ public class HappyBayController {
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/Profile/ChangeProfile")
+    @GetMapping("/profile/ChangeProfile")
     public String changeImg(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("person", person);
         return "changeProfile";
     }
 
-    @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(@ModelAttribute("person") Person person, Principal principal) {
-        personRepository.save(person);
-        return "confirmationAdd";
-    }
-
-    @GetMapping("/PersonInfo/MyThings")
-    public String myThings(Model model, Principal principal){
+    @GetMapping("/myThings")
+    public String myThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        List<Geraet> myThings = geraetRepository.findAll();
-        for(int i = 0;i<person.getMyThings().size();i++){
-            myThings.add(person.getMyThings().get(i));
-        }
         model.addAttribute("user", person);
-        model.addAttribute("myThings",myThings);
+        List<Geraet> geraete = geraetRepository.findAll();
+        model.addAttribute("geraete", geraete);
         return "myThings";
     }
 
-    @GetMapping("/PersonInfo/RentThings")
-    public String rentThings(Model model, Principal principal){
+    @GetMapping("/rentThings")
+    public String rentThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        List<Geraet> geraete = geraetRepository.findAll();
+        model.addAttribute("geraete", geraete);
         return "rentThings";
     }
 
@@ -140,12 +124,15 @@ public class HappyBayController {
     }
 
     @GetMapping("/addGeraet")
-    public String addGeraet() {
+    public String addGeraet(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
         return "addGeraet";
     }
 
     @GetMapping("/login")
-    public String login(Model model, String error, String logout){
+    public String login(Model model, String error, String logout) {
         if (error != null)
             model.addAttribute("error", "Your username and password is invalid.");
 
@@ -154,21 +141,18 @@ public class HappyBayController {
         return "login";
     }
 
-    @GetMapping("/geraet")
-    public String geraet(Model model) {
-        Geraet geraet = new Geraet();
-        model.addAttribute("geraet", geraet);
-        return "geraet";
-    }
-
-
-
-
     @GetMapping("/proPay")
     public String proPay(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "proPay";
+    }
+
+    @GetMapping("/geraet")
+    public String geraet(Model model) {
+        Geraet geraet = new Geraet();
+        model.addAttribute("geraet", geraet);
+        return "geraet";
     }
 }

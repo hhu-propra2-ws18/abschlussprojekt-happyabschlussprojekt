@@ -11,13 +11,13 @@
 
 <ul th:fragment="navigation" class="nav nav-tabs">
         <li sec:authorize="isAnonymous()" class="nav-item">
-            <a class="nav-link" th:href="@{/PersonInfo}">Anmelden</a>
+            <a class="nav-link" th:href="@{/personInfo}">Anmelden</a>
         </li>
         <li sec:authorize="isAnonymous()" class="nav-item">
             <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
         </li>
         <li>
-            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/PersonInfo}">Dein Profil</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Dein Profil</a>
         </li>
         <li class="nav-item ml-auto">
             <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Logout</a>

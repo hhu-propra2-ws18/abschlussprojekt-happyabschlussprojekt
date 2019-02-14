@@ -51,34 +51,39 @@
 
 <ul class="nav nav-tabs" style="border-bottom: none">
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/PersonInfo/Profile/ChangeProfile}">
+        <a class="nav-link" th:href="@{changeProfile}">
             <span class="glyphicon glyphicon-edit"></span>
             Bearbeiten
         </a>
     </li>
 </ul>
 
-<div style="margin: 15px">
+<div style="background-color:white ;text-align: center; padding-top:50px">
+    <a th:href="@{changeProfile}">
+        <img class="img-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="200px" width="200px">
+    </a>
+</div>
+
+<div class="card-body text-center" style="background-color: white">
     <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Name:</li>
-        <li class="list-inline-item"
-            th:text="${user.getVorname()} + ' ' + ${user.getNachname()}"></li>
+        <li class="list-inline-item font-weight-bold" style="color: black">NAME: </li>
+        <li class="list-inline-item" style="color: black" th:text="${user.getVorname() +' '+ user.getNachname()}"></li>
     </ul>
     <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Kontakt:</li>
-        <li class="list-inline-item" th:text="${user.getKontakt()}"></li>
+        <li class="list-inline-item font-weight-bold" style="color: black">CONTACT: </li>
+        <li class="list-inline-item" style="color: black" th:text="${user.getKontakt()}"></li>
     </ul>
     <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Adresse:</li>
-        <li class="list-inline-item" th:text="${user.getAdresse()}"></li>
+        <li class="list-inline-item font-weight-bold" style="color: black">ADRESSE: </li>
+        <li class="list-inline-item" style="color: black" th:text="${user.getAdresse()}"></li>
+    </ul>
+    <ul class="list-inline card-text" >
+        <li class="list-inline-item font-weight-bold" style="color: black">USERNAME: </li>
+        <li class="list-inline-item" style="color: black" th:text="${user.getUsername()}"></li>
     </ul>
     <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Username:</li>
-        <li class="list-inline-item" th:text="${user.getUsername()}"></li>
-    </ul>
-    <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Angemeldet als:</li>
-        <li class="list-inline-item" th:text="${user.getRole()}"></li>
+        <li class="list-inline-item font-weight-bold" style="color: black">ROLE: </li>
+        <li class="list-inline-item" style="color: black" th:text="${user.getRole()}"></li>
     </ul>
 </div>
 
