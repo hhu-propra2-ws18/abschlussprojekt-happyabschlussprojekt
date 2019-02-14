@@ -34,6 +34,15 @@ public class HappyBayController {
         if (person != null) {
             Person person1 = personRepository.findByUsername(person.getName()).get();
             model.addAttribute("person",person1);
+            Geraet newGeraet = new Geraet();
+            newGeraet.setTitel("Stuhl");
+            newGeraet.setBesitzer(person1);
+            newGeraet.setAbholort("Dusseldorf");
+            newGeraet.setKaution(30);
+            newGeraet.setKosten(10);
+            newGeraet.setVerfuegbar(true);
+            geraetRepository.save(newGeraet);
+            person1.getVerleihen().add(newGeraet);
         }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
@@ -73,7 +82,7 @@ public class HappyBayController {
     }
 
 
-    @GetMapping("/PersonInfo")
+    @GetMapping("/personInfo")
     public String person(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -81,7 +90,7 @@ public class HappyBayController {
         return "personInfo";
     }
 
-    @GetMapping("/PersonInfo/Profile")
+    @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -89,20 +98,35 @@ public class HappyBayController {
         return "profile";
     }
 
-    @GetMapping("/PersonInfo/MyThings")
+    @GetMapping("/profile/ChangeProfile")
+    public String changeImg(Model model, Principal principal) {
+        return "changeProfile";
+    }
+
+    @GetMapping("/myThings")
     public String myThings(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        List<Geraet> geraete = geraetRepository.findAll();
+        model.addAttribute("geraete",geraete);
         return "myThings";
     }
 
-    @GetMapping("/PersonInfo/RentThings")
+    @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         return "rentThings";
+    }
+
+    @GetMapping("myRemind")
+    public String myRemind(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "myRemind";
     }
 
     @GetMapping("/addGeraet")
@@ -119,5 +143,4 @@ public class HappyBayController {
             model.addAttribute("message", "You have been logged out successfully.");
         return "login";
     }
-
 }

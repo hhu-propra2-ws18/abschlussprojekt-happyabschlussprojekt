@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
@@ -10,20 +10,18 @@
 <div th:replace="profile.html :: profile"></div>
 <div th:replace="profile.html :: navigation"></div>
 
-<p style="text-align: left; margin: 10px">
-    <a class="btn btn-primary btn-sm" style="align: left"
-       href="/addGeraet">Neues Gerät hinzufügen</a>
-</p>
+<ul class="nav nav-tabs" style="border-bottom: none">
+    <li class="nav-item">
+        <p style="margin: 15px;"><a th:href="@{/addGeraet}">
+            <span class="glyphicon glyphicon-plus" height="40px" width="40px"></span>
+            Neues Gerät hinzüfugen
+        </a>
+        </p>
+    </li>
+</ul>
 
-<div class="card-body">
-    <div class="card-body">
-        <p class="card-text" th:text="'My things here'"></p>
-    </div>
-</div>
-
-<div class="card-body">
-    <p class="card-text">Some thing shows here.</p>
-
+<div th:each="geraet : ${geraete}" class="card-body" style="text-align: center">
+    <h2 class="card-text" th:text="${geraet.titel}"></h2>
 </div>
 
 <div th:replace="index.html :: footer"></div>

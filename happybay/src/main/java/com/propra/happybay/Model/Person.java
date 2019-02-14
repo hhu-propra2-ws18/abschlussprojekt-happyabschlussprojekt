@@ -22,9 +22,12 @@ public class Person {
     @Transient
     private String passwordConfirm;
     private String role;
+    private String color;
 
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> verleihen;
     @OneToMany(cascade = CascadeType.ALL)
     List<Geraet> ausleihen;
+    @OneToOne
+    Bild foto;
 }
