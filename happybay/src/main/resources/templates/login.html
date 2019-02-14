@@ -10,21 +10,25 @@
 <body>
 <div th:replace="profile.html :: profile"></div>
 <div th:replace="index.html :: navigation"></div>
-<div th:if="${param.error}" style="margin: 15px">
-    Invalid username and password.
-</div>
-<div th:if="${param.logout}" style="margin: 15px">
-    You have been logged out.
-</div>
-<form th:action="@{/login}" method="post" style="margin: 15px">
-    <div class="form-group" style="margin: 15px">
-        <label>User Name : </label>
-        <input type="text" class="form-control" name="username"/><br/>
-        <label>Password: </label>
-        <input type="password" class="form-control" name="password"/><br/>
-        <button class="btn btn-primary" type="submit">Login</button>
+<div class="row justify-content-md-center">
+    <div class="col-5">
+        <div class="alert alert-danger" role="alert" th:if="${param.error}" style="margin: 15px">
+            Invalid username and password.
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${param.logout}" style="margin: 15px">
+            You have been logged out.
+        </div>
+        <form th:action="@{/login}" method="post" style="margin: 15px">
+            <div class="form-group" style="margin: 15px">
+                <label>User Name : </label>
+                <input type="text" class="form-control" name="username"/><br/>
+                <label>Password: </label>
+                <input type="password" class="form-control" name="password"/><br/>
+                <button class="btn btn-primary" type="submit">Login</button>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 <div th:replace="index.html :: footer"></div>
 </body>
 </html>

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -36,20 +37,7 @@ public class HappyBayController {
     private AccountRepository accountRepository;
 
     @GetMapping("/")
-    public String index(Model model, Principal person){
-        if (person != null) {
-            Person person1 = personRepository.findByUsername(person.getName()).get();
-            model.addAttribute("person",person1);
-            Geraet newGeraet = new Geraet();
-            newGeraet.setTitel("Stuhl");
-            newGeraet.setBesitzer(person1);
-            newGeraet.setAbholort("Dusseldorf");
-            newGeraet.setKaution(30);
-            newGeraet.setKosten(10);
-            newGeraet.setVerfuegbar(true);
-            geraetRepository.save(newGeraet);
-            person1.getVerleihen().add(newGeraet);
-        }
+    public String index(Model model){
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -65,7 +53,12 @@ public class HappyBayController {
                                 Model model) {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("bindingResult", bindingResult);
+            List<String> errorList = new ArrayList<>();
+            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
+                errorList.add(bindingResult.getAllErrors().get(i).getCode());
+            }
+            System.out.println(errorList);
+            model.addAttribute("errorList",errorList);
             return "addUser";
         }
         person.setRole("ROLE_USER");
