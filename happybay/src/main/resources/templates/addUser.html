@@ -5,12 +5,18 @@
     <meta charset="UTF-8">
     <title>Registrierung</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
 
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="index.html :: navigation"></div>
+<div th:replace="index.html :: navbar"></div>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/PersonInfo}">Anmelden</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" th:href="@{/addUser}">Registrieren</a>
+    </li>
+</ul>
 
 <p th:if="${bindingResult} != null" th:text="${bindingResult}"></p>
 
@@ -20,15 +26,24 @@
         <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
         <label>Nachname:</label>
         <input type="text" name="nachname" class="form-control" placeholder="Nachnahme"><br>
-        <label>Kontaktdaten:</label>
+        <label>Kontaktdaten:</label><br>
+        <small id="emailHelp" class="text-muted">We'll never share your email with anyone else.</small>
+        <br>
         <input type="email" name="kontakt" class="form-control" aria-describedby="emailHelp" placeholder="Email"><br>
         <label>Adresse:</label>
         <input type="text" name="adresse" class="form-control" placeholder="Adresse"><br>
-        <label>Username:</label>
+        <label>Username:</label><br>
+        <small id="passwordHelpInline" class="text-muted">
+            Must be more 6 characters long.
+        </small>
+        <br>
         <input type="text" name="username" class="form-control" placeholder="Username"><br>
-        <label>Password:</label>
+        <label>Password:</label><br>
+        <small id="passwordHelpInline" class="text-muted">
+            Must be 8-20 characters long.
+        </small><br>
         <input type="password" name="password" class="form-control" placeholder="Password"><br>
-        <label>Bitte bestätige Dein Password:</label>
+        <label>Bitte bestätige Dein Password:</label><br>
         <input type="password" name="passwordConfirm" class="form-control" placeholder="Bitte wiederhole Dein Password"><br>
         <button class="btn btn-primary" type="submit" style="position: relative; z-index: 10">Submit</button>
     </div>

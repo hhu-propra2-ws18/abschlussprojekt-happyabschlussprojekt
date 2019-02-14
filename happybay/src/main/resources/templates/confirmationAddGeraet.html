@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
+<div th:replace="profile.html :: profile"></div>
 <div th:replace="index.html :: navbar"></div>
 
-<h3 th:text="${person.vorname} + ' ' + ${person.nachname}"><b>Name</b></h3>
+<h3 th:text="${geraet.titel}"><b>Titel</b></h3>
 <ul class="list-group list-group-flush">
-    <li class="list-group-item" th:text="'Username: ' + ${person.username}" >Username</li>
-    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.kontakt}" >Kontakt Daten</li>
-    <li class="list-group-item" th:text="'Adresse: ' + ${person.adresse}">Adresse</li>
+    <li class="list-group-item" th:text="'Beschreibung: ' + ${geraet.beschreibung}" >Beschreibung</li>
+    <li class="list-group-item" th:text="'Abholord: ' + ${geraet.abholort}">Abholord</li>
 </ul>
 </div>
 <div th:replace="index.html :: footer"></div>
 </body>
 </html>
+

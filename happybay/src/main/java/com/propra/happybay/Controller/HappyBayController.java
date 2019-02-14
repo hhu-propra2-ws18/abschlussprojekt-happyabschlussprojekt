@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,10 +32,10 @@ public class HappyBayController {
 
     @GetMapping("/")
     public String index(Model model, Principal person){
-        if (person != null) {
-            Person person1 = personRepository.findByUsername(person.getName()).get();
-            model.addAttribute("person",person1);
-        }
+//        if (person.getName() != null) {
+//            Person person1 = personRepository.findByUsername(person.getName()).get();
+//            model.addAttribute("person",person1);
+//        }
         List<Geraet> geraete = geraetRepository.findAll();
         model.addAttribute("geraete",geraete);
         return "index";
@@ -122,6 +123,12 @@ public class HappyBayController {
     public String addGeraet() {
         return "addGeraet";
     }
+    @PostMapping("/addGeraetForm")
+    public String addGeraetForm(@ModelAttribute("geraet")Geraet geraet,Model model){
+        geraetRepository.save(geraet);
+        model.addAttribute("geraet",geraet);
+        return "confirmationAddGeraet";
+    }
 
     @GetMapping("/login")
     public String login(Model model, String error, String logout){
@@ -132,5 +139,6 @@ public class HappyBayController {
             model.addAttribute("message", "You have been logged out successfully.");
         return "login";
     }
+
 
 }

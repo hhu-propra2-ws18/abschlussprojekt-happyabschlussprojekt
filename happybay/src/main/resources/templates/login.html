@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="index.html :: navigation"></div>
+<div th:replace="index.html :: navbar"></div>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" th:href="@{/PersonInfo}">Anmelden</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
+    </li>
+</ul>
 <div th:if="${param.error}" style="margin: 15px">
     Invalid username and password.
 </div>
