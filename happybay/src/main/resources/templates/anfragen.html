@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bestätigung der Registrierung</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="index.html :: navigation"></div>
+<div class="card" style="padding: 10px; margin-bottom: 10px">
+    <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} "  method="post">
+        <label for="zeitraum">Zeitraum:</label>
+        <input style="margin-bottom: 10px" type="text" class="form-control" name="zeitraum" id="zeitraum" th:value="${notification.getZeitraum()}" />
+
+        <label for="mietezeitPunkt">Miete Start Datum:</label>
+        <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitPunkt" id="mietezeitPunkt" th:value="${notification.getMietezeitPunkt()}" />
+        <label for="message">Message:</label>
+        <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message" th:value="${notification.getMietezeitPunkt()}" />
+
+        <button type="submit" class="btn btn-primary">Schicken</button>
+    </form>
+    <div class="card-body">
+        <a href="/" class="card-link">Back</a>
+    </div>
+</div>
+</body>
+</html>

@@ -38,9 +38,9 @@
         <!--<label class="nav-link" th:text="'Hallo, ' + ${user.getUsername()}"></label>-->
     <!--</li>-->
     <li class="nav-item ml-auto">
-        <a th:href="@{/myRemind}">
+        <a th:href="@{/user/myRemind}">
             <span class="glyphicon glyphicon-bell" th:style="${4 > 3} ? 'color: gold' : ''"></span>
-            <span class="badge badge-pill badge-info">4</span>
+            <span class="badge badge-pill badge-info" th:text="${zahl}"></span>
             <label >Benachrichtigungen</label>
         </a>
     </li>

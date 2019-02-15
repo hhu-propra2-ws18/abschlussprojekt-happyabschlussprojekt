@@ -1,13 +1,7 @@
 package com.propra.happybay.Controller;
 
-import com.propra.happybay.Model.Account;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Person;
-import com.propra.happybay.Model.Transfer;
-import com.propra.happybay.Repository.AccountRepository;
-import com.propra.happybay.Repository.GeraetRepository;
-import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Repository.TransferRepository;
+import com.propra.happybay.Model.*;
+import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +21,7 @@ import java.util.List;
 
 @Controller
 public class HappyBayController {
+    private int zahl;
     @Autowired
     PersonRepository personRepository;
     @Autowired
@@ -40,8 +35,7 @@ public class HappyBayController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private TransferRepository transferRepository;
-
+    private NotificationRepository notificationRepository;
     @GetMapping("/")
     public String index(Model model) {
         List<Geraet> geraete = geraetRepository.findAll();
@@ -80,11 +74,7 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/user")
-    public String user(Model m, Principal person) {
-        m.addAttribute("username", person.getName());
-        return "profile";
-    }
+
 
 
     @GetMapping("/personInfo")
@@ -92,13 +82,22 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        model.addAttribute("zahl",zahl);
         return "personInfo";
     }
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
+
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        List<Geraet> geraete=geraetRepository.findAllByBesitzer(name);
+        zahl=0;
+        for (Geraet geraet:geraete){
+            zahl+=notificationRepository.findByGeraetId(geraet.getId()).size();
+        }
+
+        model.addAttribute("zahl",zahl);
         model.addAttribute("user", person);
         return "profile";
     }
@@ -112,7 +111,7 @@ public class HappyBayController {
         model.addAttribute("user", person);
 
         model.addAttribute("geraete", geraetRepository.findAllByBesitzer(name));
-
+        model.addAttribute("zahl",zahl);
         return "myThings";
     }
 
@@ -121,14 +120,14 @@ public class HappyBayController {
         String mieterName = principal.getName();
         List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "rentThings";
     }
 
-    @GetMapping("myRemind")
+    @GetMapping("/user/myRemind")
     public String myRemind(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        List<Geraet> geraete=geraetRepository.findAllByBesitzer(principal.getName());
+        model.addAttribute("geraete",geraete);
         return "myRemind";
     }
 
@@ -164,6 +163,7 @@ public class HappyBayController {
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
+        model.addAttribute("zahl",zahl);
         return "proPay";
     }
 
@@ -222,7 +222,7 @@ public class HappyBayController {
         geraetRepository.save(geraet1);
         List<Geraet> geraete = null;//personRepository.findByUsername(person.getName()).get().getMyThings();
         model.addAttribute("geraete", geraete);
-        return "myThings";
+        return "redirect:/myThings";
     }
 
     @GetMapping("/user/bezahlen/{id}")
@@ -230,8 +230,33 @@ public class HappyBayController {
         Geraet geraet1 = geraetRepository.findById(id).get();
         String mieterName= person.getName();
         geraet1.setMieter(mieterName);
+        geraet1.setVerfuegbar(false);
         geraetRepository.save(geraet1);
-        System.out.println(mieterName + ' '+ geraet1);
+
+
         return "confirmBezahlen";
     }
+    @GetMapping("/user/anfragen/{id}")
+    public String anfragen(@PathVariable Long id,Model model) {
+        Geraet geraet1 = geraetRepository.findById(id).get();
+
+        model.addAttribute("geraet",geraet1);
+        model.addAttribute("notification",new Notification());
+        return "anfragen";
+    }
+    @PostMapping("/user/anfragen/{id}")
+    public String anfragen(Model model,@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) {
+
+        Notification notification1=new Notification();
+        notification1.setAnfragePerson(principal.getName());
+        notification1.setGeraetId(id);
+        notification1.setMessage(notification.getMessage());
+        notification1.setZeitraum(notification.getZeitraum());
+        notification1.setMietezeitPunkt(notification.getMietezeitPunkt());
+
+        notificationRepository.save(notification1);
+
+        return "redirect:/";
+    }
+
 }

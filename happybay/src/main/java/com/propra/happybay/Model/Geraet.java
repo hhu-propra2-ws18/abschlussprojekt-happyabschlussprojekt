@@ -20,7 +20,9 @@ public class Geraet {
     int kosten;
     int kaution;
     String abholort;
-    Date oeffdatum;
+    Date mietezeitPunkt;
+    int zeitraum;
+
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }
