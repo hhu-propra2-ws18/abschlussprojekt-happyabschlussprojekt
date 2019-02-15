@@ -3,6 +3,7 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.Reservation;
 import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HappyBayController {
@@ -176,4 +178,17 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
+    @GetMapping("/erzeugeReservation")
+    public String erzeugeReservation(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erzeugeReservation(person.getUsername(),"ancao100", 100);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        //List<Reservation> reservations = account.getReservations();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+
 }
