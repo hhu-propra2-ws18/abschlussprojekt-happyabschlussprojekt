@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sound.midi.SysexMessage;
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -53,8 +54,9 @@ public class HappyBayController {
     }
 
     @PostMapping("/add")
-    public String addToDatabase(@ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) {
+    public String addToDatabase(@RequestParam("file") MultipartFile file,
+                                @ModelAttribute("person") Person person, BindingResult bindingResult,
+                                Model model) throws IOException{
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
@@ -65,6 +67,9 @@ public class HappyBayController {
             model.addAttribute("errorList", errorList);
             return "addUser";
         }
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        person.setFoto(bild);
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
@@ -97,6 +102,7 @@ public class HappyBayController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        person.setEncode(encodeBild(person.getFoto()));
         model.addAttribute("user", person);
         return "profile";
     }
@@ -215,7 +221,7 @@ public class HappyBayController {
     }
 
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
-    public String changeImg(Model model, Principal principal) {
+    public String changeImg(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
@@ -223,9 +229,13 @@ public class HappyBayController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(@ModelAttribute("person") Person p, Principal principal) {
+    public String chageProfile(@RequestParam("file") MultipartFile file,
+                               @ModelAttribute("person") Person p, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        person.setFoto(bild);
         person.setNachname(p.getNachname());
         person.setKontakt(p.getKontakt());
         person.setVorname(p.getVorname());

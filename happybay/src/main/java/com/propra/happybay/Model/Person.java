@@ -23,6 +23,9 @@ public class Person {
     private String passwordConfirm;
     private String role;
     private String color;
-    @OneToOne
+
+    @OneToOne(cascade = {CascadeType.ALL})
     Bild foto;
+
+    String encode;
 }
