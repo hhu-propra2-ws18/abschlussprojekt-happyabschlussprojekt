@@ -118,9 +118,9 @@ public class HappyBayController {
 
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        String mieterName = principal.getName();
+        List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
+        model.addAttribute("geraete", geraete);
         return "rentThings";
     }
 
@@ -143,7 +143,7 @@ public class HappyBayController {
 
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
-        return "index";
+        return "redirect:/myThings";
     }
 
     @GetMapping("/login")
@@ -226,18 +226,12 @@ public class HappyBayController {
     }
 
     @GetMapping("/user/bezahlen/{id}")
-    public String bezahlen(Model model, Principal person, @PathVariable Long id) {
-//        transferRepository.deleteAll();
-        String name = person.getName();
-        Person person1 = personRepository.findByUsername(name).get();
-        Geraet geraet = geraetRepository.findById(id).get();
-
-        Transfer newTransfer = new Transfer();
-        newTransfer.setAbsender(person1.getUsername());
-        newTransfer.setEmpfänger(geraet.getBesitzer());
-        newTransfer.setAmount(geraet.getKosten());
-        transferRepository.save(newTransfer);
-        model.addAttribute(person1);
+    public String bezahlen(Model model,@ModelAttribute Geraet geraet, Principal person, @PathVariable Long id) {
+        Geraet geraet1 = geraetRepository.findById(id).get();
+        String mieterName= person.getName();
+        geraet1.setMieter(mieterName);
+        geraetRepository.save(geraet1);
+        System.out.println(mieterName + ' '+ geraet1);
         return "confirmBezahlen";
     }
 }
