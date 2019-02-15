@@ -58,7 +58,15 @@
     </li>
 </ul>
 
-<div style="margin: 15px">
+<div style="background-color:white ;text-align: center; padding-top:50px">
+    <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
+        <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
+    </a>
+</div>
+
+
+
+<div class="card-body text-center" style="background-color: white">
     <ul class="list-inline card-text">
         <li class="list-inline-item font-weight-bold">Name:</li>
         <li class="list-inline-item"

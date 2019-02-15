@@ -37,9 +37,12 @@
         </div>
     </div>
     <div>
-        <form action="/add" method="post">
+        <form action="/add" method="post" enctype="multipart/form-data">
             <div class="form-group" style="margin: 15px">
                 <div class="col-6">
+                    <label>Foto Hochladen(Max. 15MB)</label>
+                    <input style="padding-top: 10px" type = "file" name = "file" accept="image/png, image/jpeg, image/gif, image/jpg" />
+
                     <label>Vorname:</label>
                     <input type="text" name="vorname" class="form-control" placeholder="Vornahme"><br>
                     <label>Nachname:</label>
