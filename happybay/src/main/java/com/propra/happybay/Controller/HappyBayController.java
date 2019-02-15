@@ -91,10 +91,18 @@ public class HappyBayController {
     public String person(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+
+        List<Geraet> geraete=geraetRepository.findAllByBesitzer(name);
+        zahl=0;
+        for (Geraet geraet:geraete){
+            zahl+=notificationRepository.findByGeraetId(geraet.getId()).size();
+        }
+
         model.addAttribute("user", person);
         model.addAttribute("zahl",zahl);
         return "personInfo";
     }
+
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
@@ -102,10 +110,12 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
+
+
+        model.addAttribute("zahl",zahl);
         model.addAttribute("user", person);
         return "profile";
     }
-
 
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal) {
@@ -119,7 +129,7 @@ public class HappyBayController {
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete",geraets);
-
+        model.addAttribute("zahl",zahl);
         return "myThings";
     }
 
@@ -156,7 +166,28 @@ public class HappyBayController {
         model.addAttribute("notification",newNotification);
         return "myRemind";
     }
+    @GetMapping("/user/anfragen/{id}")
+    public String anfragen(@PathVariable Long id,Model model) {
+        Geraet geraet1 = geraetRepository.findById(id).get();
 
+        model.addAttribute("geraet",geraet1);
+        model.addAttribute("notification",new Notification());
+        return "anfragen";
+    }
+    @PostMapping("/user/anfragen/{id}")
+    public String anfragen(Model model,@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) {
+
+        Notification notification1=new Notification();
+        notification1.setAnfragePerson(principal.getName());
+        notification1.setGeraetId(id);
+        notification1.setMessage(notification.getMessage());
+        notification1.setZeitraum(notification.getZeitraum());
+        notification1.setMietezeitPunkt(notification.getMietezeitPunkt());
+
+        notificationRepository.save(notification1);
+
+        return "redirect:/";
+    }
     @GetMapping("/addGeraet")
     public String addGeraet() {
         return "addGeraet";
@@ -232,6 +263,15 @@ public class HappyBayController {
     }
     @PostMapping("/notification/delete/{id}")
     public String notificationDelete(@PathVariable Long id) {
+        notificationRepository.deleteById(id);
+        return "redirect:/user/myRemind";
+    }
+    @PostMapping("/notification/accept/{id}")
+    public String notificationAccept(@PathVariable Long id) {
+        Notification notification=notificationRepository.findById(id).get();
+        Geraet geraet=geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setVerfuegbar(false);
+        geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }

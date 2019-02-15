@@ -37,7 +37,7 @@
 
                     </form>
                     <!--Here Mach API BEZAHLEN-->
-                    <form >
+                    <form th:action="@{/notification/accept/{id}(id=${myThing.getId()})}" method="post">
                         <button type="submit">Accept</button>
 
                     </form>
