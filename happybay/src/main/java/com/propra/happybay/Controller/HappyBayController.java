@@ -35,8 +35,7 @@ public class HappyBayController {
     private AccountRepository accountRepository;
     @Autowired
     private TransferRepository transferRepository;
-    @Autowired
-    private BildRepository bildRepository;
+
 
     @GetMapping("/")
     public String index(Model model) {
@@ -146,16 +145,19 @@ public class HappyBayController {
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
                                 @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
+        List<Bild> bilds = new ArrayList<>();
+        for(int i = 0;i<files.length;i++){
+            Bild bild = new Bild();
+            bild.setBild(files[i].getBytes());
+
+        }
+
         for (MultipartFile file : files) {
             Bild bild = new Bild();
             bild.setBild(file.getBytes());
-            bildRepository.save(bild);
+            bilds.add(bild);
         }
-
-        List<Bild> bilds = new ArrayList<>();
-        bildRepository.findAll().forEach(e -> bilds.add(e));
         geraet.setBilder(bilds);
-
         geraet.setVerfuegbar(true);
 
         geraet.setBesitzer(person.getName());

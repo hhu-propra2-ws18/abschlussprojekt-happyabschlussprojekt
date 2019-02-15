@@ -21,8 +21,8 @@ public class Geraet {
     int kaution;
     String abholort;
     Date oeffdatum;
+    String encode;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
-    String encode;
 }
 
