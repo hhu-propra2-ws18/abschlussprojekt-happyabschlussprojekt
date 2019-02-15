@@ -24,8 +24,7 @@
     </a>
 </div>
 
-<label th:text="'Release Date: '+${geraet.getOeffdatum()}" style="alignment: left; color: darkgrey">Release Date:
-    2018-1-1</label>
+
 <div class="container" style="max-height: 400px; max-width: 712px">
     <div id="controller" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
@@ -55,8 +54,11 @@
 
     <!--Hier muss man noch action hinfuegen.-->
     <div th:if="${geraet.getBesitzer()!=person.getName()}">
-        <form th:action="@{'/user/bezahlen/' +${geraet.getId()}}">
-            <button class="btn btn-primary" type="submit">Miete</button>
+        <!--<form th:action="@{'/user/bezahlen/' +${geraet.getId()}}">-->
+            <!--<button class="btn btn-primary" type="submit">Anfrage</button>-->
+        <!--</form>-->
+        <form th:action="@{'/user/anfragen/' +${geraet.getId()}}">
+            <button class="btn btn-primary" type="submit">Anfrage</button>
         </form>
     </div>
     <h4 th:text="${geraet.getTitel()}"></h4>
