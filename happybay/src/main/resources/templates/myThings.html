@@ -24,7 +24,7 @@
     <div th:each="myThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <img class="card-img-top" th:src="@{'data:image/jpeg;base64,'+ ${}}"/>
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold">TITEL: </li>
