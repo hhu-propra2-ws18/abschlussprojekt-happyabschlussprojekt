@@ -1,6 +1,7 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
+import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,7 +49,7 @@ public class ProPayService {
 
         byte[] queryBytes = query.toString().getBytes("UTF-8");
 
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
@@ -58,4 +59,24 @@ public class ProPayService {
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 
     }
+    public void ueberweisen(String username, String besizer, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
+    }
+
 }

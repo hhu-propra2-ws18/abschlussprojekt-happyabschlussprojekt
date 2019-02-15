@@ -154,13 +154,23 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
-
-    @GetMapping("erhoeheAmount")
+    @GetMapping("/erhoeheAmount")
     public String erhoeheAmount(Model model, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
         proPayService.erhoeheAmount(person.getUsername(), 10);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+    @GetMapping("/ueberweisen")
+    public String ueberweisen(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.ueberweisen(person.getUsername(),"ancao100", 10);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
