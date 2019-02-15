@@ -1,33 +1,51 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
+<head th:fragment="headMuster">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
 <body>
-<div th:replace="profile.html :: profile"></div>
-
-<ul th:fragment="navigation" class="nav nav-tabs">
-        <li sec:authorize="isAnonymous()" class="nav-item">
-            <a class="nav-link" th:href="@{/personInfo}">Anmelden</a>
-        </li>
-        <li sec:authorize="isAnonymous()" class="nav-item">
-            <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
-        </li>
-        <li>
-            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Mein Profil</a>
-        </li>
-        <li class="nav-item ml-auto">
-            <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Abmelden</a>
-        </li>
-</ul>
-
-<footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
-margin: 0; width: 100%">
-    <p>© Made by Happy-Gruppe</p>
-</footer>
-
+<div>
+    <div>
+        <nav th:fragment="logo" class="nav" style="background: deepskyblue;">
+            <a href="/" class="nav-link" style="color: white; align: left">
+                <img class="rounded-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="70px"
+                     width="70px">
+            </a>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col">
+            <ul th:fragment="navigation" class="nav nav-tabs" style="background: deepskyblue">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/personInfo}"><i class="fas fa-sign-in-alt"></i> Anmelden</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/addUser}"><i class="fas fa-user-plus"></i> Registrieren</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About us</a>
+                </li>
+                <li>
+                    <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Mein Profil</a>
+                </li>
+                <li class="nav-item ml-auto">
+                    <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Abmelden</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
+        margin: 0; width: 100%">
+            <p>© Made by Happy-Gruppe</p>
+        </footer>
+    </div>
+</div>
 </body>
 </html>

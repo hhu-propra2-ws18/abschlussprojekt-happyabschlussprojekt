@@ -1,34 +1,54 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
+<head th:replace="index.html :: headMuster"></head>
 <body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="index.html :: navigation"></div>
-<div class="row justify-content-md-center">
-    <div class="col-5">
-        <div class="alert alert-danger" role="alert" th:if="${param.error}" style="margin: 15px">
-            Invalid username and password.
+<div>
+    <div th:replace="index.html :: logo"></div>
+    <div class="row">
+        <div class="col">
+            <ul th:fragment="navigation" class="nav nav-tabs" style="background: deepskyblue">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i>Home</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link active" th:href="@{/personInfo}"><i class="fas fa-sign-in-alt"></i> Anmelden</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/addUser}"><i class="fas fa-user-plus"></i> Registrieren</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About us</a>
+                </li>
+                <li>
+                    <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Mein Profil</a>
+                </li>
+                <li class="nav-item ml-auto">
+                    <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Abmelden</a>
+                </li>
+            </ul>
         </div>
-        <div class="alert alert-danger" role="alert" th:if="${param.logout}" style="margin: 15px">
-            You have been logged out.
-        </div>
-        <form th:action="@{/login}" method="post" style="margin: 15px">
-            <div class="form-group" style="margin: 15px">
-                <label>User Name : </label>
-                <input type="text" class="form-control" name="username"/><br/>
-                <label>Password: </label>
-                <input type="password" class="form-control" name="password"/><br/>
-                <button class="btn btn-primary" type="submit">Login</button>
-            </div>
-        </form>
     </div>
+    <div class="row justify-content-md-center">
+        <div class="col-5">
+            <div class="alert alert-danger" role="alert" th:if="${param.error}" style="margin: 15px">
+                Invalid username and password.
+            </div>
+            <div class="alert alert-danger" role="alert" th:if="${param.logout}" style="margin: 15px">
+                You have been logged out.
+            </div>
+            <form th:action="@{/login}" method="post" style="margin: 15px">
+                <div class="form-group" style="margin: 15px">
+                    <label>User Name : </label>
+                    <input type="text" class="form-control" name="username"/><br/>
+                    <label>Password: </label>
+                    <input type="password" class="form-control" name="password"/><br/>
+                    <button class="btn btn-primary" type="submit">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div th:replace="index.html :: footer"></div>
 </div>
-<div th:replace="index.html :: footer"></div>
 </body>
 </html>
