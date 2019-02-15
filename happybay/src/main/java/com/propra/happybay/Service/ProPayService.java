@@ -1,6 +1,7 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
+import com.propra.happybay.Model.Reservation;
 import com.propra.happybay.Repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +13,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProPayService {
@@ -21,9 +24,6 @@ public class ProPayService {
 
     public void saveAccount(String username) {
         Account account = getEntity(username, Account.class);
-        System.out.println("**************");
-        System.out.println(account);
-        System.out.println("************");
         accountRepository.save(account);
     }
 
@@ -78,8 +78,8 @@ public class ProPayService {
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 
     }
-    public void erzeugeReservation(String username, String besizer, double amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/reserve/"  + username + "/" + besizer);
+    public void erzeugeReservation(String username, String besitzer, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/reserve/"  + username + "/" + besitzer);
         String query = "";
         query = query + URLEncoder.encode("amount", "UTF-8");
         query = query + "=";

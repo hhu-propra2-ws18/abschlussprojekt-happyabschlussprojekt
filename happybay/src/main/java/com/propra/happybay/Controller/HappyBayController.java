@@ -183,10 +183,9 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
-        proPayService.erzeugeReservation(person.getUsername(),"ancao100", 100);
+        proPayService.erzeugeReservation(person.getUsername(),"tomazvid", 4);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
-        //List<Reservation> reservations = account.getReservations();
         model.addAttribute("account", account);
         return "proPay";
     }
