@@ -1,13 +1,7 @@
 package com.propra.happybay.Controller;
 
-import com.propra.happybay.Model.Account;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Person;
-import com.propra.happybay.Model.Transfer;
-import com.propra.happybay.Repository.AccountRepository;
-import com.propra.happybay.Repository.GeraetRepository;
-import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Repository.TransferRepository;
+import com.propra.happybay.Model.*;
+import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.sound.midi.SysexMessage;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -41,6 +35,8 @@ public class HappyBayController {
     private AccountRepository accountRepository;
     @Autowired
     private TransferRepository transferRepository;
+    @Autowired
+    private BildRepository bildRepository;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -111,9 +107,19 @@ public class HappyBayController {
 
         model.addAttribute("user", person);
 
-        model.addAttribute("geraete", geraetRepository.findAllByBesitzer(name));
+        List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
+        for (Geraet geraet: geraets){
+            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+        }
+        model.addAttribute("geraete",geraets);
 
         return "myThings";
+    }
+
+    private String encodeBild(Bild bild){
+        Base64.Encoder encoder = Base64.getEncoder();
+        String encode = encoder.encodeToString(bild.getBild());
+        return encode;
     }
 
     @GetMapping("/rentThings")
@@ -138,13 +144,26 @@ public class HappyBayController {
     }
 
     @PostMapping("/addGeraet")
-    public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet, Principal person) {
+    public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
+                                @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
+        for (MultipartFile file : files) {
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            bildRepository.save(bild);
+        }
+
+        List<Bild> bilds = new ArrayList<>();
+        bildRepository.findAll().forEach(e -> bilds.add(e));
+        geraet.setBilder(bilds);
+
         geraet.setVerfuegbar(true);
 
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
         return "redirect:/myThings";
     }
+
+
 
     @GetMapping("/login")
     public String login(Model model, String error, String logout) {

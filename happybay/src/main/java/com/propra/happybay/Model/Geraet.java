@@ -23,5 +23,6 @@ public class Geraet {
     Date oeffdatum;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
+    String encode;
 }
 
