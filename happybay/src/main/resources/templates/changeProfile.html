@@ -25,15 +25,12 @@
         <h1>Verleihen Iher Gerät</h1>
     </div>
 
-    <div class="card" style="padding: 10px; margin-inside: 10px; margin-bottom: 10px">
-        <form th:action="@{/addgeraet/bildupload}" method="post" enctype="multipart/form-data">
-            <input type="file" name="files" multiple accept="image/png, image/jpeg, image/gif, image/jpg"/>
-            <input type="submit" value="Upload Files"/>
-        </form>
-    </div>
-
     <div class="card" style="padding: 10px; margin-bottom: 10px">
-        <form th:action="@{/PersonInfo/Profile/ChangeProfile}" method="post">
+        <form th:action="@{/PersonInfo/Profile/ChangeProfile}" method="post" enctype="multipart/form-data">
+
+            <label>Foto Hochladen(Max. 15MB)</label>
+            <input type="file" name="file" accept="image/png, image/jpeg, image/gif, image/jpg"/>
+
             <label for="vorname">Vorname</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="vorname" id="vorname"
                    th:value="${person.getVorname()}"/>
