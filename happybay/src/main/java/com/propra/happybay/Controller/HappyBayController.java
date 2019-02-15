@@ -59,7 +59,12 @@ public class HappyBayController {
                                 Model model) {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("bindingResult", bindingResult);
+            List<String> errorList = new ArrayList<>();
+            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
+                errorList.add(bindingResult.getAllErrors().get(i).getCode());
+            }
+            System.out.println(errorList);
+            model.addAttribute("errorList",errorList);
             return "addUser";
         }
         person.setRole("ROLE_USER");
