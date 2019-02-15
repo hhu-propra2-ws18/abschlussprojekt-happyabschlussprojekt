@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +149,18 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+
+    @GetMapping("erhoeheAmount")
+    public String erhoeheAmount(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erhoeheAmount(person.getUsername(), 10);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);

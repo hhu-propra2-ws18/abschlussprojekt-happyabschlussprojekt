@@ -8,6 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class ProPayService {
 
@@ -29,5 +36,26 @@ public class ProPayService {
                 .bodyToMono(type);
 
         return mono.block();
+    }
+
+
+    public void erhoeheAmount(String username, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/account/" + username);
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
     }
 }
