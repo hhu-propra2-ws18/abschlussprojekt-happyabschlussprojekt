@@ -22,6 +22,7 @@ import java.util.List;
 
 @Controller
 public class HappyBayController {
+    private int zahl;
     @Autowired
     PersonRepository personRepository;
     @Autowired
@@ -35,7 +36,7 @@ public class HappyBayController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private TransferRepository transferRepository;
+    private NotificationRepository notificationRepository;
 
 
     @GetMapping("/")
@@ -83,11 +84,7 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/user")
-    public String user(Model m, Principal person) {
-        m.addAttribute("username", person.getName());
-        return "profile";
-    }
+
 
 
     @GetMapping("/personInfo")
@@ -95,11 +92,13 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+        model.addAttribute("zahl",zahl);
         return "personInfo";
     }
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
+
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
@@ -135,14 +134,26 @@ public class HappyBayController {
         String mieterName = principal.getName();
         List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "rentThings";
     }
 
-    @GetMapping("myRemind")
+    @GetMapping("/user/myRemind")
     public String myRemind(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        List<Geraet> geraetList=geraetRepository.findAllByBesitzer(principal.getName());
+        List<Notification> newNotification=new ArrayList<>();
+
+        for(Geraet geraet:geraetList){
+            List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
+            for(Notification notification:notificationList){
+                    newNotification.add(notification);
+            }
+
+        }
+
+
+
+        model.addAttribute("notification",newNotification);
         return "myRemind";
     }
 
@@ -188,6 +199,7 @@ public class HappyBayController {
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
+        model.addAttribute("zahl",zahl);
         return "proPay";
     }
 
@@ -208,7 +220,6 @@ public class HappyBayController {
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
-
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("geraet", geraet);
         return "edit";
@@ -218,6 +229,11 @@ public class HappyBayController {
     public String geraetDelete(@PathVariable Long id) {
         geraetRepository.deleteById(id);
         return "redirect:/myThings";
+    }
+    @PostMapping("/notification/delete/{id}")
+    public String notificationDelete(@PathVariable Long id) {
+        notificationRepository.deleteById(id);
+        return "redirect:/user/myRemind";
     }
 
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
@@ -264,7 +280,9 @@ public class HappyBayController {
         geraet1.setAbholort(geraet.getAbholort());
 
         geraetRepository.save(geraet1);
-        return "myThings";
+        List<Geraet> geraete = null;//personRepository.findByUsername(person.getName()).get().getMyThings();
+        model.addAttribute("geraete", geraete);
+        return "redirect:/myThings";
     }
 
     @GetMapping("/user/bezahlen/{id}")
@@ -273,7 +291,8 @@ public class HappyBayController {
         String mieterName= person.getName();
         geraet1.setMieter(mieterName);
         geraetRepository.save(geraet1);
-        System.out.println(mieterName + ' '+ geraet1);
+
+
         return "confirmBezahlen";
     }
 }

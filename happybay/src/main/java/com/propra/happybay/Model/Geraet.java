@@ -17,6 +17,7 @@ public class Geraet {
     boolean verfuegbar;
     String besitzer;
     String mieter;
+
     int kosten;
     int kaution;
     String abholort;
