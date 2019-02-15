@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +34,6 @@ public class HappyBayController {
 
     @GetMapping("/")
     public String index(Model model,Principal person){
-        //Geraet geraet = new Geraet();
-        //geraet.setBeschreibung("All‑Screen Design. Die längste Batterielaufzeit bei einem iPhone. Die schnellste Performance. Fotos in Studioqualität.Das größte Super Retina Display. Die schnellste Performance mit dem A12 Bionic. Die sicherste Gesichtsauthentifizierung mit Face ID.");
-        //geraet.setKaution(10000);
-        //geraet.setKosten(100);
-        //geraet.setVerfuegbar(false);
-        //geraet.setTitel("iPhone X");
-        //geraetRepository.save(geraet);
         if (person != null) {
             Person person1 = personRepository.findByUsername(person.getName()).get();
             model.addAttribute("person",person1);
@@ -108,7 +103,13 @@ public class HappyBayController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(@ModelAttribute("person") Person person, Principal principal) {
+    public String chageProfile(@ModelAttribute("person") Person p, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        person.setNachname(p.getNachname());
+        person.setKontakt(p.getKontakt());
+        person.setVorname(p.getVorname());
+        person.setAdresse(p.getAdresse());
         personRepository.save(person);
         return "confirmationAdd";
     }

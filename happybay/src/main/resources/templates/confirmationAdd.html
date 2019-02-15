@@ -13,7 +13,7 @@
 
 <h3 th:text="${person.vorname} + ' ' + ${person.nachname}"><b>Name</b></h3>
 <ul class="list-group list-group-flush">
-    <li class="list-group-item" th:text="'Username: ' + ${person.username}" >Username</li>
+    <li class="list-group-item" th:text="'Username: ' + ${person.getUsername()}">Username</li>
     <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.kontakt}" >Kontakt Daten</li>
     <li class="list-group-item" th:text="'Adresse: ' + ${person.adresse}">Adresse</li>
 </ul>
