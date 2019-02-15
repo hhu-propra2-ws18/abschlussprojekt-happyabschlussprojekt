@@ -18,16 +18,12 @@
         <h1>Verleihen Iher Gerät</h1>
     </div>
 
-    <div class="card" style="padding: 10px; margin-inside: 10px; margin-bottom: 10px">
-        <label for="titel">Bilder Hochladen(Max. 15MB)</label>
-        <form  th:action="@{/addgeraet/bildupload}" method = "post" enctype="multipart/form-data">
-            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
-            <input class="btn btn-primary" style="margin-top: 10px" type = "submit" value = "Upload Files" />
-        </form>
-    </div>
-
     <div class="card" style="padding: 10px; margin-bottom: 10px">
-        <form th:action="@{/geraet/edit/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post">
+        <form th:action="@{/geraet/edit/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post" enctype="multipart/form-data">
+            <label for="titel">Bilder Hochladen(Max. 15MB)</label>
+            <label>(Hinweis:Sie können mehrere Bilder hochladen. Das erste wird zum Cover Ihres Artikels und ersetzt alle Ihre alten Bilder.)</label>
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
+
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" th:value="${geraet.titel}" />
 

@@ -40,6 +40,9 @@ public class HappyBayController {
     @GetMapping("/")
     public String index(Model model) {
         List<Geraet> geraete = geraetRepository.findAll();
+        for (Geraet geraet: geraete){
+            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+        }
         model.addAttribute("geraete", geraete);
         return "index";
     }
@@ -146,12 +149,6 @@ public class HappyBayController {
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
                                 @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
         List<Bild> bilds = new ArrayList<>();
-        for(int i = 0;i<files.length;i++){
-            Bild bild = new Bild();
-            bild.setBild(files[i].getBytes());
-
-        }
-
         for (MultipartFile file : files) {
             Bild bild = new Bild();
             bild.setBild(file.getBytes());
@@ -191,6 +188,13 @@ public class HappyBayController {
     @GetMapping("/geraet/{id}")
     public String geraet(@PathVariable Long id, Model model, Principal person) {
         Geraet geraet = geraetRepository.findById(id).get();
+        List<Bild> bilds = geraet.getBilder();
+        List<String> encodes = new ArrayList<>();
+        for(int i=1;i<bilds.size();i++){
+            encodes.add(encodeBild(bilds.get(i)));
+        }
+        geraet.setEncode(encodeBild(bilds.get(0)));
+        model.addAttribute("encodes",encodes);
         model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
         return "geraet";
@@ -198,6 +202,7 @@ public class HappyBayController {
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
+
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("geraet", geraet);
         return "edit";
@@ -232,8 +237,16 @@ public class HappyBayController {
 
 
     @PostMapping("/geraet/edit/{id}")
-    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet, Principal person) {
+    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
+                             @RequestParam("files") MultipartFile[] files) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
+        List<Bild> bilds = new ArrayList<>();
+        for (MultipartFile file : files) {
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            bilds.add(bild);
+        }
+        geraet1.setBilder(bilds);
         geraet1.setKosten(geraet.getKosten());
         geraet1.setTitel(geraet.getTitel());
         geraet1.setBeschreibung(geraet.getBeschreibung());
@@ -241,8 +254,6 @@ public class HappyBayController {
         geraet1.setAbholort(geraet.getAbholort());
 
         geraetRepository.save(geraet1);
-        List<Geraet> geraete = null;//personRepository.findByUsername(person.getName()).get().getMyThings();
-        model.addAttribute("geraete", geraete);
         return "myThings";
     }
 
