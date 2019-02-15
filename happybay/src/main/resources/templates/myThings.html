@@ -20,8 +20,45 @@
     </li>
 </ul>
 
-<div th:each="geraet : ${geraete}" class="card-body" style="text-align: center">
-    <h2 class="card-text" th:text="${geraet.titel}"></h2>
+<div class="row">
+    <div th:each="myThing: ${geraete}" class="col-sm-3">
+        <div class="clearfix" style="margin-bottom: 20px;">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">STATUS: </li>
+                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                    </ul>
+                    <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
+                    <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
+                    <form th:action="@{/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
+                        <button type="submit">Delete</button>
+
+                    </form>
+                    <!-- Button trigger modal -->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div th:replace="index.html :: footer"></div>

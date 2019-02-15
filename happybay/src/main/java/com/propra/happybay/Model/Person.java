@@ -22,12 +22,7 @@ public class Person {
     @Transient
     private String passwordConfirm;
     private String role;
-    private String color = "deepskyblue";
-
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> verleihen;
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> ausleihen;
+    private String color;
     @OneToOne
     Bild foto;
 }
