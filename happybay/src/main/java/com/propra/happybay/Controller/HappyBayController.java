@@ -103,10 +103,6 @@ public class HappyBayController {
         return "profile";
     }
 
-    @GetMapping("/profile/ChangeProfile")
-    public String changeImg(Model model, Principal principal) {
-        return "changeProfile";
-    }
 
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal){
@@ -187,6 +183,27 @@ public class HappyBayController {
         geraetRepository.deleteById(id);
         return "redirect:/myThings";
     }
+    @GetMapping("/PersonInfo/Profile/ChangeProfile")
+    public String changeImg(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("person", person);
+        return "changeProfile";
+    }
+    @PostMapping("/PersonInfo/Profile/ChangeProfile")
+    public String chageProfile(@ModelAttribute("person") Person p, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        person.setNachname(p.getNachname());
+        person.setKontakt(p.getKontakt());
+        person.setVorname(p.getVorname());
+        person.setAdresse(p.getAdresse());
+        System.out.println(person.getUsername() + ' '+ p.getUsername());
+        personRepository.save(person);
+        return "confirmationAdd";
+    }
+
+
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id,@ModelAttribute Geraet geraet, Principal person) {
         Geraet geraet1=geraetRepository.findById(id).get();
