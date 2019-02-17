@@ -11,15 +11,21 @@ import java.util.List;
 @Entity
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    Long id;
-    String name;
-    String password;
-    String kontakt;
-    String adresse;
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> verleihen;
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Geraet> ausleihen;
+    @GeneratedValue
+    private Long id;
+    private String vorname;
+    private String nachname;
+    private String kontakt;
+    private String adresse;
+    private String username;
+    private String password;
+    @Transient
+    private String passwordConfirm;
+    private String role;
+    private String color;
+
+    @OneToOne(cascade = {CascadeType.ALL})
+    Bild foto;
+
+    String encode;
 }

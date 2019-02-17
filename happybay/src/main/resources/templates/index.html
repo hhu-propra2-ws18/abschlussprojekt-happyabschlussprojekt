@@ -1,24 +1,79 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:fragment="headMuster">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <div th:replace="profile.html :: profile"></div>
 </head>
 <body>
-<div class="navbar" style="background-color: deepskyblue;">
-    <a href="/index" class="navbar-brand" style="color: white">
-        <strong>HappyBay</strong>
-    </a>
-</div>
-<div style="text-align: right">
-    <a class="btn btn-primary"
-       href="/login">Anmelden</a>
-    <a class="btn btn-outline-primary"
-       href="/addUser">Registrieren</a>
-</div>
-<div class="alert alert-secondary">
-    <p>© Made by Happy-Gruppe</p>
-</div>
+
+
+<ul th:fragment="navigation" class="nav nav-tabs">
+    <li sec:authorize="isAnonymous()" class="nav-item">
+        <a class="nav-link" th:href="@{/personInfo}">Anmelden</a>
+    </li>
+    <li sec:authorize="isAnonymous()" class="nav-item">
+        <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
+    </li>
+    <li>
+        <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Mein Profil</a>
+    </li>
+    <li class="nav-item ml-auto">
+        <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Abmelden</a>
+    </li>
+</ul>
+
+<div>
+
+
+    <div class="card-group">
+        <div th:each="Thing: ${geraete}" class="col-sm-3">
+            <div class="clearfix" style="margin-bottom: 20px;">
+                <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                    <img class="card-img-top"
+                         th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}">
+                    <div class="card-body text-left">
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">TITEL:</li>
+                            <li class="list-inline-item" th:text="${Thing.getTitel()}"></li>
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">BESCHREIBUNG:</li>
+                            <li class="list-inline-item text-truncate" style="max-width: 200px"
+                                th:text="${#strings.abbreviate(Thing.beschreibung,100)}"></li>
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">KOST:</li>
+                            <li class="list-inline-item" th:text="${Thing.getKosten() + '€'}"></li>
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">KAUTION:</li>
+                            <li class="list-inline-item" th:text="${Thing.getKaution() + '€'}"></li>
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li th:if="${Thing.isVerfuegbar()}==true">
+                                <span class="badge badge-success">Verfügbar</span>
+                            </li>
+                            <li th:if="${Thing.isVerfuegbar()}==false">
+                                <span class="badge badge-danger">Besetzt</span>
+                            </li>
+                            
+                        </ul>
+                        <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
+margin: 0; width: 100%">
+        <p>© Made by Happy-Gruppe</p>
+    </footer>
+
 </body>
 </html>

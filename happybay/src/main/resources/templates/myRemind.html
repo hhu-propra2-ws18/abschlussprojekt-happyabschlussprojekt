@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HappyBay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="profile.html :: navigation"></div>
+
+<div class="row">
+    <div th:each="myThing: ${notification}" class="col-sm-3">
+        <div class="clearfix" style="margin-bottom: 20px;">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">Zeitraum: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getZeitraum()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >Message: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.getMessage(),100)}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >Miete ZeitPunkt: </li>
+                        <li class="list-inline-item" th:text="${myThing.getMietezeitPunkt()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
+                        <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
+                    </ul>
+                    <form th:action="@{/notification/delete/{id}(id=${myThing.getId()})}" method="post">
+                        <button type="submit">Delete</button>
+
+                    </form>
+                    <!--Here Mach API BEZAHLEN-->
+                    <form th:action="@{/notification/accept/{id}(id=${myThing.getId()})}" method="post">
+                        <button type="submit">Accept</button>
+
+                    </form>
+                    <!-- Button trigger modal -->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="index.html :: footer"></div>
+</body>
+</html>

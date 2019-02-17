@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HappyBay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="profile.html :: profile"></div>
+<div th:replace="profile.html :: navigation"></div>
+
+<div style="margin: 15px">
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Kontostand:</li>
+        <li class="list-inline-item" th:text="${account.amount}">100 €</li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Reservations: </li>
+        <li class="list-inline-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
+        <li class="list-inline-item" th:each="reservation : ${account.reservations}"
+            th:text="${reservation.amount}">30 €</li>
+    </ul>
+</div>
+
+<div th:replace="index.html :: footer"></div>
+</body>
+</html>

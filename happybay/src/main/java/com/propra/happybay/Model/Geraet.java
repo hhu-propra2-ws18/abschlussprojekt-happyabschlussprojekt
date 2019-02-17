@@ -3,21 +3,27 @@ package com.propra.happybay.Model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.util.List;
 
 @Data
 @Entity
 public class Geraet {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @GeneratedValue
     Long id;
     String titel;
     String beschreibung;
     boolean verfuegbar;
-    @OneToOne(cascade = CascadeType.ALL)
-    Person besitzer;
+    String besitzer;
+    String mieter;
+    int zeitraum;
     int kosten;
     int kaution;
     String abholort;
+    Date mietezeitpunkt;
+    String encode;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Bild> bilder;
 }
 

@@ -12,6 +12,4 @@ public class HappybayApplicationTests {
     @Test
     public void contextLoads() {
     }
-
 }
-

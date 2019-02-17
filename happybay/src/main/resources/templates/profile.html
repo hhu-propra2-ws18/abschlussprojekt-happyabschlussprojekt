@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HappyBay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+
+<nav th:fragment="profile" class="nav" style="position: relative" th:style="${user != null} ? 'background-color:' + ${user.color} : 'background-color: deepskyblue'">
+    <a href="/" class="nav-link" style="color: white; align: left">
+        <img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px"
+             width="50px">
+    </a>
+</nav>
+
+<ul th:fragment="navigation" class="nav nav-tabs" style="background-color: white">
+    <li class="nav-item">
+        <a href="/">
+            <span class="glyphicon glyphicon-home"></span>
+            Startseite
+        </a>
+    </li>
+    <li id="meineDaten" class="nav-item" style="display: inline-block">
+        <a class="nav-link" th:href="@{/profile}">Meine Daten</a>
+    </li>
+    <li class="nav-item" style="display: inline-block">
+        <a class="nav-link" th:href="@{/proPay}">Mein ProPay</a>
+    </li>
+    <li id="meineGeraete" class="nav-item" style="display: inline-block;">
+        <a class="nav-link" th:href="@{/myThings}">Meine Geräte</a>
+    </li>
+    <li id="meineAusleihen" onclick="this.className.replace(this.className + ' active')" class="nav-item" style="display: inline-block">
+        <a class="nav-link" th:href="@{/rentThings}">Meine Ausleihen</a>
+    </li>
+    <!--<li id="benachrichtigungen" onclick="changeClass(this)" class="nav-item ml-auto">-->
+        <!--<label class="nav-link" th:text="'Hallo, ' + ${user.getUsername()}"></label>-->
+    <!--</li>-->
+    <li class="nav-item ml-auto">
+        <a th:href="@{/user/myRemind}">
+            <span class="glyphicon glyphicon-bell" th:style="${4 > 3} ? 'color: gold' : ''"></span>
+            <span class="badge badge-pill badge-info" th:text="${zahl}"></span>
+            <label >Benachrichtigungen</label>
+        </a>
+    </li>
+    <li style="float: right" class="nav-item">
+            <a class="nav-link" th:href="@{/logout}">Abmelden</a>
+    </li>
+</ul>
+
+<ul class="nav nav-tabs" style="border-bottom: none">
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/PersonInfo/Profile/ChangeProfile}">
+            <span class="glyphicon glyphicon-edit"></span>
+            Bearbeiten
+        </a>
+    </li>
+</ul>
+
+<div style="background-color:white ;text-align: center; padding-top:50px">
+    <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
+        <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
+    </a>
+</div>
+
+
+
+<div class="card-body text-center" style="background-color: white">
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Name:</li>
+        <li class="list-inline-item"
+            th:text="${user.getVorname()} + ' ' + ${user.getNachname()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Kontakt:</li>
+        <li class="list-inline-item" th:text="${user.getKontakt()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Adresse:</li>
+        <li class="list-inline-item" th:text="${user.getAdresse()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Username:</li>
+        <li class="list-inline-item" th:text="${user.getUsername()}"></li>
+    </ul>
+    <ul class="list-inline card-text">
+        <li class="list-inline-item font-weight-bold">Angemeldet als:</li>
+        <li class="list-inline-item" th:text="${user.getRole()}"></li>
+    </ul>
+</div>
+
+<footer th:fragment="footer" class="alert alert-secondary" style="position: fixed; bottom: 0;
+margin: 0; width: 100%">
+    <p>© Made by Happy-Gruppe</p>
+</footer>
+</body>
+</html>
