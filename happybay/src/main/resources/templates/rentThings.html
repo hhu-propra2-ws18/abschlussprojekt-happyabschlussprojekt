@@ -4,9 +4,40 @@
 <body style="background-color: #3CBCC3">
 <nav th:replace="profile.html :: profile"></nav>
 
-<div class="container">
-    <div class="card-body" style="text-align: center">
-        <h2 class="card-text" th:text="'Hier ist leer jetzt...'"></h2>
+
+<div class="row">
+    <div th:each="rentThing: ${geraete}" class="col-sm-3">
+        <div class="clearfix" style="margin-bottom: 20px;">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item"  th:text="${rentThing.getTitel()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.beschreibung,100)}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item" th:text="${rentThing.getKosten() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item" th:text="${rentThing.getKaution() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">STATUS: </li>
+                        <li class="list-inline-item" th:text="${rentThing.isVerfuegbar()}"></li>
+                    </ul>
+                    <a th:href="@{/geraet/{id}(id=${rentThing.getId()})}" >Details</a>
+
+
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

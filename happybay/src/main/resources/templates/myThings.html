@@ -18,6 +18,46 @@
     <div th:each="geraet : ${geraete}" class="card-body" style="text-align: center">
         <h2 class="card-text" th:text="${geraet.titel}"></h2>
     </div>
+<div class="row">
+    <div th:each="myThing: ${geraete}" class="col-sm-3">
+        <div class="clearfix" style="   margin-bottom: 20px;">
+            <div class="card" style="padding-top: 20px;padding-bottom: 40px">
+                <img class="card-img-top" th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}" style="width:330px;height: 350px"/>
+                <div class="card-body text-left">
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                    </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                    </ul>
+
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">STATUS: </li>
+                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                    </ul>
+                    <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
+                    <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
+                    <form th:action="@{/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
+                        <button type="submit">Delete</button>
+
+                    </form>
+                    <!-- Button trigger modal -->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

@@ -8,27 +8,31 @@
     <h1 class="text-justify text-center font-weight-bold">Verleihen Iher Gerät</h1>
 
     <div class="row justify-content-md-center">
-        <div class="col-5">
+        <div>
+        <form th:action="@{/addGeraet}"  method="post" enctype="multipart/form-data">
             <label for="titel">Bilder Hochladen(Max. 15MB)</label>
-            <form  th:action="@{/addgeraet/bildupload}" method = "post" enctype="multipart/form-data">
-                <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
-                <input class="btn btn-primary" style="margin-top: 10px" type = "submit" value = "Upload Files" />
-            </form>
-            <form th:action="@{/addgeraet}" method="post">
-                <label for="titel">Titel:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" placeholder="Titel" name="titel" id="titel" />
+            <label for="titel">(Hinweis:Laden Sie mehrere Bilder hoch, wobei das erste zum Titel Ihres Artikels wird)</label>
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
 
-                <label for="beschreibung">Beschreibung:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" placeholder="Beschreibung" id="beschreibung" />
+            <label for="titel">Titel:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" />
 
-                <label for="kosten">kosten Pro Tag:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" placeholder="Kosten" id="kosten" />
+            <label for="beschreibung">Beschreibung:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" />
 
-                <label for="kaution">Kaution:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" placeholder="Kaution" id="kaution" />
+            <label for="kosten">kosten Pro Tag:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" />
 
-                <button type="submit" class="btn btn-primary">Save</button>
-            </form>
+            <label for="kaution">Kaution:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" />
+
+            <label for="kaution">Abholort:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" />
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        <div class="card-body">
+            <a href="/" class="card-link">Back</a>
         </div>
     </div>
 </div>

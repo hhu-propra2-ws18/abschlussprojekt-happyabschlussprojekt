@@ -61,6 +61,12 @@
                 </a>
             </li>
             <br>
+            <li class="list-inline-item">
+                <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
+                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
+                </a>
+            </li>
+            <br>
             <li class="list-inline-item font-weight-bold">Name:</li>
             <li class="list-inline-item"
                 th:text="${user.getVorname()} + ' ' + ${user.getNachname()}"></li><br>

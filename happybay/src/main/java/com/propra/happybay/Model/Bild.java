@@ -2,9 +2,7 @@ package com.propra.happybay.Model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Blob;
 
 @Data
@@ -13,5 +11,9 @@ public class Bild {
     @Id
     @GeneratedValue
     Long id;
-    Blob bild;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="gerat_bilder", columnDefinition="longblob", nullable=true)
+    private byte[] bild;
 }

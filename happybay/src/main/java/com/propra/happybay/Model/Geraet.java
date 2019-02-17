@@ -15,12 +15,14 @@ public class Geraet {
     String titel;
     String beschreibung;
     boolean verfuegbar;
-    @OneToOne
-    Person besitzer;
+    String besitzer;
+    String mieter;
+
     int kosten;
     int kaution;
     String abholort;
     Date oeffdatum;
+    String encode;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }
