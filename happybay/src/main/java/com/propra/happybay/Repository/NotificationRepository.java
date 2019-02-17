@@ -13,4 +13,5 @@ public interface NotificationRepository extends CrudRepository<Notification,Long
 
 
     List<Notification> findAllByGeraetId(Long id);
+
 }

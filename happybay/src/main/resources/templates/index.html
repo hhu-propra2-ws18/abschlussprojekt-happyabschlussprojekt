@@ -5,10 +5,18 @@
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <div th:replace="profile.html :: profile"></div>
+
 </head>
 <body>
-
+<div>
+    <nav th:fragment="logo" class="nav" style="background: deepskyblue;">
+        <a href="/" class="nav-link" style="color: white; align: left">
+            <img class="rounded-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4"
+                 height="70px"
+                 width="70px">
+        </a>
+    </nav>
+</div>
 
 <ul th:fragment="navigation" class="nav nav-tabs">
     <li sec:authorize="isAnonymous()" class="nav-item">
@@ -59,7 +67,15 @@
                             <li th:if="${Thing.isVerfuegbar()}==false">
                                 <span class="badge badge-danger">Besetzt</span>
                             </li>
-                            
+
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">Verleihende Person:</li>
+                            <li class="list-inline-item" th:text="${Thing.getBesitzer()}"></li>
+                        </ul>
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">Abholort:</li>
+                            <li class="list-inline-item" th:text="${Thing.getAbholort()}"></li>
                         </ul>
                         <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
 
@@ -69,11 +85,10 @@
             </div>
         </div>
     </div>
-
-    <footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
+</div>
+<footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
 margin: 0; width: 100%">
-        <p>© Made by Happy-Gruppe</p>
-    </footer>
-
+    <p>© Made by Happy-Gruppe</p>
+</footer>
 </body>
 </html>

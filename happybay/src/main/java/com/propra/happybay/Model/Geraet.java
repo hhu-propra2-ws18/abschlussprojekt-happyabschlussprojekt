@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @Entity
 public class Geraet {
+
     @Id
     @GeneratedValue
     Long id;
@@ -16,6 +17,7 @@ public class Geraet {
     String beschreibung;
     boolean verfuegbar;
     String besitzer;
+
     String mieter;
     int zeitraum;
     int kosten;
@@ -23,6 +25,7 @@ public class Geraet {
     String abholort;
     Date mietezeitpunkt;
     String encode;
+    String returnStatus;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }
