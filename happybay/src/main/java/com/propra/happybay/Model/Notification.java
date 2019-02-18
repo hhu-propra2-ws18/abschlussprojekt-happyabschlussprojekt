@@ -13,9 +13,11 @@ public class Notification {
     @GeneratedValue
     Long id;
     Long geraetId;
+    String type;
     String message;
     String anfragePerson;
     Date mietezeitPunkt;
     int zeitraum;
+
 }
 

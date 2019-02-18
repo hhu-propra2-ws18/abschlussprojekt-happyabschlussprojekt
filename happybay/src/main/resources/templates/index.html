@@ -70,7 +70,7 @@
                     <li class="list-group-item" th:text="'Kaution : ' + ${Thing.getKaution() + '€'}">KAUTION:</li>
                     <li class="list-group-item">
                         <span th:if="${Thing.isVerfuegbar()}==true" class="badge badge-success">Verfügbar</span>
-                        <span th:if="${Thing.isVerfuegbar()}==false" class="badge badge-danger">Besetzt</span>
+                        <span th:if="${Thing.isVerfuegbar()}==false" class="badge badge-danger">Nicht Verfügbar</span>
                     </li>
                 </ul>
                 <div class="card-body">

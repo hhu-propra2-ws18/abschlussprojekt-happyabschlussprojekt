@@ -5,7 +5,7 @@
 <nav th:replace="profile.html :: profile"></nav>
 
 
-<div class="row">
+<div class="card-group">
     <div th:each="rentThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
@@ -27,13 +27,12 @@
                         <li class="list-inline-item font-weight-bold" >KAUTION: </li>
                         <li class="list-inline-item" th:text="${rentThing.getKaution() + '€'}"></li>
                     </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">STATUS: </li>
-                        <li class="list-inline-item" th:text="${rentThing.isVerfuegbar()}"></li>
-                    </ul>
+
                     <a th:href="@{/geraet/{id}(id=${rentThing.getId()})}" >Details</a>
-
-
+                    <a th:href="@{/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a>
+                    <a th:if="${rentThing.getReturnStatus()=='good'}">Artikel wurde erfolgreich zurückgegeben</a>
+                    <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Artikel war kaputt geworden !!!</a>
+                    <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wurde bearbeitet</a>
 
                 </div>
             </div>

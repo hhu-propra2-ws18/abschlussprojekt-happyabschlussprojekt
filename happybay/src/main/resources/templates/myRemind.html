@@ -49,6 +49,12 @@
     <div th:each="myThing: ${notification}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <ul class="list-inline card-text" th:if="${myThing.getType()=='ausleihen'}">
+                    <span class="badge badge-warning">Neue Anfrage zum Ausleihen</span>
+                </ul>
+                <ul class="list-inline card-text" th:if="${myThing.getType()=='zurueck'}">
+                    <span class="badge badge-warning">Neue Anfrage zum Zurückgeben</span>
+                </ul>
                 <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
@@ -67,16 +73,30 @@
                         <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
                         <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
                     </ul>
-                    <form th:action="@{/notification/delete/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Delete</button>
+                    <div th:if="${myThing.getType()=='request'}" >
+                        <form th:action="@{/notification/refuseRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen</button>
 
-                    </form>
-                    <!--Here Mach API BEZAHLEN-->
-                    <form th:action="@{/notification/accept/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Accept</button>
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen</button>
 
-                    </form>
-                    <!-- Button trigger modal -->
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
+                    <div th:if="${myThing.getType()=='return'}" >
+                        <form th:action="@{/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen Return</button>
+
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen Return</button>
+
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
 
 
                 </div>

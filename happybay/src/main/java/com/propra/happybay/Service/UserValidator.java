@@ -25,7 +25,7 @@ public class UserValidator implements Validator {
         Person person = (Person) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "This field Username is required.");
-        if (person.getUsername().length() < 6 || person.getUsername().length() > 32) {
+        if (person.getUsername().length() < 1 || person.getUsername().length() > 32) {
             errors.rejectValue("username", "Please use between 6 and 32 characters.");
         }
         if (personRepository.findByUsername(person.getUsername()).isPresent()) {
@@ -33,7 +33,7 @@ public class UserValidator implements Validator {
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "This field Password is required.");
-        if (person.getPassword().length() < 8 || person.getPassword().length() > 32) {
+        if (person.getPassword().length() < 1 || person.getPassword().length() > 32) {
             errors.rejectValue("password", "Try one with at least 8 characters.");
         }
 
