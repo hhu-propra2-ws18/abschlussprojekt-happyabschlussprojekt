@@ -1,10 +1,12 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Repository.*;
+import com.propra.happybay.Repository.AccountRepository;
+import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.NotificationRepository;
+import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -224,7 +226,7 @@ public class HappyBayController {
         }
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
-
+        geraet.setLikes(0);
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
         return "redirect:/myThings";
@@ -325,7 +327,7 @@ public class HappyBayController {
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
 
-
+        notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/acceptReturn/{id}")
@@ -334,10 +336,11 @@ public class HappyBayController {
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
-        geraet.setReturnStatus("good");
-
+        geraet.setReturnStatus("default");
+        geraet.setMieter(null);
         geraetRepository.save(geraet);
 
+        notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
@@ -441,5 +444,13 @@ public class HappyBayController {
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
         return "proPay";
+    }
+    @PostMapping("/geraet/addLikes/{id}")
+    public String addLikes(@PathVariable Long id) {
+        Geraet geraet=geraetRepository.findById(id).get();
+        int likeZustand=geraet.getLikes();
+        geraet.setLikes(likeZustand++);
+
+        return "redirect:/";
     }
 }
