@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -356,6 +357,20 @@ public class HappyBayController {
         helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
         helper.setSubject("Antragsergebnis");
         sender.send(message);
+
+        MimeMessage message1 = sender.createMimeMessage();
+        MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+        helper1.setTo(person.getKontakt());
+        helper1.setText("Es sind noch 3 Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück." );
+        helper1.setSubject("Rückkehrzeit");
+        if(geraet.getZeitraum()>=3){
+            helper1.setSentDate(new Date(notification.getMietezeitPunkt().getTime()+(long)((geraet.getZeitraum()-3) * 24 * 60 * 60 * 1000)));
+            sender.send(message1);
+        }
+        else{
+            helper1.setText("Es sind noch "+ geraet.getZeitraum() + " Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück.");
+            sender.send(message1);
+        }
 
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
