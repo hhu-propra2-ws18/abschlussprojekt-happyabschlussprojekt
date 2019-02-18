@@ -2,8 +2,8 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:replace="index.html :: headMuster">
 </head>
-<body style="background-color: #438945">
-<nav th:fragment="profile" class="navbar navbar-expand-lg navbar-light" style="background-color: #F7F4E9">
+<body style="background-color: #3CBCC3">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #F7F4E9">
     <div class="container">
         <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
                                               width="100px"></a>
@@ -16,8 +16,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
                 </li>
-                <li class="nav-item dropdown active">
-                    <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" th:text="'Hello ' + ${user.username}"> Name</a>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/personInfo}"><i class="fas fa-sign-in-alt"></i> Anmelden</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/addUser}"><i class="fas fa-user-plus"></i> Registrieren</a>
+                </li>
+                <li class="nav-item dropdown" th:if="${person} != null">
+                    <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="'Hello ' + ${person.username}" ></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" th:href="@{/profile}">Meine Daten</a>
                         <a class="dropdown-item" th:href="@{/proPay}">Mein ProPay</a>
@@ -27,13 +33,13 @@
                         <a class="dropdown-item" th:href="@{/logout}">Abmelden</a>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="isAuthenticated()"  class="nav-item">
                     <a th:href="@{/myRemind}" class="nav-link">
                         <i class="fas fa-bell"></i>
                         <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" th:href="@{/about}"><i class="fas fa-dragon"></i> About</a>
                 </li>
             </ul>
@@ -44,44 +50,15 @@
         </div>
     </div>
 </nav>
-
-<div class="container align-self-center">
-    <div style="margin: 15px">
-        <ul class="list-inline card-text">
-            <li class="list-inline-item">
-                <a class="badge badge-pill badge-primary" th:href="@{/PersonInfo/Profile/ChangeProfile}">
-                    <i class="fas fa-user-edit"></i>
-                    Bearbeiten
-                </a>
-            </li>
-            <br>
-            <li class="list-inline-item">
-                <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
-                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
-                </a>
-            </li>
-            <br>
-            <li class="list-inline-item font-weight-bold">Name:</li>
-            <li class="list-inline-item"
-                th:text="${user.getVorname()} + ' ' + ${user.getNachname()}"></li><br>
-            <li class="list-inline-item font-weight-bold">Kontakt:</li>
-            <li class="list-inline-item" th:text="${user.getKontakt()}"></li>
-            <br>
-            <li class="list-inline-item font-weight-bold">Adresse:</li>
-            <li class="list-inline-item" th:text="${user.getAdresse()}"></li>
-            <br>
-            <li class="list-inline-item font-weight-bold">Username:</li>
-            <li class="list-inline-item" th:text="${user.getUsername()}"></li>
-            <br>
-            <li class="list-inline-item font-weight-bold">Angemeldet als:</li>
-            <li class="list-inline-item" th:text="${user.getRole()}"></li>
-        </ul>
+<div class="container">
+    <div class="row">
+        <div class="col align-self-center">
+            <p class="text-justify text-center font-weight-bold">We are Happy-Team</p>
+        </div>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
 </body>
 </html>

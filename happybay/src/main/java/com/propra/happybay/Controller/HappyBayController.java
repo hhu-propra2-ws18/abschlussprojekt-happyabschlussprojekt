@@ -12,8 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sound.midi.SysexMessage;
-import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -40,12 +38,19 @@ public class HappyBayController {
 
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, Principal principal){
+        if(principal != null){
+            String name = principal.getName();
+            if(personRepository.findByUsername(name).isPresent()) {
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+            }
+        }
         List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "index";
     }
 
@@ -57,11 +62,11 @@ public class HappyBayController {
     @PostMapping("/add")
     public String addToDatabase(@RequestParam("file") MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) throws IOException{
+                                Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
-            for (int i = 0; i < bindingResult.getAllErrors().size(); i++) {
+            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
                 errorList.add(bindingResult.getAllErrors().get(i).getCode());
             }
             System.out.println(errorList);
@@ -103,10 +108,8 @@ public class HappyBayController {
         return "personInfo";
     }
 
-
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
-
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
@@ -121,7 +124,6 @@ public class HappyBayController {
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-
         model.addAttribute("user", person);
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
@@ -142,7 +144,9 @@ public class HappyBayController {
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
+        Person person = personRepository.findByUsername(mieterName).get();
         List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
+        model.addAttribute("user",person);
         model.addAttribute("geraete", geraete);
         model.addAttribute("zahl",zahl);
         return "rentThings";
@@ -189,7 +193,10 @@ public class HappyBayController {
         return "redirect:/";
     }
     @GetMapping("/addGeraet")
-    public String addGeraet() {
+    public String addGeraet(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
         return "addGeraet";
     }
 
@@ -235,7 +242,8 @@ public class HappyBayController {
     }
 
     @GetMapping("/geraet/{id}")
-    public String geraet(@PathVariable Long id, Model model, Principal person) {
+    public String geraet(@PathVariable Long id, Model model, Principal principal) {
+        String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
         List<Bild> bilds = geraet.getBilder();
         List<String> encodes = new ArrayList<>();
@@ -244,7 +252,8 @@ public class HappyBayController {
         }
         geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
-        model.addAttribute("person", person);
+        model.addAttribute("person", principal);
+        model.addAttribute("user", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "geraet";
     }
@@ -334,5 +343,48 @@ public class HappyBayController {
 
 
         return "confirmBezahlen";
+    }
+    @GetMapping("/erhoeheAmount")
+    public String erhoeheAmount(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erhoeheAmount(person.getUsername(), 10);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+    @GetMapping("/ueberweisen")
+    public String ueberweisen(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+    @GetMapping("/about")
+    public String about(Model model, Principal principal){
+        if(principal != null){
+            String name = principal.getName();
+            if(personRepository.findByUsername(name).isPresent()) {
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+            }
+        }
+        return "about";
+    }
+    @GetMapping("/erzeugeReservation")
+    public String erzeugeReservation(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erzeugeReservation(person.getUsername(),"ancao100", 4);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
     }
 }

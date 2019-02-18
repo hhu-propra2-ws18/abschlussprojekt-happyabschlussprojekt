@@ -1,12 +1,18 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
+import com.propra.happybay.Model.Reservation;
 import com.propra.happybay.Repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 
 @Service
 public class ProPayService {
@@ -30,4 +36,64 @@ public class ProPayService {
 
         return mono.block();
     }
+
+
+    public void erhoeheAmount(String username, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/account/" + username);
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
+    }
+    public void ueberweisen(String username, String besizer, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
+    }
+    public void erzeugeReservation(String username, String besitzer, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/reserve/"  + username + "/" + besitzer);
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
+    }
+
 }
