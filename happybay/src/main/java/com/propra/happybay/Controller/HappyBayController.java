@@ -18,10 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Controller
 public class HappyBayController {
@@ -218,7 +218,7 @@ public class HappyBayController {
         MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setTo(person.getKontakt());
-        helper.setText("Du hast eine neue Anfrag von " + principal.getName());
+        helper.setText("Du hast eine neue Anfrag über("+ geraet.getTitel() + ") von " + principal.getName());
         helper.setSubject("Anfrag");
         sender.send(message);
 
@@ -344,6 +344,8 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id) throws Exception{
+        Thread thread1 = new Thread("tipsMail");
+        //Thread thread2 = new Thread("accept");
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
@@ -358,20 +360,30 @@ public class HappyBayController {
         helper.setSubject("Antragsergebnis");
         sender.send(message);
 
-        MimeMessage message1 = sender.createMimeMessage();
-        MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-        helper1.setTo(person.getKontakt());
-        helper1.setText("Es sind noch 3 Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück." );
-        helper1.setSubject("Rückkehrzeit");
-        if(geraet.getZeitraum()>=3){
-            helper1.setSentDate(new Date(notification.getMietezeitPunkt().getTime()+(long)((geraet.getZeitraum()-3) * 24 * 60 * 60 * 1000)));
+
+        if(notification.getZeitraum()>=3){
+            //thread1.sleep((notification.getZeitraum()-3)*24*60*60*1000);
+            MimeMessage message1 = sender.createMimeMessage();
+            //LocalDate localDate = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum()-3);
+            //message1.setSentDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            //message1.setSentDate(new Date().setTime((notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
+            //message1.saveChanges();
+
+            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+            helper1.setTo(person.getKontakt());
+            helper1.setSubject("Rückkehrzeit");
+            helper1.setText("Es sind noch 3 Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück." );
+            //helper1.setSentDate(new Date(notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
             sender.send(message1);
         }
         else{
-            helper1.setText("Es sind noch "+ geraet.getZeitraum() + " Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück.");
-            sender.send(message1);
+            MimeMessage message2 = sender.createMimeMessage();
+            MimeMessageHelper helper2 = new MimeMessageHelper(message2);
+            helper2.setTo(person.getKontakt());
+            helper2.setSubject("Rückkehrzeit");
+            helper2.setText("Es sind noch "+ notification.getZeitraum() + " Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück.");
+            sender.send(message2);
         }
-
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
