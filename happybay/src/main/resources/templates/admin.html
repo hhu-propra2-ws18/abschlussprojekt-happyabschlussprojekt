@@ -17,7 +17,7 @@
         </thead>
         <tbody>
         <tr th:each="personMitAccount : ${personenMitAccounts}">
-            <th scope="row">1</th>
+            <th scope="row" th:text="${personMitAccount.person.id}"></th>
             <td th:text="${personMitAccount.person.username}">Username</td>
             <td th:text="${personMitAccount.account.amount}">Geld</td>
             <td> <form action="/erhoeheAmount" method="post">
@@ -25,6 +25,30 @@
                 <br>
                 <input type="submit" value="Erhöhe Kontostand">
             </form> </td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    <br/>
+    <p>--------------------------------------</p>
+    <br/>
+    <table class="table">
+        <thead>
+        <b>Konflikte</b> <br/><br/>
+        <tr>
+            <th scope="col">Besitzer</th>
+            <th scope="col">Mieter</th>
+            <th scope="col">Foto davor</th>
+            <th scope="col">Foto danach</th>
+            <th scope="col">Kaution Besitzer überweisen?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="geraetMitKonflikt : ${geraeteMitKonflikten}">
+            <td th:text="${geraetMitKonflikt.besitzer}">Besitzer</td>
+            <td th:text="${geraetMitKonflikt.mieter}">Mieter</td>
+            <td></td>
+            <td></td>
             <td></td>
         </tr>
         </tbody>

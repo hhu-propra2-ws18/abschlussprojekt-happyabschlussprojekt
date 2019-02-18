@@ -85,6 +85,7 @@ public class HappyBayController {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
+        proPayService.saveAccount(person.getUsername());
         person.setPassword("");
         model.addAttribute("person", person);
         return "confirmationAdd";
@@ -397,8 +398,6 @@ public class HappyBayController {
         String mieterName= person.getName();
         geraet1.setMieter(mieterName);
         geraetRepository.save(geraet1);
-
-
         return "confirmBezahlen";
     }
 
@@ -412,17 +411,18 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "redirect:/admin";
     }
-    @GetMapping("/ueberweisen")
-    public String ueberweisen(Model model, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
-        proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
-        proPayService.saveAccount(person.getUsername());
-        Account account = accountRepository.findByAccount(person.getUsername()).get();
-        model.addAttribute("account", account);
-        return "proPay";
-    }
+    //@GetMapping("/ueberweisen")
+    //public String ueberweisen(Model model, Principal principal) throws IOException {
+    //    String name = principal.getName();
+    //    Person person = personRepository.findByUsername(name).get();
+    //    model.addAttribute("user", person);
+    //    proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
+    //    proPayService.saveAccount(person.getUsername());
+    //    Account account = accountRepository.findByAccount(person.getUsername()).get();
+    //    model.addAttribute("account", account);
+    //    return "proPay";
+    //}
+
     @GetMapping("/about")
     public String about(Model model, Principal principal){
         if(principal != null){
@@ -455,6 +455,8 @@ public class HappyBayController {
             }
         }
         model.addAttribute("personenMitAccounts",personenMitAccounts);
+        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus("kaputt");
+        model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         return "admin";
     }
 
