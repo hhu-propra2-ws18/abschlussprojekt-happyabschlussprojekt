@@ -282,12 +282,15 @@ public class HappyBayController {
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/accept/{id}")
-    public String notificationAccept(@PathVariable Long id) {
+    public String notificationAccept(@PathVariable Long id,Principal principal) throws IOException {
         Notification notification=notificationRepository.findById(id).get();
         Geraet geraet=geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
+        proPayService.erzeugeReservation(notification.getAnfragePerson(),person.getUsername(),geraet.getKaution());
         return "redirect:/user/myRemind";
     }
 
