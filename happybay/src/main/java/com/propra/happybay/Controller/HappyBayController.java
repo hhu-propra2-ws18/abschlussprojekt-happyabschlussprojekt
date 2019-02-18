@@ -82,6 +82,7 @@ public class HappyBayController {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
+        proPayService.saveAccount(person.getUsername());
         person.setPassword("");
         model.addAttribute("person", person);
         return "confirmationAdd";
@@ -241,7 +242,6 @@ public class HappyBayController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
-        proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
         model.addAttribute("zahl",zahl);
