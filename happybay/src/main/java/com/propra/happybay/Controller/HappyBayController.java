@@ -6,6 +6,8 @@ import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -36,6 +39,9 @@ public class HappyBayController {
     private AccountRepository accountRepository;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private JavaMailSender sender;
+
 
 
     @GetMapping("/")
@@ -109,8 +115,10 @@ public class HappyBayController {
         return "personInfo";
     }
 
+
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
+
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
@@ -125,6 +133,7 @@ public class HappyBayController {
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+
         model.addAttribute("user", person);
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
@@ -186,7 +195,8 @@ public class HappyBayController {
         return "anfragen";
     }
     @PostMapping("/user/anfragen/{id}")
-    public String anfragen(Model model,@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) {
+    public String anfragen(Model model,@PathVariable Long id,
+                           @ModelAttribute Notification notification, Principal principal) throws Exception{
 
         Notification newNotification=new Notification();
         newNotification.setType("request");
@@ -202,6 +212,14 @@ public class HappyBayController {
         geraet.setZeitraum(notification.getZeitraum());
 
         notificationRepository.save(newNotification);
+
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Du hast eine neue Anfrag von " + principal.getName());
+        helper.setSubject("Anfrag");
+        sender.send(message);
 
         return "redirect:/";
     }
@@ -278,9 +296,10 @@ public class HappyBayController {
         return "edit";
     }
     @GetMapping("/geraet/zurueckgeben/{id}")
-    public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) {
+    public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) throws Exception{
         Geraet geraet = geraetRepository.findById(id).get();
-
+//        geraet.setVerfuegbar(true);
+//        geraet.setMieter(null);
         geraet.setReturnStatus("waiting");
         geraetRepository.save(geraet);
 
@@ -290,6 +309,14 @@ public class HappyBayController {
         newNotification.setGeraetId(id);
         notificationRepository.save(newNotification);
 
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Geraet (" + geraet.getTitel()+ ") wurde zur Bewerbung zurückgeschickt" );
+        helper.setSubject("Bewerbung zurücksenden");
+        sender.send(message);
+
         return "redirect:/rentThings";
     }
     @PostMapping("/geraet/delete/{id}")
@@ -298,45 +325,74 @@ public class HappyBayController {
         return "redirect:/myThings";
     }
     @PostMapping("/notification/refuseRequest/{id}")
-    public String notificationRefuseRequest(@PathVariable Long id) {
+    public String notificationRefuseRequest(@PathVariable Long id) throws Exception{
+        Notification notification=notificationRepository.findById(id).get();
+        String mieter=notification.getAnfragePerson();
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+
+        Person person = personRepository.findByUsername(mieter).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
-
     @PostMapping("/notification/acceptRequest/{id}")
-    public String notificationAcceptRequest(@PathVariable Long id,Principal principal) throws IOException {
+    public String notificationAcceptRequest(@PathVariable Long id) throws Exception{
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
 
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+        Person person = personRepository.findByUsername(mieter).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
-        proPayService.erzeugeReservation(notification.getAnfragePerson(),person.getUsername(),geraet.getKaution());
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/refuseReturn/{id}")
-    public String notificationRefuseReturn(@PathVariable Long id) {
+    public String notificationRefuseReturn(@PathVariable Long id) throws Exception{
         Notification notification=notificationRepository.findById(id).get();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
 
-
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/acceptReturn/{id}")
-    public String notificationAcceptReturn(@PathVariable Long id) {
+    public String notificationAcceptReturn(@PathVariable Long id) throws Exception{
         Notification notification=notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
         geraet.setReturnStatus("good");
-
         geraetRepository.save(geraet);
+
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
 
         return "redirect:/user/myRemind";
     }
@@ -442,4 +498,6 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
+
+
 }
