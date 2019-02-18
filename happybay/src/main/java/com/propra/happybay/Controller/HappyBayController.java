@@ -85,14 +85,6 @@ public class HappyBayController {
         return "confirmationAdd";
     }
 
-    @GetMapping("/admin")
-    public String administrator() {
-        return "admin";
-    }
-
-
-
-
     @GetMapping("/personInfo")
     public String person(Model model, Principal principal) {
         String name = principal.getName();
@@ -442,4 +434,16 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
+    @GetMapping("/admin")
+    public String adminFunktion(Model model){
+        List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
+        List<Person> personList = personRepository.findAll();
+        for (Person person : personList) {
+            Account account = accountRepository.findByAccount(person.getUsername()).get();
+            personenMitAccounts.add(new PersonMitAccount(person,account));
+        }
+        model.addAttribute("personList",personenMitAccounts);
+        return "admin";
+    }
+
 }

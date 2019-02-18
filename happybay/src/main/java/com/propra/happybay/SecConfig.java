@@ -32,6 +32,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/addUser").permitAll()
                 .antMatchers("/about").permitAll()
                 .antMatchers("/profile").hasRole("USER")
+                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
         http.logout().permitAll();
         http.userDetailsService(userDetailsService);

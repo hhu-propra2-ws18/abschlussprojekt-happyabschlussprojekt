@@ -5,6 +5,23 @@
     <title>Admin</title>
 </head>
 <body>
-    <p>Hello, Admin!</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">UserName</th>
+            <th scope="col">Guthaben</th>
+            <th scope="col">Funktion</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="personMitAccount : ${personList}">
+            <th scope="row">1</th>
+            <td th:text="${personMitAccount.person.username}">Username</td>
+            <td th:text="${personMitAccount.account.amount}">Geld</td>
+            <td><a th:href="@{/erhoeheAmount}">Erhöhe Kontostand</a></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>
