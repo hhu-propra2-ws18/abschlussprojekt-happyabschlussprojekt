@@ -199,6 +199,7 @@ public class HappyBayController {
         for(int i=1;i<bilds.size();i++){
             encodes.add(encodeBild(bilds.get(i)));
         }
+
         geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
         model.addAttribute("person", person);
