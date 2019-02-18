@@ -34,7 +34,7 @@
                     </div>
                 </li>
                 <li sec:authorize="isAuthenticated()"  class="nav-item">
-                    <a th:href="@{/myRemind}" class="nav-link">
+                    <a th:href="@{/user/myRemind}" class="nav-link">
                         <i class="fas fa-bell"></i>
                         <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
                     </a>

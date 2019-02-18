@@ -164,6 +164,9 @@ public class HappyBayController {
             }
 
         }
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
 
 
 
@@ -171,7 +174,10 @@ public class HappyBayController {
         return "myRemind";
     }
     @GetMapping("/user/anfragen/{id}")
-    public String anfragen(@PathVariable Long id,Model model) {
+    public String anfragen(@PathVariable Long id,Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
 
         model.addAttribute("geraet",geraet1);
