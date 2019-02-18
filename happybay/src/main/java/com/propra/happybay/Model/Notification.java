@@ -18,5 +18,6 @@ public class Notification {
     String anfragePerson;
     Date mietezeitPunkt;
     int zeitraum;
+
 }
 

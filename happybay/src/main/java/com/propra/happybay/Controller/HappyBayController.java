@@ -280,8 +280,7 @@ public class HappyBayController {
     @GetMapping("/geraet/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) {
         Geraet geraet = geraetRepository.findById(id).get();
-//        geraet.setVerfuegbar(true);
-//        geraet.setMieter(null);
+
         geraet.setReturnStatus("waiting");
         geraetRepository.save(geraet);
 
@@ -303,10 +302,9 @@ public class HappyBayController {
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
+
     @PostMapping("/notification/acceptRequest/{id}")
-    public String notificationAcceptRequest(@PathVariable Long id) {
-    @PostMapping("/notification/accept/{id}")
-    public String notificationAccept(@PathVariable Long id,Principal principal) throws IOException {
+    public String notificationAcceptRequest(@PathVariable Long id,Principal principal) throws IOException {
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
@@ -326,6 +324,8 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
+
+
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/acceptReturn/{id}")
@@ -335,6 +335,7 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
         geraet.setReturnStatus("good");
+
         geraetRepository.save(geraet);
 
         return "redirect:/user/myRemind";
