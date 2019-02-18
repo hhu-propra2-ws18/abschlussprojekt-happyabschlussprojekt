@@ -275,7 +275,11 @@ public class HappyBayController {
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
+        Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
+        person.setEncode(encodeBild(person.getFoto()));
+
         Geraet geraet = geraetRepository.findById(id).get();
+        model.addAttribute("user", person);
         model.addAttribute("geraet", geraet);
         return "edit";
     }
@@ -445,12 +449,14 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
-    @PostMapping("/geraet/addLikes/{id}")
-    public String addLikes(@PathVariable Long id) {
-        Geraet geraet=geraetRepository.findById(id).get();
-        int likeZustand=geraet.getLikes();
-        geraet.setLikes(likeZustand++);
 
+    @GetMapping("/geraet/addLikes/{id}")
+    public String addLikes(@PathVariable Long id, Model model) {
+        Geraet geraet=geraetRepository.findById(id).get();
+        int like = geraet.getLikes();
+        geraet.setLikes(like + 1);
+        geraetRepository.save(geraet);
+        System.out.println(geraet.getLikes());
         return "redirect:/";
     }
 }

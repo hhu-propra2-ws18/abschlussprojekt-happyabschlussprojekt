@@ -27,7 +27,7 @@ public class Geraet {
     Date mietezeitpunkt;
     String encode;
     String returnStatus="default";
-    int likes;
+    int likes = 0;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }
