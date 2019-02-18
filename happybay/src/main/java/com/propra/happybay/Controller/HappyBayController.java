@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -49,6 +50,7 @@ public class HappyBayController {
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "index";
     }
 
@@ -60,7 +62,7 @@ public class HappyBayController {
     @PostMapping("/add")
     public String addToDatabase(@RequestParam("file") MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) throws IOException{
+                                Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
@@ -142,7 +144,9 @@ public class HappyBayController {
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
+        Person person = personRepository.findByUsername(mieterName).get();
         List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
+        model.addAttribute("user",person);
         model.addAttribute("geraete", geraete);
         model.addAttribute("zahl",zahl);
         return "rentThings";
@@ -238,7 +242,8 @@ public class HappyBayController {
     }
 
     @GetMapping("/geraet/{id}")
-    public String geraet(@PathVariable Long id, Model model, Principal person) {
+    public String geraet(@PathVariable Long id, Model model, Principal principal) {
+        String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
         List<Bild> bilds = geraet.getBilder();
         List<String> encodes = new ArrayList<>();
@@ -247,7 +252,8 @@ public class HappyBayController {
         }
         geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
-        model.addAttribute("person", person);
+        model.addAttribute("person", principal);
+        model.addAttribute("user", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "geraet";
     }

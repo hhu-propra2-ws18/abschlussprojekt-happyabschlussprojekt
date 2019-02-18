@@ -40,7 +40,7 @@
                     <li sec:authorize="isAuthenticated()"  class="nav-item">
                         <a th:href="@{/myRemind}" class="nav-link">
                             <i class="fas fa-bell"></i>
-                            <span class="badge badge-pill badge-info">4</span>
+                            <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -54,46 +54,31 @@
             </div>
         </div>
     </nav>
-    <div class="row">
-        <div th:each="Thing: ${geraete}" class="col-sm-3">
-            <div class="clearfix" style="margin-bottom: 20px;">
-                <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                    <img class="card-img-top"
-                         th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}" style="width:330px;height: 350px">
-                    <div class="card-body text-left">
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">TITEL:</li>
-                            <li class="list-inline-item" th:text="${Thing.getTitel()}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">BESCHREIBUNG:</li>
-                            <li class="list-inline-item text-truncate" style="max-width: 200px"
-                                th:text="${#strings.abbreviate(Thing.beschreibung,100)}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">KOST:</li>
-                            <li class="list-inline-item" th:text="${Thing.getKosten() + '€'}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">KAUTION:</li>
-                            <li class="list-inline-item" th:text="${Thing.getKaution() + '€'}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li th:if="${Thing.isVerfuegbar()}==true">
-                                <span class="badge badge-success">Verfügbar</span>
-                            </li>
-                            <li th:if="${Thing.isVerfuegbar()}==false">
-                                <span class="badge badge-danger">Besetzt</span>
-                            </li>
-
-                        </ul>
-                        <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
-
-
-                    </div>
+    <br>
+    <div class="container">
+        <div class="row justify-content-around">
+            <div class="col-5 w-50 card" style="width: 15rem;" th:each="Thing: ${geraete}" >
+                <img class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}">
+                <div class="card-body">
+                    <h5 class="card-title">TITEL : </h5>
+                    <p class="card-text" th:text="${Thing.getTitel()}">Content</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(Thing.beschreibung,100)}">BESCHREIBUNG : </li>
+                    <li class="list-group-item" th:text="'Kosten : ' + ${Thing.getKosten() + '€'}">KOST : </li>
+                    <li class="list-group-item" th:text="'Kaution : ' + ${Thing.getKaution() + '€'}">KAUTION:</li>
+                    <li class="list-group-item">
+                        <span th:if="${Thing.isVerfuegbar()}==true" class="badge badge-success">Verfügbar</span>
+                        <span th:if="${Thing.isVerfuegbar()}==false" class="badge badge-danger">Besetzt</span>
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
                 </div>
             </div>
         </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

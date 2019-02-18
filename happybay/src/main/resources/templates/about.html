@@ -36,7 +36,7 @@
                 <li sec:authorize="isAuthenticated()"  class="nav-item">
                     <a th:href="@{/myRemind}" class="nav-link">
                         <i class="fas fa-bell"></i>
-                        <span class="badge badge-pill badge-info">4</span>
+                        <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
                     </a>
                 </li>
                 <li class="nav-item active">
@@ -50,9 +50,11 @@
         </div>
     </div>
 </nav>
-<div class="container h-100">
-    <div class="row h-100 justify-content-center align-items-center">
-        <p class="text-justify text-center font-weight-bold">We are Happy-Team</p>
+<div class="container">
+    <div class="row">
+        <div class="col align-self-center">
+            <p class="text-justify text-center font-weight-bold">We are Happy-Team</p>
+        </div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

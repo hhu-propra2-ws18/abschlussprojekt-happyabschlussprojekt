@@ -22,7 +22,7 @@
                     <a class="nav-link" th:href="@{/addUser}"><i class="fas fa-user-plus"></i> Registrieren</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" th:text="'Hello ' + ${person.username}"> Name</a>
+                    <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" th:text="'Hello ' + ${user.username}"> Name</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" th:href="@{/profile}">Meine Daten</a>
                         <a class="dropdown-item" th:href="@{/proPay}">Mein ProPay</a>
@@ -35,7 +35,7 @@
                 <li sec:authorize="isAuthenticated()"  class="nav-item">
                     <a th:href="@{/myRemind}" class="nav-link">
                         <i class="fas fa-bell"></i>
-                        <span class="badge badge-pill badge-info">4</span>
+                        <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
                     </a>
                 </li>
                 <li class="nav-item">
