@@ -12,4 +12,8 @@ public class Reservation {
     @Id
     private Long id;
     private Double amount;
+
+    public Reservation(Double amount) {
+        this.amount = amount;
+    }
 }

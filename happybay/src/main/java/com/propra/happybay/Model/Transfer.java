@@ -15,4 +15,11 @@ public class Transfer {
     String absender;
     String empfänger;
     int amount;
+
+
+    public Transfer(String absender, String empfänger, int amount) {
+        this.absender = absender;
+        this.empfänger = empfänger;
+        this.amount = amount;
+    }
 }

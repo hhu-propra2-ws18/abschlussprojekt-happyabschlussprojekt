@@ -16,4 +16,6 @@ public class Bild {
     @Basic(fetch = FetchType.LAZY)
     @Column(name="gerat_bilder", columnDefinition="longblob", nullable=true)
     private byte[] bild;
+
+
 }

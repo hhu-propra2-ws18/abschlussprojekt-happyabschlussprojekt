@@ -22,7 +22,22 @@ public class Geraet {
     String abholort;
     Date oeffdatum;
     String encode;
+
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
+
+    public Geraet(String titel, String beschreibung, boolean verfuegbar, String besitzer, String mieter, int kosten, int kaution, String abholort, Date oeffdatum, String encode,List<Bild> bilder) {
+        this.titel = titel;
+        this.beschreibung = beschreibung;
+        this.verfuegbar = verfuegbar;
+        this.besitzer = besitzer;
+        this.mieter = mieter;
+        this.kosten = kosten;
+        this.kaution = kaution;
+        this.abholort = abholort;
+        this.oeffdatum = oeffdatum;
+        this.encode = encode;
+        this.bilder = bilder;
+    }
 }
 

@@ -11,6 +11,15 @@ public class Account {
     @Id
     private String account;
     private Double amount;
+
     @OneToMany
     private List<Reservation> reservations;
+
+
+    public Account(String account, Double amount, List<Reservation> reservations) {
+        this.account = account;
+        this.amount = amount;
+        this.reservations = reservations;
+    }
+
 }

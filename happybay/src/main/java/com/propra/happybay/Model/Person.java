@@ -28,4 +28,22 @@ public class Person {
     Bild foto;
 
     String encode;
+
+
+    public Person(String vorname, String nachname, String kontakt, String adresse, String username, String password, String passwordConfirm, String role, String color, Bild foto, String encode) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.kontakt = kontakt;
+        this.adresse = adresse;
+        this.username = username;
+        this.password = password;
+        this.passwordConfirm = passwordConfirm;
+        this.role = role;
+        this.color = color;
+        this.foto = foto;
+        this.encode = encode;
+    }
+
+
+
 }
