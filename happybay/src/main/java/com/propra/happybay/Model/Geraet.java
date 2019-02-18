@@ -15,6 +15,7 @@ public class Geraet {
     Long id;
     String titel;
 //    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(length = 1000)
     String beschreibung;
     boolean verfuegbar;
     String besitzer;
