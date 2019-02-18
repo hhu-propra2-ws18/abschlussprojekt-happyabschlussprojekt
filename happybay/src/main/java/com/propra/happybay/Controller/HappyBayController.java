@@ -109,10 +109,8 @@ public class HappyBayController {
         return "personInfo";
     }
 
-
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
-
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
@@ -127,7 +125,6 @@ public class HappyBayController {
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-
         model.addAttribute("user", person);
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
@@ -308,14 +305,19 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id) {
+    @PostMapping("/notification/accept/{id}")
+    public String notificationAccept(@PathVariable Long id,Principal principal) throws IOException {
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
 
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
+        proPayService.erzeugeReservation(notification.getAnfragePerson(),person.getUsername(),geraet.getKaution());
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/refuseReturn/{id}")

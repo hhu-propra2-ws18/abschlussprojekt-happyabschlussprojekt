@@ -14,6 +14,7 @@ public class Geraet {
     @GeneratedValue
     Long id;
     String titel;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     String beschreibung;
     boolean verfuegbar;
     String besitzer;
@@ -21,7 +22,7 @@ public class Geraet {
     String mieter;
     int zeitraum;
     int kosten;
-    int kaution;
+    double kaution;
     String abholort;
     Date mietezeitpunkt;
     String encode;
