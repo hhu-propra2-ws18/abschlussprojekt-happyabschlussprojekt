@@ -14,7 +14,6 @@ public class Geraet {
     @GeneratedValue
     Long id;
     String titel;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     String beschreibung;
     boolean verfuegbar;
     String besitzer;
@@ -28,6 +27,6 @@ public class Geraet {
     String encode;
     String returnStatus="default";
     @OneToMany(cascade = CascadeType.ALL)
-    List<Bild> bilder;
+    List<Bild> bilder=null;
 }
 

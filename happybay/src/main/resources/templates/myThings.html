@@ -19,7 +19,9 @@
     <div class="container">
         <div class="row justify-content-around">
             <div class="col-5 w-50 card" style="width: 15rem;" th:each="myThing: ${geraete}" >
-                <img class="card-img-top"
+                <img th:if="${myThing.getBilder()==null}" class="card-img-top"
+                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="100px" width="100px">
+                <img th:unless="${myThing.getBilder()==null}" class="card-img-top"
                      th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
                 <div class="card-body">
                     <h5 class="card-title">TITEL : </h5>

@@ -11,7 +11,9 @@
             <div class="carousel-inner">
                 <!--Hier muss man noch Thymleaf benutzen!-->
                 <div class="carousel-item active" >
-                    <img th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}"
+                    <img th:if="${geraet.getBilder()==null}" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4"
+                         class="d-block w-100" style="max-height: 400px; max-width: available">
+                    <img th:unless="${geraet.getBilder()==null}" th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}"
                          class="d-block w-100" style="max-height: 400px; max-width: available">
                 </div>
                 <div class="carousel-item" th:each="encode:${encodes}">

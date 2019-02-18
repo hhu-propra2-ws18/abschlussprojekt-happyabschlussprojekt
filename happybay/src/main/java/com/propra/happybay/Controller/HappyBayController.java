@@ -54,7 +54,13 @@ public class HappyBayController {
         }
         List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if(geraet.getBilder().size()==0){
+                geraet.setBilder(null);
+            }
+            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+
         }
         model.addAttribute("geraete", geraete);
         model.addAttribute("zahl",zahl);
@@ -80,9 +86,12 @@ public class HappyBayController {
             model.addAttribute("errorList", errorList);
             return "addUser";
         }
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
+        if(!file.isEmpty()){
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            person.setFoto(bild);
+        }
+
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
@@ -121,8 +130,7 @@ public class HappyBayController {
 
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        person.setEncode(encodeBild(person.getFoto()));
-
+        if(person.getFoto()!=null){person.setEncode(encodeBild(person.getFoto())); }
 
         model.addAttribute("zahl",zahl);
         model.addAttribute("user", person);
@@ -138,7 +146,13 @@ public class HappyBayController {
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
         for (Geraet geraet: geraets){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if(geraet.getBilder().size()==0){
+                geraet.setBilder(null);
+            }
+            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+
         }
         model.addAttribute("geraete",geraets);
         model.addAttribute("zahl",zahl);
@@ -236,15 +250,18 @@ public class HappyBayController {
                                 @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
         List<Bild> bilds = new ArrayList<>();
         for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilds.add(bild);
+            if(!file.isEmpty()){
+                Bild bild = new Bild();
+                bild.setBild(file.getBytes());
+                bilds.add(bild);
+            }
         }
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
 
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
+
         return "redirect:/myThings";
     }
 
@@ -278,10 +295,16 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(id).get();
         List<Bild> bilds = geraet.getBilder();
         List<String> encodes = new ArrayList<>();
-        for(int i=1;i<bilds.size();i++){
-            encodes.add(encodeBild(bilds.get(i)));
+        if(bilds.size()>0){
+            for(int i=1;i<bilds.size();i++){
+                encodes.add(encodeBild(bilds.get(i)));
+            }
+            geraet.setEncode(encodeBild(bilds.get(0)));
+    }
+
+        if(geraet.getBilder().size()==0){
+            geraet.setBilder(null);
         }
-        geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
         model.addAttribute("person", principal);
         model.addAttribute("user", personRepository.findByUsername(person).get());

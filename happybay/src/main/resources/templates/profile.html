@@ -56,9 +56,8 @@
             </li>
             <br>
             <li class="list-inline-item">
-                <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
-                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
-                </a>
+                <img th:if="${user.getFoto()==null}" class="img-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="100px" width="100px">
+                <img th:unless="${user.getFoto()==null}" class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
             </li>
             <br>
             <li class="list-inline-item font-weight-bold">Name:</li>
