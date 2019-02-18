@@ -76,6 +76,11 @@
                 <div class="card-body">
                     <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
                 </div>
+                <form th:action="@{/geraet/addLikes/{id}(id=${Thing.getId()})}">
+                    <button type="submit" class="btn btn-primary">Like
+                        <span class="badge badge-light" th:text="${Thing.getLikes()}"></span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

@@ -30,7 +30,6 @@
 
                     <a th:href="@{/geraet/{id}(id=${rentThing.getId()})}" >Details</a>
                     <a th:href="@{/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a>
-                    <a th:if="${rentThing.getReturnStatus()=='good'}">Artikel wurde erfolgreich zurückgegeben</a>
                     <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Artikel war kaputt geworden !!!</a>
                     <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wurde bearbeitet</a>
 

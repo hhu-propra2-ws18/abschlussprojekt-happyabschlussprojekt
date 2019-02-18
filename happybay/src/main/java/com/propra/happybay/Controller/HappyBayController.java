@@ -1,7 +1,10 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Repository.*;
+import com.propra.happybay.Repository.AccountRepository;
+import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.NotificationRepository;
+import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.aspectj.weaver.ast.Not;
@@ -218,7 +221,7 @@ public class HappyBayController {
         }
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
-
+        geraet.setLikes(0);
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
         return "redirect:/myThings";
@@ -267,7 +270,11 @@ public class HappyBayController {
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
+        Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
+        person.setEncode(encodeBild(person.getFoto()));
+
         Geraet geraet = geraetRepository.findById(id).get();
+        model.addAttribute("user", person);
         model.addAttribute("geraet", geraet);
         return "edit";
     }
@@ -319,7 +326,7 @@ public class HappyBayController {
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
 
-
+        notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/acceptReturn/{id}")
@@ -328,10 +335,11 @@ public class HappyBayController {
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
-        geraet.setReturnStatus("good");
-
+        geraet.setReturnStatus("default");
+        geraet.setMieter(null);
         geraetRepository.save(geraet);
 
+        notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
@@ -449,5 +457,7 @@ public class HappyBayController {
         model.addAttribute("personenMitAccounts",personenMitAccounts);
         return "admin";
     }
+
+
 
 }
