@@ -55,4 +55,8 @@ dependencies {
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '1.18'
     testCompile group: 'org.apache.ant', name: 'ant-testutil', version: '1.8.3'
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.20.0', ext: 'pom'
+
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-mail')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }

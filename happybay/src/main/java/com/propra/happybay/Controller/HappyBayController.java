@@ -5,6 +5,8 @@ import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.internet.MimeMessage;
 import javax.sound.midi.SysexMessage;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +39,8 @@ public class HappyBayController {
     private AccountRepository accountRepository;
     @Autowired
     private TransferRepository transferRepository;
+    @Autowired
+    private JavaMailSender sender;
 
 
     @GetMapping("/")
@@ -277,4 +282,26 @@ public class HappyBayController {
         System.out.println(mieterName + ' '+ geraet1);
         return "confirmBezahlen";
     }
+
+
+    @RequestMapping("/simpleemail")
+    @ResponseBody
+    String home() {
+        try {
+            sendEmail();
+            return "Email Sent!";
+        }catch(Exception ex) {
+            return "Error in sending email: "+ex;
+        }
+    }
+
+    private void sendEmail() throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo("hatia100@uni-duesseldorf.de");
+        helper.setText("How are you?");
+        helper.setSubject("Hi");
+        sender.send(message);
+    }
+
 }
