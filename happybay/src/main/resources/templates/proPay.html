@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
-<body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="profile.html :: navigation"></div>
-
-<div style="margin: 15px">
-    <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Kontostand:</li>
-        <li class="list-inline-item" th:text="${account.amount}">100 €</li>
-    </ul>
-    <ul class="list-inline card-text">
-        <li class="list-inline-item font-weight-bold">Reservations: </li>
-        <li class="list-inline-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
-        <li class="list-inline-item" th:each="reservation : ${account.reservations}"
-            th:text="${reservation.amount}">30 €</li>
-    </ul>
+<head th:replace="index.html :: headMuster"></head>
+<body  style="background-color: #3CBCC3">
+<nav th:replace="profile.html :: profile"></nav>
+<div class="container" >
+    <div style="margin: 15px">
+        <ul class="list-inline card-text">
+            <li class="list-inline-item font-weight-bold">Kontostand:</li>
+            <li class="list-inline-item" th:text="${account.amount} + ' €'">100 €</li>
+        </ul>
+        <ul class="list-inline card-text">
+            <li class="list-inline-item font-weight-bold">Reservierungen: </li>
+        </ul>
+        <ul class="list-group list-group-flush" style="background-color: transparent">
+            <!--<li class="list-inline-item font-weight-bold">Reservierungen: </li>-->
+            <li class="list-group-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
+            <li class="list-group-item" th:each="reservation : ${account.reservations}"
+                th:text="${reservation.amount} + ' €'">30 €</li><br/>
+        </ul>
+        <ul class="list-inline card-text">
+            <li id="meineDaten" class="nav-item" style="display: inline-block">
+                <a class="nav-link" th:href="@{/erhoeheAmount}">Erhöhe Kontostand</a>
+            </li>
+        </ul>
+        <ul class="list-inline card-text">
+            <li class="nav-item" style="display: inline-block">
+                <a class="nav-link" th:href="@{/ueberweisen}">Ueberweisen</a>
+            </li>
+        </ul>
+        <ul class="list-inline card-text">
+            <li class="nav-item" style="display: inline-block">
+                <a class="nav-link" th:href="@{/erzeugeReservation}">Reservation</a>
+            </li>
+        </ul>
+    </div>
 </div>
-
-<div th:replace="index.html :: footer"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>

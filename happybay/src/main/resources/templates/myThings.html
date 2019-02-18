@@ -1,67 +1,53 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
-<body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="profile.html :: navigation"></div>
+<head th:replace="index.html :: headMuster"></head>
+<body  style="background-color: #3CBCC3">
+<nav th:replace="profile.html :: profile"></nav>
 
-<ul class="nav nav-tabs" style="border-bottom: none">
-    <li class="nav-item">
-        <p style="margin: 15px;"><a th:href="@{/addGeraet}">
-            <span class="glyphicon glyphicon-plus" height="40px" width="40px"></span>
-            Neues Gerät hinzüfugen
-        </a>
-        </p>
-    </li>
-</ul>
+<div class="container">
+    <ul class="nav nav-tabs" style="border-bottom: none">
+        <li class="nav-item">
+            <p style="margin: 15px;"><a class="badge badge-pill badge-primary" th:href="@{/addGeraet}">
+                <i class="fas fa-plus"></i>
+                Neues Gerät hinzüfugen
+            </a>
+            </p>
+        </li>
+    </ul>
 
-<div class="card-group">
-    <div th:each="myThing: ${geraete}" class="col-sm-3">
-        <div class="clearfix" style="   margin-bottom: 20px;">
-            <div class="card" style="padding-top: 20px;padding-bottom: 40px">
-                <img class="card-img-top" th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}"/>
-                <div class="card-body text-left">
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">TITEL: </li>
-                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >KOST: </li>
-                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
-                    </ul>
-                    <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
-                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
-                    </ul>
 
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">STATUS: </li>
-                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
-                    </ul>
+    <div class="container">
+        <div class="row justify-content-around">
+            <div class="col-5 w-50 card" style="width: 15rem;" th:each="myThing: ${geraete}" >
+                <img class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
+                <div class="card-body">
+                    <h5 class="card-title">TITEL : </h5>
+                    <p class="card-text" th:text="${myThing.getTitel()}">Content</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(myThing.beschreibung,100)}">BESCHREIBUNG : </li>
+                    <li class="list-group-item" th:text="'Kosten : ' + ${myThing.getKosten() + '€'}">KOST : </li>
+                    <li class="list-group-item" th:text="'Kaution : ' + ${myThing.getKaution() + '€'}">KAUTION:</li>
+                    <li class="list-group-item">
+                        <span th:if="${myThing.isVerfuegbar()}==true" class="badge badge-success">Verfügbar</span>
+                        <span th:if="${myThing.isVerfuegbar()}==false" class="badge badge-danger">Besetzt</span>
+                    </li>
+                </ul>
+                <div class="card-body">
                     <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
                     <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
+                </div>
+                <div class="card-body">
                     <form th:action="@{/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Delete</button>
-
+                        <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
-                    <!-- Button trigger modal -->
-
-
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<div th:replace="index.html :: footer"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
