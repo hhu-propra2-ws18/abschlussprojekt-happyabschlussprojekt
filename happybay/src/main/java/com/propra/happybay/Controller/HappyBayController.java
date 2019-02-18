@@ -295,7 +295,7 @@ public class HappyBayController {
     public String changeImg(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("person", person);
+        model.addAttribute("user", person);
         return "changeProfile";
     }
 
