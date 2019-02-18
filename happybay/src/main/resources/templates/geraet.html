@@ -24,22 +24,17 @@
     </a>
 </div>
 
-<label th:text="'Release Date: '+${geraet.getOeffdatum()}" style="alignment: left; color: darkgrey">Release Date:
-    2018-1-1</label>
+
 <div class="container" style="max-height: 400px; max-width: 712px">
     <div id="controller" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
             <!--Hier muss man noch Thymleaf benutzen!-->
-            <div class="carousel-item active">
-                <img src="https://www.hdcarwallpapers.com/download/2020_ford_mustang_shelby_gt500_4k_3-1920x1080.jpg"
+            <div class="carousel-item active" >
+                <img th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}"
                      class="d-block w-100" style="max-height: 400px; max-width: available">
             </div>
-            <div class="carousel-item">
-                <img src="https://pixelz.cc/wp-content/uploads/2017/11/apple-iphone-6s-waterproof-uhd-4k-wallpaper.jpg"
-                     class="d-block w-100" style="max-height: 400px; max-width: available">
-            </div>
-            <div class="carousel-item">
-                <img src="https://i.auto-bild.de/ir_img/1/7/6/3/5/7/9/Alle-Auto-Neuheiten-2019-1200x800-df10403818caec85.jpg"
+            <div class="carousel-item" th:each="encode:${encodes}">
+                <img th:src="@{'data:image/jpeg;base64,'+ ${encode}}"
                      class="d-block w-100" style="max-height: 400px; max-width: available">
             </div>
         </div>
@@ -59,8 +54,11 @@
 
     <!--Hier muss man noch action hinfuegen.-->
     <div th:if="${geraet.getBesitzer()!=person.getName()}">
-        <form th:action="@{'/user/bezahlen/' +${geraet.getId()}}">
-            <button class="btn btn-primary" type="submit">Miete</button>
+        <!--<form th:action="@{'/user/bezahlen/' +${geraet.getId()}}">-->
+            <!--<button class="btn btn-primary" type="submit">Anfrage</button>-->
+        <!--</form>-->
+        <form th:action="@{'/user/anfragen/' +${geraet.getId()}}">
+            <button class="btn btn-primary" type="submit">Anfrage</button>
         </form>
     </div>
     <h4 th:text="${geraet.getTitel()}"></h4>

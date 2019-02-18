@@ -21,6 +21,7 @@
     <div class="card" style="padding: 10px; margin-bottom: 10px">
         <form th:action="@{/addGeraet}"  method="post" enctype="multipart/form-data">
             <label for="titel">Bilder Hochladen(Max. 15MB)</label>
+            <label for="titel">(Hinweis:Laden Sie mehrere Bilder hoch, wobei das erste zum Titel Ihres Artikels wird)</label>
             <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
 
             <label for="titel">Titel:</label>

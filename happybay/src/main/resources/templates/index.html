@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:fragment="headMuster">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <div th:replace="profile.html :: profile"></div>
 </head>
 <body>
-<div th:replace="profile.html :: profile"></div>
+
 
 <ul th:fragment="navigation" class="nav nav-tabs">
     <li sec:authorize="isAnonymous()" class="nav-item">
@@ -38,34 +37,39 @@
     </div>
 
     <div class="row">
-        <div th:each="myThing: ${geraete}" class="col-sm-3">
+        <div th:each="Thing: ${geraete}" class="col-sm-3">
             <div class="clearfix" style="margin-bottom: 20px;">
                 <div class="card" style="padding-top: 40px;padding-bottom: 40px">
                     <img class="card-img-top"
-                         src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                         th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}" style="width:330px;height: 350px">
                     <div class="card-body text-left">
                         <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">TITEL:</li>
-                            <li class="list-inline-item" th:text="${myThing.getTitel()}"></li>
+                            <li class="list-inline-item" th:text="${Thing.getTitel()}"></li>
                         </ul>
                         <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">BESCHREIBUNG:</li>
                             <li class="list-inline-item text-truncate" style="max-width: 200px"
-                                th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
+                                th:text="${#strings.abbreviate(Thing.beschreibung,100)}"></li>
                         </ul>
                         <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">KOST:</li>
-                            <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                            <li class="list-inline-item" th:text="${Thing.getKosten() + '€'}"></li>
                         </ul>
                         <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">KAUTION:</li>
-                            <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                            <li class="list-inline-item" th:text="${Thing.getKaution() + '€'}"></li>
                         </ul>
                         <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">STATUS:</li>
-                            <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                            <li th:if="${Thing.isVerfuegbar()}==true">
+                                <span class="badge badge-success">Verfügbar</span>
+                            </li>
+                            <li th:if="${Thing.isVerfuegbar()}==false">
+                                <span class="badge badge-danger">Besetzt</span>
+                            </li>
+                            
                         </ul>
-                        <a th:href="@{/geraet/{id}(id=${myThing.getId()})}">Details</a>
+                        <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
 
 
                     </div>
