@@ -73,16 +73,30 @@
                         <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
                         <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
                     </ul>
-                    <form th:action="@{/notification/delete/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Ablehnen</button>
+                    <div th:if="${myThing.getType()=='request'}" >
+                        <form th:action="@{/notification/refuseRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen</button>
 
-                    </form>
-                    <!--Here Mach API BEZAHLEN-->
-                    <form th:action="@{/notification/accept/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Annehmen</button>
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen</button>
 
-                    </form>
-                    <!-- Button trigger modal -->
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
+                    <div th:if="${myThing.getType()=='return'}" >
+                        <form th:action="@{/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen Return</button>
+
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen Return</button>
+
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
 
 
                 </div>

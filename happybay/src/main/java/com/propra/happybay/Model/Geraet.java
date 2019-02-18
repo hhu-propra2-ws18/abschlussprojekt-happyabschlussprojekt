@@ -25,7 +25,7 @@ public class Geraet {
     String abholort;
     Date mietezeitpunkt;
     String encode;
-    String returnStatus;
+    String returnStatus="default";
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }

@@ -192,7 +192,7 @@ public class HappyBayController {
     public String anfragen(Model model,@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) {
 
         Notification newNotification=new Notification();
-        newNotification.setType("ausleihen");
+        newNotification.setType("request");
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
@@ -204,7 +204,7 @@ public class HappyBayController {
         geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
         geraet.setZeitraum(notification.getZeitraum());
 
-        notificationRepository.save(notification1);
+        notificationRepository.save(newNotification);
 
         return "redirect:/";
     }
@@ -289,7 +289,7 @@ public class HappyBayController {
         geraetRepository.save(geraet);
 
         Notification newNotification=new Notification();
-        newNotification.setType("zurueck");
+        newNotification.setType("return");
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         notificationRepository.save(newNotification);
@@ -301,35 +301,47 @@ public class HappyBayController {
         geraetRepository.deleteById(id);
         return "redirect:/myThings";
     }
-    @PostMapping("/notification/delete/{id}")
-    public String notificationDelete(@PathVariable Long id) {
+    @PostMapping("/notification/refuseRequest/{id}")
+    public String notificationRefuseRequest(@PathVariable Long id) {
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
-    @PostMapping("/notification/accept/{id}")
-    public String notificationAccept(@PathVariable Long id) {
+    @PostMapping("/notification/acceptRequest/{id}")
+    public String notificationAcceptRequest(@PathVariable Long id) {
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
-        if(geraet.getReturnStatus()=="waiting"){
-            geraet.setVerfuegbar(true);
-            geraet.setMieter(null);
-        }
-
-
 
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
+    @PostMapping("/notification/refuseReturn/{id}")
+    public String notificationRefuseReturn(@PathVariable Long id) {
+        Notification notification=notificationRepository.findById(id).get();
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setReturnStatus("kaputt");
+        geraetRepository.save(geraet);
+        return "redirect:/user/myRemind";
+    }
+    @PostMapping("/notification/acceptReturn/{id}")
+    public String notificationAcceptReturn(@PathVariable Long id) {
+        Notification notification=notificationRepository.findById(id).get();
 
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setVerfuegbar(true);
+        geraet.setReturnStatus("good");
+        geraetRepository.save(geraet);
+
+        return "redirect:/user/myRemind";
+    }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("person", person);
+        model.addAttribute("user", person);
         return "changeProfile";
     }
 
