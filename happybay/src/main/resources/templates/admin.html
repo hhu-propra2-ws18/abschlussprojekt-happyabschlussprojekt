@@ -5,6 +5,7 @@
     <title>Admin</title>
 </head>
 <body>
+    <br/>
     <table class="table">
         <thead>
         <tr>
@@ -15,11 +16,16 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="personMitAccount : ${personList}">
+        <tr th:each="personMitAccount : ${personenMitAccounts}">
             <th scope="row">1</th>
             <td th:text="${personMitAccount.person.username}">Username</td>
             <td th:text="${personMitAccount.account.amount}">Geld</td>
-            <td><a th:href="@{/erhoeheAmount}">Erhöhe Kontostand</a></td>
+            <td> <form action="/erhoeheAmount" method="post">
+                <input type="hidden" name="username" th:value="${personMitAccount.person.username}">
+                <br>
+                <input type="submit" value="Erhöhe Kontostand">
+            </form> </td>
+            <td></td>
         </tr>
         </tbody>
     </table>

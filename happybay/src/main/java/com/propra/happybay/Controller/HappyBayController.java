@@ -13,11 +13,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HappyBayController {
@@ -391,16 +393,16 @@ public class HappyBayController {
 
         return "confirmBezahlen";
     }
-    @GetMapping("/erhoeheAmount")
-    public String erhoeheAmount(Model model, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+
+    @PostMapping("/erhoeheAmount")
+    public String erhoeheAmount(Model model, @ModelAttribute("username") String username) throws IOException {
+        Person person = personRepository.findByUsername(username).get();
         model.addAttribute("user", person);
         proPayService.erhoeheAmount(person.getUsername(), 10);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
-        return "proPay";
+        return "redirect:/admin";
     }
     @GetMapping("/ueberweisen")
     public String ueberweisen(Model model, Principal principal) throws IOException {
@@ -439,10 +441,12 @@ public class HappyBayController {
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
         List<Person> personList = personRepository.findAll();
         for (Person person : personList) {
-            Account account = accountRepository.findByAccount(person.getUsername()).get();
-            personenMitAccounts.add(new PersonMitAccount(person,account));
+            if (!person.getUsername().equals("admin")) {
+                Optional<Account> account = accountRepository.findByAccount(person.getUsername());
+                personenMitAccounts.add(new PersonMitAccount(person, account.get()));
+            }
         }
-        model.addAttribute("personList",personenMitAccounts);
+        model.addAttribute("personenMitAccounts",personenMitAccounts);
         return "admin";
     }
 
