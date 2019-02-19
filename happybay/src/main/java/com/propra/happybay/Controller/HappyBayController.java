@@ -4,7 +4,10 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,16 +15,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sound.midi.SysexMessage;
-import java.io.File;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Controller
 public class HappyBayController {
+    private int zahl;
     @Autowired
     PersonRepository personRepository;
     @Autowired
@@ -35,16 +39,26 @@ public class HappyBayController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private TransferRepository transferRepository;
+    private NotificationRepository notificationRepository;
+    @Autowired
+    private JavaMailSender sender;
+
 
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, Principal principal){
+        if(principal != null){
+            String name = principal.getName();
+            if(personRepository.findByUsername(name).isPresent()) {
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+            }
+        }
         List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "index";
     }
 
@@ -56,11 +70,11 @@ public class HappyBayController {
     @PostMapping("/add")
     public String addToDatabase(@RequestParam("file") MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) throws IOException{
+                                Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
-            for (int i = 0; i < bindingResult.getAllErrors().size(); i++) {
+            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
                 errorList.add(bindingResult.getAllErrors().get(i).getCode());
             }
             System.out.println(errorList);
@@ -83,30 +97,38 @@ public class HappyBayController {
         return "admin";
     }
 
-    @GetMapping("/user")
-    public String user(Model m, Principal person) {
-        m.addAttribute("username", person.getName());
-        return "profile";
-    }
+
 
 
     @GetMapping("/personInfo")
     public String person(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+
+        List<Geraet> geraete=geraetRepository.findAllByBesitzer(name);
+        zahl=0;
+        for (Geraet geraet:geraete){
+            zahl+=notificationRepository.findByGeraetId(geraet.getId()).size();
+        }
+
         model.addAttribute("user", person);
+        model.addAttribute("zahl",zahl);
         return "personInfo";
     }
 
+
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
+
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
+
+
+        model.addAttribute("zahl",zahl);
         model.addAttribute("user", person);
         return "profile";
     }
-
 
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal) {
@@ -120,7 +142,7 @@ public class HappyBayController {
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete",geraets);
-
+        model.addAttribute("zahl",zahl);
         return "myThings";
     }
 
@@ -133,21 +155,80 @@ public class HappyBayController {
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
+        Person person = personRepository.findByUsername(mieterName).get();
         List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
+        model.addAttribute("user",person);
         model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
         return "rentThings";
     }
 
-    @GetMapping("myRemind")
+    @GetMapping("/user/myRemind")
     public String myRemind(Model model, Principal principal) {
+        List<Geraet> geraetList=geraetRepository.findAllByBesitzer(principal.getName());
+        List<Notification> newNotification=new ArrayList<>();
+
+        for(Geraet geraet:geraetList){
+            List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
+            for(Notification notification:notificationList){
+                    newNotification.add(notification);
+            }
+
+        }
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("user", person);
+
+
+
+        model.addAttribute("notification",newNotification);
         return "myRemind";
     }
+    @GetMapping("/user/anfragen/{id}")
+    public String anfragen(@PathVariable Long id,Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        Geraet geraet1 = geraetRepository.findById(id).get();
 
+        model.addAttribute("geraet",geraet1);
+        model.addAttribute("notification",new Notification());
+        return "anfragen";
+    }
+    @PostMapping("/user/anfragen/{id}")
+    public String anfragen(Model model,@PathVariable Long id,
+                           @ModelAttribute Notification notification, Principal principal) throws Exception{
+
+        Notification newNotification=new Notification();
+        newNotification.setType("request");
+        newNotification.setAnfragePerson(principal.getName());
+        newNotification.setGeraetId(id);
+        newNotification.setMessage(notification.getMessage());
+        newNotification.setZeitraum(notification.getZeitraum());
+        newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
+        notificationRepository.save(newNotification);
+
+        Geraet geraet=geraetRepository.findById(newNotification.getGeraetId()).get();
+        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
+        geraet.setZeitraum(notification.getZeitraum());
+
+        notificationRepository.save(newNotification);
+
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Du hast eine neue Anfrag über("+ geraet.getTitel() + ") von " + principal.getName());
+        helper.setSubject("Anfrag");
+        sender.send(message);
+
+        return "redirect:/";
+    }
     @GetMapping("/addGeraet")
-    public String addGeraet() {
+    public String addGeraet(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
         return "addGeraet";
     }
 
@@ -188,11 +269,13 @@ public class HappyBayController {
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
+        model.addAttribute("zahl",zahl);
         return "proPay";
     }
 
     @GetMapping("/geraet/{id}")
-    public String geraet(@PathVariable Long id, Model model, Principal person) {
+    public String geraet(@PathVariable Long id, Model model, Principal principal) {
+        String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
         List<Bild> bilds = geraet.getBilder();
         List<String> encodes = new ArrayList<>();
@@ -201,30 +284,150 @@ public class HappyBayController {
         }
         geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
-        model.addAttribute("person", person);
+        model.addAttribute("person", principal);
+        model.addAttribute("user", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "geraet";
     }
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
-
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("geraet", geraet);
         return "edit";
     }
+    @GetMapping("/geraet/zurueckgeben/{id}")
+    public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) throws Exception{
+        Geraet geraet = geraetRepository.findById(id).get();
+//        geraet.setVerfuegbar(true);
+//        geraet.setMieter(null);
+        geraet.setReturnStatus("waiting");
+        geraetRepository.save(geraet);
 
+        Notification newNotification=new Notification();
+        newNotification.setType("return");
+        newNotification.setAnfragePerson(principal.getName());
+        newNotification.setGeraetId(id);
+        notificationRepository.save(newNotification);
+
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Geraet (" + geraet.getTitel()+ ") wurde zur Bewerbung zurückgeschickt" );
+        helper.setSubject("Bewerbung zurücksenden");
+        sender.send(message);
+
+        return "redirect:/rentThings";
+    }
     @PostMapping("/geraet/delete/{id}")
     public String geraetDelete(@PathVariable Long id) {
         geraetRepository.deleteById(id);
         return "redirect:/myThings";
     }
+    @PostMapping("/notification/refuseRequest/{id}")
+    public String notificationRefuseRequest(@PathVariable Long id) throws Exception{
+        Notification notification=notificationRepository.findById(id).get();
+        String mieter=notification.getAnfragePerson();
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
 
+        Person person = personRepository.findByUsername(mieter).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+
+        notificationRepository.deleteById(id);
+        return "redirect:/user/myRemind";
+    }
+    @PostMapping("/notification/acceptRequest/{id}")
+    public String notificationAcceptRequest(@PathVariable Long id) throws Exception{
+        Thread thread1 = new Thread("tipsMail");
+        //Thread thread2 = new Thread("accept");
+        Notification notification=notificationRepository.findById(id).get();
+        String mieter=notification.getAnfragePerson();
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setVerfuegbar(false);
+        geraet.setMieter(mieter);
+
+        Person person = personRepository.findByUsername(mieter).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+
+
+        if(notification.getZeitraum()>=3){
+            //thread1.sleep((notification.getZeitraum()-3)*24*60*60*1000);
+            MimeMessage message1 = sender.createMimeMessage();
+            //LocalDate localDate = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum()-3);
+            //message1.setSentDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            //message1.setSentDate(new Date().setTime((notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
+            //message1.saveChanges();
+
+            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+            helper1.setTo(person.getKontakt());
+            helper1.setSubject("Rückkehrzeit");
+            helper1.setText("Es sind noch 3 Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück." );
+            //helper1.setSentDate(new Date(notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
+            sender.send(message1);
+        }
+        else{
+            MimeMessage message2 = sender.createMimeMessage();
+            MimeMessageHelper helper2 = new MimeMessageHelper(message2);
+            helper2.setTo(person.getKontakt());
+            helper2.setSubject("Rückkehrzeit");
+            helper2.setText("Es sind noch "+ notification.getZeitraum() + " Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück.");
+            sender.send(message2);
+        }
+        geraetRepository.save(geraet);
+        notificationRepository.deleteById(id);
+        return "redirect:/user/myRemind";
+    }
+    @PostMapping("/notification/refuseReturn/{id}")
+    public String notificationRefuseReturn(@PathVariable Long id) throws Exception{
+        Notification notification=notificationRepository.findById(id).get();
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setReturnStatus("kaputt");
+        geraetRepository.save(geraet);
+
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
+        return "redirect:/user/myRemind";
+    }
+    @PostMapping("/notification/acceptReturn/{id}")
+    public String notificationAcceptReturn(@PathVariable Long id) throws Exception{
+        Notification notification=notificationRepository.findById(id).get();
+
+        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setVerfuegbar(true);
+        geraet.setReturnStatus("good");
+        geraetRepository.save(geraet);
+
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
+
+        return "redirect:/user/myRemind";
+    }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("person", person);
+        model.addAttribute("user", person);
         return "changeProfile";
     }
 
@@ -264,7 +467,9 @@ public class HappyBayController {
         geraet1.setAbholort(geraet.getAbholort());
 
         geraetRepository.save(geraet1);
-        return "myThings";
+        List<Geraet> geraete = null;//personRepository.findByUsername(person.getName()).get().getMyThings();
+        model.addAttribute("geraete", geraete);
+        return "redirect:/myThings";
     }
 
     @GetMapping("/user/bezahlen/{id}")
@@ -273,7 +478,53 @@ public class HappyBayController {
         String mieterName= person.getName();
         geraet1.setMieter(mieterName);
         geraetRepository.save(geraet1);
-        System.out.println(mieterName + ' '+ geraet1);
+
+
         return "confirmBezahlen";
     }
+    @GetMapping("/erhoeheAmount")
+    public String erhoeheAmount(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erhoeheAmount(person.getUsername(), 10);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+    @GetMapping("/ueberweisen")
+    public String ueberweisen(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+    @GetMapping("/about")
+    public String about(Model model, Principal principal){
+        if(principal != null){
+            String name = principal.getName();
+            if(personRepository.findByUsername(name).isPresent()) {
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+            }
+        }
+        return "about";
+    }
+    @GetMapping("/erzeugeReservation")
+    public String erzeugeReservation(Model model, Principal principal) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        proPayService.erzeugeReservation(person.getUsername(),"ancao100", 4);
+        proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "proPay";
+    }
+
+
 }

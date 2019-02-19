@@ -11,15 +11,6 @@ public class Account {
     @Id
     private String account;
     private Double amount;
-
-    @OneToMany
+    @OneToMany(mappedBy = "account", cascade = {CascadeType.ALL})
     private List<Reservation> reservations;
-
-
-    public Account(String account, Double amount, List<Reservation> reservations) {
-        this.account = account;
-        this.amount = amount;
-        this.reservations = reservations;
-    }
-
 }

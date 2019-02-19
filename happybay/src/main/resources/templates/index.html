@@ -1,87 +1,93 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 <head th:fragment="headMuster">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
-          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <div th:replace="profile.html :: profile"></div>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HappyBay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
-<body>
+<body style="background-color: #3CBCC3">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #F7F4E9">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
+                                                  width="100px"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-
-<ul th:fragment="navigation" class="nav nav-tabs">
-    <li sec:authorize="isAnonymous()" class="nav-item">
-        <a class="nav-link" th:href="@{/personInfo}">Anmelden</a>
-    </li>
-    <li sec:authorize="isAnonymous()" class="nav-item">
-        <a class="nav-link" th:href="@{/addUser}">Registrieren</a>
-    </li>
-    <li>
-        <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/personInfo}">Mein Profil</a>
-    </li>
-    <li class="nav-item ml-auto">
-        <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/logout}">Abmelden</a>
-    </li>
-</ul>
-
-<div>
-    <div>
-        <nav th:fragment="logo" class="nav" style="background: deepskyblue;">
-            <a href="/" class="nav-link" style="color: white; align: left">
-                <img class="rounded-circle" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4"
-                     height="70px"
-                     width="70px">
-            </a>
-        </nav>
-    </div>
-
-    <div class="row">
-        <div th:each="Thing: ${geraete}" class="col-sm-3">
-            <div class="clearfix" style="margin-bottom: 20px;">
-                <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                    <img class="card-img-top"
-                         th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}" style="width:330px;height: 350px">
-                    <div class="card-body text-left">
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">TITEL:</li>
-                            <li class="list-inline-item" th:text="${Thing.getTitel()}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">BESCHREIBUNG:</li>
-                            <li class="list-inline-item text-truncate" style="max-width: 200px"
-                                th:text="${#strings.abbreviate(Thing.beschreibung,100)}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">KOST:</li>
-                            <li class="list-inline-item" th:text="${Thing.getKosten() + '€'}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">KAUTION:</li>
-                            <li class="list-inline-item" th:text="${Thing.getKaution() + '€'}"></li>
-                        </ul>
-                        <ul class="list-inline card-text">
-                            <li th:if="${Thing.isVerfuegbar()}==true">
-                                <span class="badge badge-success">Verfügbar</span>
-                            </li>
-                            <li th:if="${Thing.isVerfuegbar()}==false">
-                                <span class="badge badge-danger">Besetzt</span>
-                            </li>
-                            
-                        </ul>
-                        <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
-
-
-                    </div>
+            <div class="collapse navbar-collapse" style="color: white">
+                <ul class="navbar-nav mr-auto justify-content-end">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li sec:authorize="isAnonymous()" class="nav-item">
+                        <a class="nav-link" th:href="@{/personInfo}"><i class="fas fa-sign-in-alt"></i> Anmelden</a>
+                    </li>
+                    <li sec:authorize="isAnonymous()" class="nav-item">
+                        <a class="nav-link" th:href="@{/addUser}"><i class="fas fa-user-plus"></i> Registrieren</a>
+                    </li>
+                    <li class="nav-item dropdown" th:if="${person} != null">
+                        <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="'Hello ' + ${person.username}">Name</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" th:href="@{/profile}">Meine Daten</a>
+                            <a class="dropdown-item" th:href="@{/proPay}">Mein ProPay</a>
+                            <a class="dropdown-item" th:href="@{/myThings}">Meine Geräte</a>
+                            <a class="dropdown-item" th:href="@{/rentThings}">Meine Ausleihen</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/logout}">Abmelden</a>
+                        </div>
+                    </li>
+                    <li sec:authorize="isAuthenticated()"  class="nav-item">
+                        <a th:href="@{/user/myRemind}" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/about}"><i class="fas fa-dragon"></i> About</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <div class="container">
+        <div class="row justify-content-around">
+            <div class="col-5 w-50 card" style="width: 15rem;" th:each="Thing: ${geraete}" >
+                <img class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}">
+                <div class="card-body">
+                    <h5 class="card-title">TITEL : </h5>
+                    <p class="card-text" th:text="${Thing.getTitel()}">Content</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(Thing.beschreibung,100)}">BESCHREIBUNG : </li>
+                    <li class="list-group-item" th:text="'Kosten : ' + ${Thing.getKosten() + '€'}">KOST : </li>
+                    <li class="list-group-item" th:text="'Kaution : ' + ${Thing.getKaution() + '€'}">KAUTION:</li>
+                    <li class="list-group-item">
+                        <span th:if="${Thing.isVerfuegbar()}==true" class="badge badge-success">Verfügbar</span>
+                        <span th:if="${Thing.isVerfuegbar()}==false" class="badge badge-danger">Nicht Verfügbar</span>
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <a th:href="@{/geraet/{id}(id=${Thing.getId()})}">Details</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;
-margin: 0; width: 100%">
-        <p>© Made by Happy-Gruppe</p>
-    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!--<div>-->
+        <!--<footer th:fragment="footer" class="alert alert-secondary" style="position: relative; bottom: 0;-->
+        <!--margin: 0; width: 100%">-->
+            <!--<p>© Made by Happy-Gruppe</p>-->
+        <!--</footer>-->
+    <!--</div>-->
 
 </body>
 </html>

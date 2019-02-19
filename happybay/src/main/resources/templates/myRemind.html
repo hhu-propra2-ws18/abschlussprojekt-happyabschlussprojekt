@@ -1,48 +1,102 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
-<body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="profile.html :: navigation"></div>
+<head th:replace="index.html :: headMuster"></head>
+<body  style="background-color: #3CBCC3">
+<nav th:fragment="profile" class="navbar navbar-expand-lg navbar-light" style="background-color: #F7F4E9">
+    <div class="container">
+        <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
+                                              width="100px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarSupported" style="color: white">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item dropdown active">
+                    <a sec:authorize="isAuthenticated()" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" th:text="'Hello ' + ${user.username}"> Name</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" th:href="@{/profile}">Meine Daten</a>
+                        <a class="dropdown-item" th:href="@{/proPay}">Mein ProPay</a>
+                        <a class="dropdown-item" th:href="@{/myThings}">Meine Geräte</a>
+                        <a class="dropdown-item" th:href="@{/rentThings}">Meine Ausleihen</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/logout}">Abmelden</a>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <a th:href="@{/user/myRemind}" class="nav-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-pill badge-info" th:text="${zahl}">4</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}"><i class="fas fa-dragon"></i> About</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
 <div class="row">
-    <div th:each="myThing: ${geraete}" class="col-sm-3">
+    <div th:each="myThing: ${notification}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                <ul class="list-inline card-text" th:if="${myThing.getType()=='ausleihen'}">
+                    <span class="badge badge-warning">Neue Anfrage zum Ausleihen</span>
+                </ul>
+                <ul class="list-inline card-text" th:if="${myThing.getType()=='zurueck'}">
+                    <span class="badge badge-warning">Neue Anfrage zum Zurückgeben</span>
+                </ul>
                 <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">TITEL: </li>
-                        <li class="list-inline-item"  th:text="${myThing.getTitel()}"></li>
+                        <li class="list-inline-item font-weight-bold">Zeitraum: </li>
+                        <li class="list-inline-item"  th:text="${myThing.getZeitraum()}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.beschreibung,100)}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >KOST: </li>
-                        <li class="list-inline-item" th:text="${myThing.getKosten() + '€'}"></li>
+                        <li class="list-inline-item font-weight-bold" >Message: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.getMessage(),100)}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
-                        <li class="list-inline-item" th:text="${myThing.getKaution() + '€'}"></li>
+                        <li class="list-inline-item font-weight-bold" >Miete ZeitPunkt: </li>
+                        <li class="list-inline-item" th:text="${myThing.getMietezeitPunkt()}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">STATUS: </li>
-                        <li class="list-inline-item" th:text="${myThing.isVerfuegbar()}"></li>
+                        <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
+                        <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
                     </ul>
-                    <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
-                    <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
-                    <form th:action="@{/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
-                        <button type="submit">Delete</button>
+                    <div th:if="${myThing.getType()=='request'}" >
+                        <form th:action="@{/notification/refuseRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen</button>
 
-                    </form>
-                    <!-- Button trigger modal -->
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptRequest/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen</button>
+
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
+                    <div th:if="${myThing.getType()=='return'}" >
+                        <form th:action="@{/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Ablehnen Return</button>
+
+                        </form>
+                        <!--Here Mach API BEZAHLEN-->
+                        <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <button type="submit">Annehmen Return</button>
+
+                        </form>
+                        <!-- Button trigger modal -->
+                    </div>
 
 
                 </div>
@@ -50,7 +104,7 @@
         </div>
     </div>
 </div>
+</div>
 
-<div th:replace="index.html :: footer"></div>
 </body>
 </html>

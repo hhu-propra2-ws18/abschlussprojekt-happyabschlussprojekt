@@ -2,18 +2,15 @@ package com.propra.happybay.Model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
 @Data
+@Entity
 public class Reservation {
     @Id
     private Long id;
     private Double amount;
-
-    public Reservation(Double amount) {
-        this.amount = amount;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Account account;
 }

@@ -1,17 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
-<body>
-<div th:replace="profile.html :: profile"></div>
-<div th:replace="profile.html :: navigation"></div>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index.html :: headMuster"></head>
+<body style="background-color: #3CBCC3">
+<nav th:replace="profile.html :: profile"></nav>
 
 
-<div class="row">
+<div class="card-group">
     <div th:each="rentThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
@@ -33,20 +27,20 @@
                         <li class="list-inline-item font-weight-bold" >KAUTION: </li>
                         <li class="list-inline-item" th:text="${rentThing.getKaution() + '€'}"></li>
                     </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">STATUS: </li>
-                        <li class="list-inline-item" th:text="${rentThing.isVerfuegbar()}"></li>
-                    </ul>
+
                     <a th:href="@{/geraet/{id}(id=${rentThing.getId()})}" >Details</a>
-
-
+                    <a th:href="@{/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a>
+                    <a th:if="${rentThing.getReturnStatus()=='good'}">Artikel wurde erfolgreich zurückgegeben</a>
+                    <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Artikel war kaputt geworden !!!</a>
+                    <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wurde bearbeitet</a>
 
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div th:replace="index.html :: footer"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
