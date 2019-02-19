@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="index.html :: headMuster"></head>
-<body  style="background-color: #EBA63F">
-<nav th:replace="profile.html :: profile"></nav>
+<head th:replace="fragments.html :: header"></head>
+<body>
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
 <br>
 
 <div class="container" style="max-height: 400px; max-width: 712px">
@@ -29,21 +29,17 @@
             </a>
         </div>
     </div>
+    <br/>
     <div class="w-100">
-        <h2 th:text="${geraet.getKosten()}+'€/Tag'" style="color: darkblue"></h2>
-        <label th:text="'Kaution: '+${geraet.getKaution()}+'€'" style="color: blue"></label>
-
-        <!--Hier muss man noch action hinfuegen.-->
-        <div th:if="${geraet.getBesitzer()!=person.getName()}">
-            <!--<form th:action="@{'/user/bezahlen/' +${geraet.getId()}}">-->
-            <!--<button class="btn btn-primary" type="submit">Anfrage</button>-->
-            <!--</form>-->
+        <h4 th:text="${geraet.getTitel()}"></h4>
+        <label th:text="'Beschreibung: ' + ${geraet.getBeschreibung()}"></label><br/>
+        <label th:text="'Miete: ' + ${geraet.getKosten()}+' €/Tag'" style="color: blue"></label><br/>
+        <label th:text="'Kaution: '+${geraet.getKaution()}+' €'" style="color: blue"></label>
+        <div th:if="${geraet.getBesitzer()!= person.username}">
             <form th:action="@{'/user/anfragen/' +${geraet.getId()}}">
-                <button class="btn btn-primary" type="submit">Anfrage</button>
+                <button class="btn btn-primary" type="submit">Anfragen</button>
             </form>
         </div>
-        <h4 th:text="${geraet.getTitel()}"></h4>
-        <label th:text="${geraet.getBeschreibung()}"></label>
     </div>
 </div>
 </body>

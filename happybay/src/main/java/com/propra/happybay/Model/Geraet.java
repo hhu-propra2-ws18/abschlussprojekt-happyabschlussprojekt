@@ -13,13 +13,11 @@ public class Geraet {
     @Id
     @GeneratedValue
     Long id;
-    String titel;
-//    @Column(columnDefinition = "NVARCHAR(MAX)")
+    String besitzer;
     @Column(length = 1000)
     String beschreibung;
+    String titel;
     boolean verfuegbar;
-    String besitzer;
-
     String mieter;
     int zeitraum;
     int kosten;

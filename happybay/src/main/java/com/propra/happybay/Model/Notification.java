@@ -15,6 +15,7 @@ public class Notification {
     Long geraetId;
     String type;
     String message;
+    String besitzer;
     String anfragePerson;
     Date mietezeitPunkt;
     int zeitraum;
