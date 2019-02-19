@@ -13,12 +13,11 @@ public class Geraet {
     @Id
     @GeneratedValue
     Long id;
-    String titel;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    String beschreibung;
-    boolean verfuegbar;
     String besitzer;
-
+    @Column(length = 1000)
+    String beschreibung;
+    String titel;
+    boolean verfuegbar;
     String mieter;
     int zeitraum;
     int kosten;
@@ -27,6 +26,7 @@ public class Geraet {
     Date mietezeitpunkt;
     String encode;
     String returnStatus="default";
+    int likes = 0;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;
 }

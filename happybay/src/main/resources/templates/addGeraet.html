@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="index.html :: headMuster"></head>
-<body  style="background-color: #3CBCC3">
-<nav th:replace="profile.html :: profile"></nav>
+<head th:replace="fragments.html :: header"></head>
+<body>
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
 
-<div class="container">
-    <h1 class="text-justify text-center font-weight-bold">Verleihen Iher Gerät</h1>
+<div class="container"><br/>
+    <h3 class="text-justify text-center font-weight-normal">Hinzufügen eines Gerätes: </h3>
 
     <div class="row justify-content-md-center">
-        <form th:action="@{/addGeraet}"  method="post" enctype="multipart/form-data">
-            <label for="titel">Bilder Hochladen(Max. 15MB)</label>
-            <label for="titel">(Hinweis:Laden Sie mehrere Bilder hoch, wobei das erste zum Titel Ihres Artikels wird)</label>
-            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
-            <br>
+        <form th:action="@{/addGeraet}"  method="post" enctype="multipart/form-data"><br/>
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" />
 
             <label for="beschreibung">Beschreibung:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" />
 
-            <label for="kosten">kosten Pro Tag:</label>
+            <label for="kosten">Miete Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" />
 
             <label for="kaution">Kaution:</label>
@@ -27,6 +23,9 @@
 
             <label for="kaution">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" />
+            <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
+            <br/><br/>
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>

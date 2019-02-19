@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
-<head th:replace="index.html :: headMuster"></head>
-<body  style="background-color: #3CBCC3">
-<nav th:replace="profile.html :: profile"></nav>
+<head th:replace="fragments.html :: header"></head>
+<body>
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
 <br>
 <div class="container">
     <div class="card" style="padding: 10px; margin-bottom: 10px">
@@ -15,6 +15,7 @@
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitPunkt" id="mietezeitPunkt" th:value="${notification.getMietezeitPunkt()}" />
             <label for="message">Message:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message" th:value="${notification.getMietezeitPunkt()}" />
+            <input type="hidden" name="besitzer" th:value="${geraet.besitzer}">
 
             <button type="submit" class="btn btn-primary">Schicken</button>
         </form>

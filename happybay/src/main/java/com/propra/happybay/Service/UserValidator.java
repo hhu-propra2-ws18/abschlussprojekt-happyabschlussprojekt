@@ -10,8 +10,6 @@ import org.springframework.validation.Validator;
 
 @Component
 public class UserValidator implements Validator {
-    //@Autowired
-    //private UserService userService;
     @Autowired
     private PersonRepository personRepository;
 
@@ -24,21 +22,21 @@ public class UserValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Person person = (Person) o;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "This field Username is required.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "Das Feld 'Benutzername' muss ausgefüllt werden.");
         if (person.getUsername().length() < 1 || person.getUsername().length() > 32) {
-            errors.rejectValue("username", "Please use between 6 and 32 characters.");
+            errors.rejectValue("username", "Bitte wählen Sie zwischen 6 und 32 Zeichen.");
         }
         if (personRepository.findByUsername(person.getUsername()).isPresent()) {
-            errors.rejectValue("username", "Someone already has that username.");
+            errors.rejectValue("username", "Dieser Benutzername ist leider schon vergeben.");
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "This field Password is required.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "Das Feld 'Password' muss ausgefüllt werden.");
         if (person.getPassword().length() < 1 || person.getPassword().length() > 32) {
-            errors.rejectValue("password", "Try one with at least 8 characters.");
+            errors.rejectValue("password", "Bitte wählen Sie ein Password mit mindestens 8 Zeichen.");
         }
 
         if (!person.getPasswordConfirm().equals(person.getPassword())) {
-            errors.rejectValue("passwordConfirm", "These passwords don't match.");
+            errors.rejectValue("passwordConfirm", "Passwörter stimmen nicht überein.");
         }
     }
 }

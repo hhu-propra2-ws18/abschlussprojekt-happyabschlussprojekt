@@ -27,11 +27,12 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST,"/add").permitAll()
-                .antMatchers("/confirmationAdd").permitAll()
+                .antMatchers("/addNewUser").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/addUser").permitAll()
-                .antMatchers("/about").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/aboutUs").permitAll()
                 .antMatchers("/profile").hasRole("USER")
+                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
         http.logout().permitAll();
         http.userDetailsService(userDetailsService);

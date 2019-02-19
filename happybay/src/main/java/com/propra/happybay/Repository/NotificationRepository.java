@@ -8,10 +8,8 @@ import java.util.List;
 
 public interface NotificationRepository extends CrudRepository<Notification,Long> {
     void deleteByGeraetIdAndAnfragePerson(Long id,String username);
-
     List<Notification> findByGeraetId(Long id);
-
-
     List<Notification> findAllByGeraetId(Long id);
+    List<Notification> findAllByBesitzer(String besitzer);
 
 }

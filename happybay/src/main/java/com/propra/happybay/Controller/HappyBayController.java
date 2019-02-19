@@ -1,10 +1,12 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Repository.*;
+import com.propra.happybay.Repository.AccountRepository;
+import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.NotificationRepository;
+import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,10 +20,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HappyBayController {
-    private int zahl;
     @Autowired
     PersonRepository personRepository;
     @Autowired
@@ -43,7 +45,14 @@ public class HappyBayController {
         if(principal != null){
             String name = principal.getName();
             if(personRepository.findByUsername(name).isPresent()) {
-                model.addAttribute("person", personRepository.findByUsername(name).get());
+                List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
+                Person person = personRepository.findByUsername(name).get();
+                person.setAnzahlNotifications(notifications.size());
+                personRepository.save(person);
+                model.addAttribute("person", person);
+            }
+            else {
+                model.addAttribute("person", new Person());
             }
         }
         List<Geraet> geraete = geraetRepository.findAll();
@@ -51,16 +60,23 @@ public class HappyBayController {
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete", geraete);
-        model.addAttribute("zahl",zahl);
         return "index";
     }
 
-    @GetMapping("/addUser")
-    public String addUser() {
-        return "addUser";
+    @GetMapping("/register")
+    public String register() {
+        return "register";
     }
 
-    @PostMapping("/add")
+    @GetMapping("/personInfo")
+    public String personInfo(Model model, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("user", person);
+        return "profile";
+    }
+
+    @PostMapping("/addNewUser")
     public String addToDatabase(@RequestParam("file") MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) throws IOException {
@@ -72,7 +88,7 @@ public class HappyBayController {
             }
             System.out.println(errorList);
             model.addAttribute("errorList", errorList);
-            return "addUser";
+            return "register";
         }
         Bild bild = new Bild();
         bild.setBild(file.getBytes());
@@ -80,43 +96,19 @@ public class HappyBayController {
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
+        proPayService.saveAccount(person.getUsername());
         person.setPassword("");
         model.addAttribute("person", person);
-        return "confirmationAdd";
-    }
-
-    @GetMapping("/admin")
-    public String administrator() {
-        return "admin";
-    }
-
-
-
-
-    @GetMapping("/personInfo")
-    public String person(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-
-        List<Geraet> geraete=geraetRepository.findAllByBesitzer(name);
-        zahl=0;
-        for (Geraet geraet:geraete){
-            zahl+=notificationRepository.findByGeraetId(geraet.getId()).size();
-        }
-
-        model.addAttribute("user", person);
-        model.addAttribute("zahl",zahl);
-        return "personInfo";
+        return "confirmationOfRegistration";
     }
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("person", person);
         person.setEncode(encodeBild(person.getFoto()));
 
-
-        model.addAttribute("zahl",zahl);
         model.addAttribute("user", person);
         return "profile";
     }
@@ -125,83 +117,64 @@ public class HappyBayController {
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
         for (Geraet geraet: geraets){
             geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
         }
         model.addAttribute("geraete",geraets);
-        model.addAttribute("zahl",zahl);
         return "myThings";
-    }
-
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
     }
 
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
-        List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
-        model.addAttribute("user",person);
+        List<Geraet> geraete = geraetRepository.findAllByMieter(mieterName);
+        model.addAttribute("person", person);
         model.addAttribute("geraete", geraete);
-        model.addAttribute("zahl",zahl);
         return "rentThings";
     }
 
-    @GetMapping("/user/myRemind")
-    public String myRemind(Model model, Principal principal) {
-        List<Geraet> geraetList=geraetRepository.findAllByBesitzer(principal.getName());
-        List<Notification> newNotification=new ArrayList<>();
-
-        for(Geraet geraet:geraetList){
-            List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
-            for(Notification notification:notificationList){
-                    newNotification.add(notification);
-            }
-
-        }
+    @GetMapping("/user/notifications")
+    public String makeNotifications(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
 
-
-
-        model.addAttribute("notification",newNotification);
-        return "myRemind";
+        List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
+        model.addAttribute("notification", notifications);
+        return "notifications";
     }
+
     @GetMapping("/user/anfragen/{id}")
     public String anfragen(@PathVariable Long id,Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
 
         model.addAttribute("geraet",geraet1);
-        model.addAttribute("notification",new Notification());
+        model.addAttribute("notification", new Notification());
         return "anfragen";
     }
     @PostMapping("/user/anfragen/{id}")
     public String anfragen(Model model,@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) {
 
-        Notification newNotification=new Notification();
+        Notification newNotification = new Notification();
         newNotification.setType("request");
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
         newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
+        newNotification.setBesitzer(notification.getBesitzer());
         notificationRepository.save(newNotification);
 
-        Geraet geraet=geraetRepository.findById(newNotification.getGeraetId()).get();
+        Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
         geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
         geraet.setZeitraum(notification.getZeitraum());
-
-        notificationRepository.save(newNotification);
 
         return "redirect:/";
     }
@@ -212,7 +185,6 @@ public class HappyBayController {
         model.addAttribute("user", person);
         return "addGeraet";
     }
-
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
                                 @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
@@ -224,7 +196,7 @@ public class HappyBayController {
         }
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
-
+        geraet.setLikes(0);
         geraet.setBesitzer(person.getName());
         geraetRepository.save(geraet);
         return "redirect:/myThings";
@@ -235,10 +207,10 @@ public class HappyBayController {
     @GetMapping("/login")
     public String login(Model model, String error, String logout) {
         if (error != null)
-            model.addAttribute("error", "Your username and password is invalid.");
+            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
 
         if (logout != null)
-            model.addAttribute("message", "You have been logged out successfully.");
+            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
         return "login";
     }
 
@@ -246,11 +218,9 @@ public class HappyBayController {
     public String proPay(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
-        proPayService.saveAccount(person.getUsername());
+        model.addAttribute("person", person);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
-        model.addAttribute("zahl",zahl);
         return "proPay";
     }
 
@@ -265,18 +235,23 @@ public class HappyBayController {
         }
         geraet.setEncode(encodeBild(bilds.get(0)));
         model.addAttribute("encodes",encodes);
-        model.addAttribute("person", principal);
-        model.addAttribute("user", personRepository.findByUsername(person).get());
+        //model.addAttribute("person", principal);
+        model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "geraet";
     }
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
+        Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
+        person.setEncode(encodeBild(person.getFoto()));
+
         Geraet geraet = geraetRepository.findById(id).get();
+        model.addAttribute("user", person);
         model.addAttribute("geraet", geraet);
         return "edit";
     }
+
     @GetMapping("/geraet/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) {
         Geraet geraet = geraetRepository.findById(id).get();
@@ -300,9 +275,8 @@ public class HappyBayController {
     @PostMapping("/notification/refuseRequest/{id}")
     public String notificationRefuseRequest(@PathVariable Long id) {
         notificationRepository.deleteById(id);
-        return "redirect:/user/myRemind";
+        return "redirect:/user/notifications";
     }
-
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id,Principal principal) throws IOException {
         Notification notification=notificationRepository.findById(id).get();
@@ -316,8 +290,9 @@ public class HappyBayController {
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         proPayService.erzeugeReservation(notification.getAnfragePerson(),person.getUsername(),geraet.getKaution());
-        return "redirect:/user/myRemind";
+        return "redirect:/user/notifications";
     }
+
     @PostMapping("/notification/refuseReturn/{id}")
     public String notificationRefuseReturn(@PathVariable Long id) {
         Notification notification=notificationRepository.findById(id).get();
@@ -325,8 +300,8 @@ public class HappyBayController {
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
 
-
-        return "redirect:/user/myRemind";
+        notificationRepository.deleteById(id);
+        return "redirect:/user/notifications";
     }
     @PostMapping("/notification/acceptReturn/{id}")
     public String notificationAcceptReturn(@PathVariable Long id) {
@@ -334,11 +309,12 @@ public class HappyBayController {
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
-        geraet.setReturnStatus("good");
-
+        geraet.setReturnStatus("default");
+        geraet.setMieter(null);
         geraetRepository.save(geraet);
 
-        return "redirect:/user/myRemind";
+        notificationRepository.deleteById(id);
+        return "redirect:/user/notifications";
     }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal){
@@ -347,9 +323,8 @@ public class HappyBayController {
         model.addAttribute("user", person);
         return "changeProfile";
     }
-
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(@RequestParam("file") MultipartFile file,
+    public String chageProfile(Model model, @RequestParam("file") MultipartFile file,
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -360,9 +335,9 @@ public class HappyBayController {
         person.setKontakt(p.getKontakt());
         person.setVorname(p.getVorname());
         person.setAdresse(p.getAdresse());
-        System.out.println(person.getUsername() + ' ' + p.getUsername());
         personRepository.save(person);
-        return "confirmationAdd";
+        model.addAttribute("person", person);
+        return "confirmationOfRegistration";
     }
 
 
@@ -395,33 +370,32 @@ public class HappyBayController {
         String mieterName= person.getName();
         geraet1.setMieter(mieterName);
         geraetRepository.save(geraet1);
-
-
         return "confirmBezahlen";
     }
-    @GetMapping("/erhoeheAmount")
-    public String erhoeheAmount(Model model, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+
+    @PostMapping("/erhoeheAmount")
+    public String erhoeheAmount(Model model, @ModelAttribute("username") String username) throws IOException {
+        Person person = personRepository.findByUsername(username).get();
         model.addAttribute("user", person);
         proPayService.erhoeheAmount(person.getUsername(), 10);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
-        return "proPay";
+        return "redirect:/admin";
     }
-    @GetMapping("/ueberweisen")
-    public String ueberweisen(Model model, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
-        proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
-        proPayService.saveAccount(person.getUsername());
-        Account account = accountRepository.findByAccount(person.getUsername()).get();
-        model.addAttribute("account", account);
-        return "proPay";
-    }
-    @GetMapping("/about")
+
+    //@GetMapping("/ueberweisen")
+    //public String ueberweisen(Model model, Principal principal) throws IOException {
+    //    String name = principal.getName();
+    //    Person person = personRepository.findByUsername(name).get();
+    //    model.addAttribute("user", person);
+    //    proPayService.ueberweisen(person.getUsername(), "ancao100", 10);
+    //    proPayService.saveAccount(person.getUsername());
+    //    Account account = accountRepository.findByAccount(person.getUsername()).get();
+    //    model.addAttribute("account", account);
+    //    return "proPay";
+    //}
+    @GetMapping("/aboutUs")
     public String about(Model model, Principal principal){
         if(principal != null){
             String name = principal.getName();
@@ -429,8 +403,9 @@ public class HappyBayController {
                 model.addAttribute("person", personRepository.findByUsername(name).get());
             }
         }
-        return "about";
+        return "aboutUs";
     }
+
     @GetMapping("/erzeugeReservation")
     public String erzeugeReservation(Model model, Principal principal) throws IOException {
         String name = principal.getName();
@@ -442,4 +417,28 @@ public class HappyBayController {
         model.addAttribute("account", account);
         return "proPay";
     }
+    @GetMapping("/admin")
+    public String adminFunktion(Model model, Principal principal){
+        List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
+        List<Person> personList = personRepository.findAll();
+        for (Person person : personList) {
+            if (!person.getUsername().equals("admin")) {
+                Optional<Account> account = accountRepository.findByAccount(person.getUsername());
+                personenMitAccounts.add(new PersonMitAccount(person, account.get()));
+            }
+        }
+        model.addAttribute("person", personRepository.findByUsername(principal.getName()));
+        model.addAttribute("personenMitAccounts",personenMitAccounts);
+        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus("kaputt");
+        model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
+        return "admin";
+    }
+
+    private String encodeBild(Bild bild){
+        Base64.Encoder encoder = Base64.getEncoder();
+        String encode = encoder.encodeToString(bild.getBild());
+        return encode;
+    }
+
+
 }
