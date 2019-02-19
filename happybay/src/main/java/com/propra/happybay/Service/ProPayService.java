@@ -40,44 +40,32 @@ public class ProPayService {
 
     public void erhoeheAmount(String username, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/" + username);
-        String query = "";
-        query = query + URLEncoder.encode("amount", "UTF-8");
-        query = query + "=";
-        query = query + URLEncoder.encode("" + amount, "UTF-8");
-
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(queryBytes);
-
-        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        erzeugeAmount(amount, url);
 
     }
     public void ueberweisen(String username, String besizer, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
-        String query = "";
-        query = query + URLEncoder.encode("amount", "UTF-8");
-        query = query + "=";
-        query = query + URLEncoder.encode("" + amount, "UTF-8");
-
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(queryBytes);
-
-        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        erzeugeAmount(amount, url);
 
     }
     public void erzeugeReservation(String username, String besitzer, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/reserve/"  + username + "/" + besitzer);
+        erzeugeAmount(amount, url);
+
+    }
+
+    public void releaseReservation(String username, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/release/"  + username);
+        erzeugeAmount(amount, url);
+
+    }
+    public void punishReservation(String username, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
+        erzeugeAmount(amount, url);
+
+    }
+
+    private void erzeugeAmount(double amount, URL url) throws IOException {
         String query = "";
         query = query + URLEncoder.encode("amount", "UTF-8");
         query = query + "=";
@@ -93,7 +81,6 @@ public class ProPayService {
         connection.getOutputStream().write(queryBytes);
 
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-
     }
 
 }

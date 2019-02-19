@@ -182,7 +182,7 @@ public class HappyBayController {
     public String addGeraet(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         return "addGeraet";
     }
     @PostMapping("/addGeraet")
@@ -304,7 +304,7 @@ public class HappyBayController {
         return "redirect:/user/notifications";
     }
     @PostMapping("/notification/acceptReturn/{id}")
-    public String notificationAcceptReturn(@PathVariable Long id) {
+    public String notificationAcceptReturn(@PathVariable Long id) throws IOException {
         Notification notification=notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
@@ -312,7 +312,10 @@ public class HappyBayController {
         geraet.setReturnStatus("default");
         geraet.setMieter(null);
         geraetRepository.save(geraet);
-
+        double amount = notification.getZeitraum()*geraet.getKosten();
+        //bezahlen und Reservierung aufheben
+        proPayService.ueberweisen(notification.getAnfragePerson(),notification.getBesitzer(),amount);
+        proPayService.releaseReservation(notification.getAnfragePerson(),geraet.getKaution());
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
     }
@@ -320,7 +323,7 @@ public class HappyBayController {
     public String changeImg(Model model, Principal principal){
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         return "changeProfile";
     }
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
@@ -376,7 +379,7 @@ public class HappyBayController {
     @PostMapping("/erhoeheAmount")
     public String erhoeheAmount(Model model, @ModelAttribute("username") String username) throws IOException {
         Person person = personRepository.findByUsername(username).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         proPayService.erhoeheAmount(person.getUsername(), 10);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
@@ -410,7 +413,7 @@ public class HappyBayController {
     public String erzeugeReservation(Model model, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         proPayService.erzeugeReservation(person.getUsername(),"ancao100", 4);
         proPayService.saveAccount(person.getUsername());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
@@ -427,9 +430,11 @@ public class HappyBayController {
                 personenMitAccounts.add(new PersonMitAccount(person, account.get()));
             }
         }
-        model.addAttribute("person", personRepository.findByUsername(principal.getName()));
         model.addAttribute("personenMitAccounts",personenMitAccounts);
         List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus("kaputt");
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("person",person);
         model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         return "admin";
     }

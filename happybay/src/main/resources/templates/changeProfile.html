@@ -13,21 +13,21 @@
 
             <label for="vorname">Vorname : </label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="vorname" id="vorname"
-            th:value="${user.getVorname()}"/>
+            th:value="${person.getVorname()}"/>
 
             <label for="nachname">Nachname : </label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="nachname" id="nachname"
-            th:value="${user.getNachname()}"/>
+            th:value="${person.getNachname()}"/>
 
             <label for="kontakt">Kontakt : </label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kontakt" id="kontakt"
-            th:value="${user.getKontakt()}"/>
+            th:value="${person.getKontakt()}"/>
 
             <label for="adresse">Adresse :</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="adresse" id="adresse"
-            th:value="${user.getAdresse()}"/>
+            th:value="${person.getAdresse()}"/>
             <input style="margin-bottom: 10px" type="hidden" class="form-control" name="username" id="username"
-                   th:value="${user.username}"/>
+                   th:value="${person.username}"/>
             <label>Foto Hochladen (Max. 15 MB)</label><br/>
             <input type="file" name="file" accept="image/png, image/jpeg, image/gif, image/jpg"/>
             <br/><br/>

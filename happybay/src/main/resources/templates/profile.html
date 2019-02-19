@@ -59,24 +59,24 @@
             <br>
             <li class="list-inline-item">
                 <a th:href="@{/PersonInfo/Profile/ChangeProfile}">
-                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${user.getEncode()}}" height="100px" width="100px">
+                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${person.getEncode()}}" height="100px" width="100px">
                 </a>
             </li>
             <br>
             <li class="list-inline-item font-weight-bold">Name:</li>
             <li class="list-inline-item"
-                th:text="${user.getVorname()} + ' ' + ${user.getNachname()}"></li><br>
+                th:text="${person.getVorname()} + ' ' + ${person.getNachname()}"></li><br>
             <li class="list-inline-item font-weight-bold">Kontakt:</li>
-            <li class="list-inline-item" th:text="${user.getKontakt()}"></li>
+            <li class="list-inline-item" th:text="${person.getKontakt()}"></li>
             <br>
             <li class="list-inline-item font-weight-bold">Adresse:</li>
-            <li class="list-inline-item" th:text="${user.getAdresse()}"></li>
+            <li class="list-inline-item" th:text="${person.getAdresse()}"></li>
             <br>
             <li class="list-inline-item font-weight-bold">Username:</li>
-            <li class="list-inline-item" th:text="${user.getUsername()}"></li>
+            <li class="list-inline-item" th:text="${person.getUsername()}"></li>
             <br>
             <li class="list-inline-item font-weight-bold">Angemeldet als:</li>
-            <li class="list-inline-item" th:text="${user.getRole()}"></li>
+            <li class="list-inline-item" th:text="${person.getRole()}"></li>
         </ul>
     </div>
 </div>
