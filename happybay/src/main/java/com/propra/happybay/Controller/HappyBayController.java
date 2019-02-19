@@ -2,6 +2,7 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
+import com.propra.happybay.Service.MailService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.aspectj.weaver.ast.Not;
@@ -46,16 +47,40 @@ public class HappyBayController {
 
 
     @GetMapping("/")
-    public String index(Model model, Principal principal){
+    public String index(Model model, Principal principal,@RequestParam(value="key",required = false,defaultValue = "") String key){
         if(principal != null){
             String name = principal.getName();
             if(personRepository.findByUsername(name).isPresent()) {
                 model.addAttribute("person", personRepository.findByUsername(name).get());
+
+                List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
+                List<Geraet> remindRentThings=new ArrayList<>();
+                List<Geraet> overTimeThings=new ArrayList<>();
+                LocalDate deadLine = LocalDate.now().plusDays(3);
+                for(Geraet geraet: rentThings){
+                    if(geraet.getEndzeitpunkt().isBefore(deadLine)||geraet.getEndzeitpunkt().isEqual(deadLine)){
+                        if(LocalDate.now().isAfter(geraet.getEndzeitpunkt())){
+                            overTimeThings.add(geraet);
+                        }else{
+                            remindRentThings.add(geraet);
+                        }
+                    }
+                }
+                model.addAttribute("remindRentThings",remindRentThings);
+                model.addAttribute("overTimeThings",overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAll();
+        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%"+key+"%");
+        System.out.println(key+geraete);
+        //List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if(geraet.getBilder().size()==0){
+                geraet.setBilder(null);
+            }
+            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+
         }
         model.addAttribute("geraete", geraete);
         model.addAttribute("zahl",zahl);
@@ -209,8 +234,6 @@ public class HappyBayController {
         notificationRepository.save(newNotification);
 
         Geraet geraet=geraetRepository.findById(newNotification.getGeraetId()).get();
-        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
-        geraet.setZeitraum(notification.getZeitraum());
 
         notificationRepository.save(newNotification);
 
@@ -344,8 +367,6 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id) throws Exception{
-        Thread thread1 = new Thread("tipsMail");
-        //Thread thread2 = new Thread("accept");
         Notification notification=notificationRepository.findById(id).get();
         String mieter=notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
@@ -360,21 +381,12 @@ public class HappyBayController {
         helper.setSubject("Antragsergebnis");
         sender.send(message);
 
+        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
+        geraet.setEndzeitpunkt(endzeit);
+
 
         if(notification.getZeitraum()>=3){
-            //thread1.sleep((notification.getZeitraum()-3)*24*60*60*1000);
-            MimeMessage message1 = sender.createMimeMessage();
-            //LocalDate localDate = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum()-3);
-            //message1.setSentDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            //message1.setSentDate(new Date().setTime((notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
-            //message1.saveChanges();
 
-            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-            helper1.setTo(person.getKontakt());
-            helper1.setSubject("Rückkehrzeit");
-            helper1.setText("Es sind noch 3 Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück." );
-            //helper1.setSentDate(new Date(notification.getMietezeitPunkt().getTime()+(long)(notification.getZeitraum()-3)*24*60*60*1000));
-            sender.send(message1);
         }
         else{
             MimeMessage message2 = sender.createMimeMessage();

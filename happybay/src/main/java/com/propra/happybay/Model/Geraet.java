@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,17 +15,16 @@ public class Geraet {
     @GeneratedValue
     Long id;
     String titel;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     String beschreibung;
     boolean verfuegbar;
     String besitzer;
-
     String mieter;
-    int zeitraum;
+    //int zeitraum;
     int kosten;
     double kaution;
     String abholort;
-    Date mietezeitpunkt;
+    //Date mietezeitpunkt;
+    LocalDate endzeitpunkt;
     String encode;
     String returnStatus="default";
     @OneToMany(cascade = CascadeType.ALL)

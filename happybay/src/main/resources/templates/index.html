@@ -54,6 +54,16 @@
             </div>
         </div>
     </nav>
+    <div class="card">
+        <div class="card-body" style="text-align: center;background-color:#F7F4E9" th:each="remindRentThing:${remindRentThings}">
+            <img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width: 20px">
+            <a href="/rentThings" style="color:orange;font-weight:bold" th:text="${remindRentThing.getTitel()}+'läuft aus, bitte senden Sie es rechtzeitig zurück.'"></a >
+        </div>
+        <div class="card-body" style="text-align: center;background-color:#F7F4E9" th:each="overTimeThing:${overTimeThings}">
+            <img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width: 20px">
+            <a href="/rentThings" style="color:red;font-weight:bold" th:text="${overTimeThing.getTitel()}+'ist abgelaufen, bitte senden Sie es sofort zurück'"></a >
+        </div>
+    </div>
     <br>
     <div class="container">
         <div class="row justify-content-around">
