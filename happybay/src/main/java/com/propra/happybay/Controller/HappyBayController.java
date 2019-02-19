@@ -72,7 +72,7 @@ public class HappyBayController {
     public String personInfo(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         return "profile";
     }
 

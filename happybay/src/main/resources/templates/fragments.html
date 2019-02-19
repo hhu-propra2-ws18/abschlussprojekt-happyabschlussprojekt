@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:fragment="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HappyBay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
+    <div class="container">
+        <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
+                                              width="100px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/personInfo}"> Anmelden</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/register}"> Registrieren</a>
+                </li>
+                <li sec:authorize="isAuthenticated()"class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}"> Meine Daten</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/proPay}"> Mein ProPay</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/myThings}"> Meine Geräte</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/rentThings}"> Meine Ausleihen</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/notifications}">
+                    <i class="fas fa-bell"></i>
+                        <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item ml-auto">
+                    <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
+                </li>
+            </ul>
+        </div>
+</nav>
+
+</body>
+</html>
