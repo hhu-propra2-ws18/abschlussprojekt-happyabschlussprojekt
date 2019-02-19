@@ -312,12 +312,6 @@ public class HappyBayController {
         return "geraet";
     }
 
-    @GetMapping("/geraet/edit/{id}")
-    public String geraetEdit(@PathVariable Long id, Model model) {
-        Geraet geraet = geraetRepository.findById(id).get();
-        model.addAttribute("geraet", geraet);
-        return "edit";
-    }
     @GetMapping("/geraet/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) throws Exception{
         Geraet geraet = geraetRepository.findById(id).get();
@@ -432,9 +426,11 @@ public class HappyBayController {
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
+        if(!file.isEmpty()){
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            person.setFoto(bild);
+        }
         person.setNachname(p.getNachname());
         person.setKontakt(p.getKontakt());
         person.setVorname(p.getVorname());
@@ -444,6 +440,12 @@ public class HappyBayController {
         return "confirmationAdd";
     }
 
+    @GetMapping("/geraet/edit/{id}")
+    public String geraetEdit(@PathVariable Long id, Model model) {
+        Geraet geraet = geraetRepository.findById(id).get();
+        model.addAttribute("geraet", geraet);
+        return "edit";
+    }
 
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
