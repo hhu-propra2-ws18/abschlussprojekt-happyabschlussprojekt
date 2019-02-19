@@ -12,8 +12,4 @@ public class GeraetMitReservationID {
     private int reservationID;
     private Long geraetID;
 
-    public GeraetMitReservationID(int reservationID, Long geraetID) {
-        this.reservationID = reservationID;
-        this.geraetID = geraetID;
-    }
 }

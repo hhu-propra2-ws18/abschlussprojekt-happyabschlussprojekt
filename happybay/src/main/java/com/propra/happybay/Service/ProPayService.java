@@ -76,9 +76,23 @@ public class ProPayService {
 
     }
 
-    public void releaseReservation(String username, double reservationId) throws IOException {
+    public void releaseReservation(String username, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/release/"  + username);
-        makeQuery(reservationId, url);
+        String query = "";
+        query = query + URLEncoder.encode("reservationId", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + reservationId, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 
     }
     public void punishReservation(String username, double reservationId) throws IOException {
