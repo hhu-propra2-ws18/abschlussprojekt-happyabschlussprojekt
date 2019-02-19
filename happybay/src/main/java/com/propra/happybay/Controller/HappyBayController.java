@@ -30,6 +30,9 @@ public class HappyBayController {
     @Autowired
     private UserValidator userValidator;
     @Autowired
+
+    private TransferRequestRepository transferRequestRepository;
+    @Autowired
     private ProPayService proPayService;
     @Autowired
     private AccountRepository accountRepository;
@@ -94,6 +97,7 @@ public class HappyBayController {
         person.setFoto(bild);
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
+
         personRepository.save(person);
         proPayService.saveAccount(person.getUsername());
         person.setPassword("");
@@ -144,6 +148,8 @@ public class HappyBayController {
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         model.addAttribute("notification", notifications);
+
+
         return "notifications";
     }
 
@@ -181,12 +187,14 @@ public class HappyBayController {
     public String addGeraet(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+
         model.addAttribute("person", person);
+
         return "addGeraet";
     }
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
-                                @RequestParam("files") MultipartFile[] files, Principal person) throws IOException {
+                                @RequestParam("files") MultipartFile[] files, Principal principal) throws IOException {
         List<Bild> bilds = new ArrayList<>();
         for (MultipartFile file : files) {
             Bild bild = new Bild();
@@ -196,7 +204,12 @@ public class HappyBayController {
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
         geraet.setLikes(0);
-        geraet.setBesitzer(person.getName());
+        geraet.setBesitzer(principal.getName());
+
+        Person person=personRepository.findByUsername(principal.getName()).get();
+        int aktionPunkte=person.getAktionPunkte();
+        person.setAktionPunkte(aktionPunkte+10);
+
         geraetRepository.save(geraet);
         return "redirect:/myThings";
     }
@@ -240,7 +253,13 @@ public class HappyBayController {
         model.addAttribute("geraet", geraet);
         return "geraet";
     }
-
+    @GetMapping("/user/BesitzerInfo/{id}")
+    public String besitzerInfo(@PathVariable Long id, Model model){
+        Geraet geraet=geraetRepository.findById(id).get();
+        Person besitzer=personRepository.findByUsername(geraet.getBesitzer()).get();
+        model.addAttribute("person",besitzer);
+        return "besitzerInfo";
+    }
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
@@ -280,18 +299,32 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id,Principal principal) throws IOException {
+
         Notification notification = notificationRepository.findById(id).get();
         String mieter = notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
         geraetRepository.save(geraet);
+
+        TransferRequest transferRequest =new TransferRequest();
+        transferRequest.setAmount(geraet.getKosten());
+        transferRequest.setAnfragePerson(mieter);
+        transferRequest.setBesitzer(principal.getName());
+        transferRequest.setKaution(geraet.getKaution());
+        transferRequestRepository.save(transferRequest);
+        System.out.println(transferRequest);
+        System.out.println("############################");
+
         notificationRepository.deleteById(id);
         int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
         GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID();
         geraetMitReservationID.setGeraetID(geraet.getId());
         geraetMitReservationID.setReservationID(reservationId);
         geraetMitReservationIDRepository.save(geraetMitReservationID);
+
+
+
         return "redirect:/user/notifications";
     }
 
@@ -433,7 +466,13 @@ public class HappyBayController {
         model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         return "admin";
     }
-
+    @GetMapping("/admin/notifications")
+    public String adminNotifications(Model model){
+        List<TransferRequest> transferRequestList=transferRequestRepository.findAll();
+        model.addAttribute("transferRequestList",transferRequestList);
+        System.out.println(transferRequestList);
+        return "adminNotifications";
+    }
     @GetMapping("/geraet/addLikes/{id}")
     public String like(@PathVariable Long id) {
         Geraet geraet = geraetRepository.findById(id).get();

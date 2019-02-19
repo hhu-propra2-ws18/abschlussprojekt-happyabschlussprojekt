@@ -23,7 +23,7 @@ public class Person {
     private String role;
     private String color;
     private int anzahlNotifications = 0;
-
+    private int aktionPunkte=0;
     @OneToOne(cascade = {CascadeType.ALL})
     private Bild foto;
 

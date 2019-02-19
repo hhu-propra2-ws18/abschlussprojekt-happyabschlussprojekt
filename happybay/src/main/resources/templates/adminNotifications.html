@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+
+
+<body>
+
+<div class="container">
+    <div class="row">
+        <div th:each="myThing: ${transferRequestList}" class="col-sm-3">
+            <div class="clearfix" style="margin-bottom: 20px;">
+                <div class="card" style="padding-top: 40px;padding-bottom: 40px">
+                    <ul class="list-inline card-text" >
+                        <span class="badge badge-warning">Neue Überweisungsanfrage</span>
+                    </ul>
+
+                    <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+                    <div class="card-body text-left">
+                        <ul class="list-inline card-text">
+                            <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
+                            <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
+                        </ul>
+
+                        <div>
+                            <form th:action="@{/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
+                                <button type="submit">Ablehnen Return</button>
+
+                            </form>
+                            <!--Here Mach API BEZAHLEN-->
+                            <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
+                                <button type="submit">Annehmen Return</button>
+
+                            </form>
+                            <!-- Button trigger modal -->
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
