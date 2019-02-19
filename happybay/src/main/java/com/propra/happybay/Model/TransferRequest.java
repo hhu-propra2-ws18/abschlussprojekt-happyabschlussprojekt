@@ -12,13 +12,9 @@ public class TransferRequest {
     @Id
     @GeneratedValue
     Long id;
-    Long geraetId;
-
-    String besitzer;
-    String anfragePerson;
-
+    String username;
     int amount;
-    double kaution;
+
 
 }
 

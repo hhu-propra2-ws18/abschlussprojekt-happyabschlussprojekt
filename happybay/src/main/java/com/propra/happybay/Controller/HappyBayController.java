@@ -149,6 +149,8 @@ public class HappyBayController {
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         model.addAttribute("notification", notifications);
 
+        List<TransferRequest> transferRequestList=transferRequestRepository.findAll();
+        model.addAttribute("transferRequestList",transferRequestList);
 
         return "notifications";
     }
@@ -234,9 +236,15 @@ public class HappyBayController {
         model.addAttribute("person", person);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
+        model.addAttribute("transferRequest",new TransferRequest());
         return "proPay";
     }
-
+    @PostMapping("/propay")
+    public String propay(Principal principal, @ModelAttribute("transferRequest") TransferRequest transferRequest){
+        transferRequest.setUsername(principal.getName());
+        transferRequestRepository.save(transferRequest);
+        return "redirect:/";
+    }
     @GetMapping("/geraet/{id}")
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
@@ -307,14 +315,7 @@ public class HappyBayController {
         geraet.setMieter(mieter);
         geraetRepository.save(geraet);
 
-        TransferRequest transferRequest =new TransferRequest();
-        transferRequest.setAmount(geraet.getKosten());
-        transferRequest.setAnfragePerson(mieter);
-        transferRequest.setBesitzer(principal.getName());
-        transferRequest.setKaution(geraet.getKaution());
-        transferRequestRepository.save(transferRequest);
-        System.out.println(transferRequest);
-        System.out.println("############################");
+
 
         notificationRepository.deleteById(id);
         int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
