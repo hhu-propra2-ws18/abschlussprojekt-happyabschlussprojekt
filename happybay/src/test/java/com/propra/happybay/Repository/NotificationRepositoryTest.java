@@ -30,11 +30,11 @@ public class NotificationRepositoryTest {
         List<Bild> bilds = new ArrayList<>();
         bilds.add(b1);
         Geraet g1 = new Geraet("a1","new geraet",true,"anton","tony",100,100,
-                "unistr.1",new Date(12,12,12),"aa",bilds);
+                100,"unistr.1",new Date(12,12,12),"aa","rr",bilds);
 
 
-        Notification n1 = new Notification(g1.getId(),"n1","tony",
-                new Date(12,12,12),22);
+        Notification n1 = new Notification(g1.getId(),"n1","tony","anton"
+                ,new Date(12,12,12),22);
         repo.save(n1);
         List<Notification> notifications = repo.findByGeraetId(g1.getId());
 

@@ -15,9 +15,19 @@ public class Notification {
     Long geraetId;
     String type;
     String message;
+
+
     String anfragePerson;
     Date mietezeitPunkt;
     int zeitraum;
 
+    public Notification(Long geraetId, String type, String message, String anfragePerson, Date mietezeitPunkt, int zeitraum) {
+        this.geraetId = geraetId;
+        this.type = type;
+        this.message = message;
+        this.anfragePerson = anfragePerson;
+        this.mietezeitPunkt = mietezeitPunkt;
+        this.zeitraum = zeitraum;
+    }
 }
 

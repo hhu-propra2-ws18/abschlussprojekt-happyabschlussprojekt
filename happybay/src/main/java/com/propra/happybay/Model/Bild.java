@@ -12,10 +12,18 @@ public class Bild {
     @GeneratedValue
     Long id;
 
+
+
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name="gerat_bilder", columnDefinition="longblob", nullable=true)
     private byte[] bild;
 
+    public Bild(byte[] bild) {
+        this.bild = bild;
+    }
 
+    public Bild() {
+    }
 }

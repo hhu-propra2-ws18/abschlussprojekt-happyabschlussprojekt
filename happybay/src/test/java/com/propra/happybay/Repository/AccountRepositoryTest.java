@@ -2,7 +2,7 @@ package com.propra.happybay.Repository;
 
 import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Reservation;
-import lombok.Data;
+import lombok.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,9 @@ public class AccountRepositoryTest {
     @Test
     public void testAccountFindByAccount() {
 
-        Reservation r1 = new Reservation(30.0);
+
+
+        Reservation r1 = new Reservation(1L,30.0);
         List<Reservation> reservations = new ArrayList<>();
         reservations.add(r1);
 

@@ -28,7 +28,7 @@ public class GeraetRepositoryTest {
         bilds.add(b1);
 
         Geraet g1 = new Geraet("a1","new geraet",true,"anton","tony",100,100,
-                "unistr.1",new Date(12,12,12),"aa",bilds);
+                100,"unistr.1",new Date(12,12,12),"aa","rr",bilds);
 
         repo.save(g1);
 
@@ -45,7 +45,7 @@ public class GeraetRepositoryTest {
         bilds.add(b1);
 
         Geraet g1 = new Geraet("a1","new geraet",true,"anton","tony",100,100,
-                "unistr.1",new Date(12,12,12),"aa",bilds);
+                100, "unistr.1",new Date(12,12,12),"aa","rr",bilds);
 
         repo.save(g1);
 
@@ -63,7 +63,7 @@ public class GeraetRepositoryTest {
         bilds.add(b1);
 
         Geraet g1 = new Geraet("a1","new geraet",true,"anton","tony",100,100,
-                "unistr.1",new Date(12,12,12),"aa",bilds);
+                100,"unistr.1",new Date(12,12,12),"aa","rr",bilds);
 
         repo.save(g1);
 
@@ -79,7 +79,7 @@ public class GeraetRepositoryTest {
         bilds.add(b1);
 
         Geraet g1 = new Geraet("a1","new geraet",true,"anton","tony",100,100,
-                "unistr.1",new Date(12,12,12),"aa",bilds);
+                100,"unistr.1",new Date(12,12,12),"aa","rr",bilds);
 
         repo.save(g1);
 
