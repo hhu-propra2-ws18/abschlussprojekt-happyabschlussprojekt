@@ -1,10 +1,7 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Repository.AccountRepository;
-import com.propra.happybay.Repository.GeraetRepository;
-import com.propra.happybay.Repository.NotificationRepository;
-import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,8 @@ public class HappyBayController {
     private AccountRepository accountRepository;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private GeraetMitReservationIDRepository geraetMitReservationIDRepository;
 
 
     @GetMapping("/")
@@ -218,6 +217,7 @@ public class HappyBayController {
     public String proPay(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        proPayService.saveAccount(person.getUsername());
         model.addAttribute("person", person);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
@@ -259,10 +259,11 @@ public class HappyBayController {
         geraet.setReturnStatus("waiting");
         geraetRepository.save(geraet);
 
-        Notification newNotification=new Notification();
+        Notification newNotification = new Notification();
         newNotification.setType("return");
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
+        newNotification.setBesitzer(geraet.getBesitzer());
         notificationRepository.save(newNotification);
 
         return "redirect:/rentThings";
@@ -279,17 +280,16 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id,Principal principal) throws IOException {
-        Notification notification=notificationRepository.findById(id).get();
-        String mieter=notification.getAnfragePerson();
+        Notification notification = notificationRepository.findById(id).get();
+        String mieter = notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
-
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
-        proPayService.erzeugeReservation(notification.getAnfragePerson(),person.getUsername(),geraet.getKaution());
+        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
+        GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID(reservationId,geraet.getId());
+        geraetMitReservationIDRepository.save(geraetMitReservationID);
         return "redirect:/user/notifications";
     }
 
@@ -305,7 +305,7 @@ public class HappyBayController {
     }
     @PostMapping("/notification/acceptReturn/{id}")
     public String notificationAcceptReturn(@PathVariable Long id) throws IOException {
-        Notification notification=notificationRepository.findById(id).get();
+        Notification notification = notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
@@ -314,8 +314,10 @@ public class HappyBayController {
         geraetRepository.save(geraet);
         double amount = notification.getZeitraum()*geraet.getKosten();
         //bezahlen und Reservierung aufheben
+        //int index =
         proPayService.ueberweisen(notification.getAnfragePerson(),notification.getBesitzer(),amount);
-        proPayService.releaseReservation(notification.getAnfragePerson(),geraet.getKaution());
+        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
+        //proPayService.releaseReservation(notification.getAnfragePerson(),);
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
     }
@@ -409,17 +411,6 @@ public class HappyBayController {
         return "aboutUs";
     }
 
-    @GetMapping("/erzeugeReservation")
-    public String erzeugeReservation(Model model, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        model.addAttribute("person", person);
-        proPayService.erzeugeReservation(person.getUsername(),"ancao100", 4);
-        proPayService.saveAccount(person.getUsername());
-        Account account = accountRepository.findByAccount(person.getUsername()).get();
-        model.addAttribute("account", account);
-        return "proPay";
-    }
     @GetMapping("/admin")
     public String adminFunktion(Model model, Principal principal){
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
