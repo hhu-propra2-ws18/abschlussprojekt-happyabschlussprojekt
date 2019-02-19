@@ -35,18 +35,18 @@
         <label th:text="'Beschreibung: ' + ${geraet.getBeschreibung()}"></label><br/>
         <label th:text="'Miete: ' + ${geraet.getKosten()}+' €/Tag'" style="color: blue"></label><br/>
         <label th:text="'Kaution: '+${geraet.getKaution()}+' €'" style="color: blue"></label>
-        <div th:if="${geraet.getBesitzer()!= person.username}">
+        <div th:if="${(geraet.getBesitzer()!= person.username)&&geraet.isVerfuegbar()}">
             <form th:action="@{'/user/anfragen/' +${geraet.getId()}}">
                 <button class="btn btn-primary" type="submit">Anfragen</button>
             </form>
-            <form th:action="@{'/user/BesitzerInfo/' +${geraet.getId()}}">
-                <button class="btn btn-primary" type="submit">
-                    Besitzer:
-                    <p th:text="${geraet.getBesitzer()}">
-                    </p>
-                </button>
-            </form>
         </div>
+        <form th:action="@{'/user/BesitzerInfo/' +${geraet.getId()}}">
+            <button class="btn btn-primary" type="submit">
+                Besitzer:
+                <p th:text="${geraet.getBesitzer()}">
+                </p>
+            </button>
+        </form>
     </div>
 </div>
 </body>
