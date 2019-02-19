@@ -9,6 +9,7 @@ import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +44,8 @@ public class HappyBayController {
     private NotificationRepository notificationRepository;
     @Autowired
     private JavaMailSender sender;
+    @Autowired
+    private MailService mailService;
 
 
 
@@ -181,9 +184,12 @@ public class HappyBayController {
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
-        List<Geraet> geraete=geraetRepository.findAllByMieter(mieterName);
+        List<Geraet> geraetes=geraetRepository.findAllByMieter(mieterName);
+        for (Geraet geraet: geraetes){
+            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+        }
         model.addAttribute("user",person);
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetes);
         model.addAttribute("zahl",zahl);
         return "rentThings";
     }
@@ -196,16 +202,15 @@ public class HappyBayController {
         for(Geraet geraet:geraetList){
             List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
             for(Notification notification:notificationList){
+                    notification.setEncode(encodeBild(geraet.getBilder().get(0)));
                     newNotification.add(notification);
             }
 
         }
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        model.addAttribute("");
         model.addAttribute("user", person);
-
-
-
         model.addAttribute("notification",newNotification);
         return "myRemind";
     }
@@ -231,10 +236,10 @@ public class HappyBayController {
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
         newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
-        notificationRepository.save(newNotification);
 
         Geraet geraet=geraetRepository.findById(newNotification.getGeraetId()).get();
-
+        newNotification.setEncode(geraet.getEncode());
+        geraet.setReturnStatus("default");
         notificationRepository.save(newNotification);
 
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
@@ -322,8 +327,7 @@ public class HappyBayController {
     @GetMapping("/geraet/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) throws Exception{
         Geraet geraet = geraetRepository.findById(id).get();
-//        geraet.setVerfuegbar(true);
-//        geraet.setMieter(null);
+        geraet.setZeitraum(-1);
         geraet.setReturnStatus("waiting");
         geraetRepository.save(geraet);
 
@@ -365,6 +369,7 @@ public class HappyBayController {
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
+
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id) throws Exception{
         Notification notification=notificationRepository.findById(id).get();
@@ -372,6 +377,7 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
+        geraet.setZeitraum(notification.getZeitraum());
 
         Person person = personRepository.findByUsername(mieter).get();
         MimeMessage message = sender.createMimeMessage();
@@ -383,23 +389,12 @@ public class HappyBayController {
 
         LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
         geraet.setEndzeitpunkt(endzeit);
-
-
-        if(notification.getZeitraum()>=3){
-
-        }
-        else{
-            MimeMessage message2 = sender.createMimeMessage();
-            MimeMessageHelper helper2 = new MimeMessageHelper(message2);
-            helper2.setTo(person.getKontakt());
-            helper2.setSubject("Rückkehrzeit");
-            helper2.setText("Es sind noch "+ notification.getZeitraum() + " Tage für Ihre Vermietung(" + geraet.getTitel()+ ") übrig, bitte senden Sie sie rechtzeitig zurück.");
-            sender.send(message2);
-        }
         geraetRepository.save(geraet);
+
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
     }
+
     @PostMapping("/notification/refuseReturn/{id}")
     public String notificationRefuseReturn(@PathVariable Long id) throws Exception{
         Notification notification=notificationRepository.findById(id).get();
@@ -421,9 +416,6 @@ public class HappyBayController {
         Notification notification=notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        geraet.setVerfuegbar(true);
-        geraet.setReturnStatus("good");
-        geraetRepository.save(geraet);
 
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         MimeMessage message = sender.createMimeMessage();
@@ -432,6 +424,11 @@ public class HappyBayController {
         helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
         helper.setSubject("Ergebnis zurückgeben");
         sender.send(message);
+
+        geraet.setMieter(null);
+        geraet.setVerfuegbar(true);
+        geraet.setReturnStatus("good");
+        geraetRepository.save(geraet);
 
         return "redirect:/user/myRemind";
     }
