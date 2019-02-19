@@ -1,8 +1,8 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
-import com.propra.happybay.Model.Reservation;
 import com.propra.happybay.Repository.AccountRepository;
+import com.propra.happybay.Repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,8 @@ public class ProPayService {
 
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    PersonRepository personRepository;
 
     public void saveAccount(String username) {
         Account account = getEntity(username, Account.class);
@@ -40,32 +42,16 @@ public class ProPayService {
 
     public void erhoeheAmount(String username, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/" + username);
-        erzeugeAmount(amount, url);
+        makeQuery(amount, url);
 
     }
     public void ueberweisen(String username, String besizer, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
-        erzeugeAmount(amount, url);
+        makeQuery(amount, url);
 
     }
-    public void erzeugeReservation(String username, String besitzer, double amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/reserve/"  + username + "/" + besitzer);
-        erzeugeAmount(amount, url);
-
-    }
-
-    public void releaseReservation(String username, double amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/release/"  + username);
-        erzeugeAmount(amount, url);
-
-    }
-    public void punishReservation(String username, double amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
-        erzeugeAmount(amount, url);
-
-    }
-
-    private void erzeugeAmount(double amount, URL url) throws IOException {
+    public int erzeugeReservation(String mieter, String besitzer, double amount) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/reserve/"  + mieter + "/" + besitzer);
         String query = "";
         query = query + URLEncoder.encode("amount", "UTF-8");
         query = query + "=";
@@ -81,6 +67,43 @@ public class ProPayService {
         connection.getOutputStream().write(queryBytes);
 
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        System.out.println("########################");
+
+        String response = ((BufferedReader) reader).readLine();
+        String[] lines = response.split(":");
+        String[] lines2 = lines[1].split(",");
+        return Integer.parseInt(lines2[0]);
+
+    }
+
+    public void releaseReservation(String username, double reservationId) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/release/"  + username);
+        makeQuery(reservationId, url);
+
+    }
+    public void punishReservation(String username, double reservationId) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
+        makeQuery(reservationId, url);
+
+    }
+
+    private void makeQuery(double amount, URL url) throws IOException {
+        String query = "";
+        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + "=";
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
+
+        byte[] queryBytes = query.toString().getBytes("UTF-8");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(queryBytes);
+
+        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+
     }
 
 }

@@ -1,7 +1,6 @@
 package com.propra.happybay.Model;
 
 import lombok.Data;
-import org.hibernate.annotations.Cascade;
 
 
 import javax.persistence.*;
@@ -26,7 +25,7 @@ public class Person {
     private int anzahlNotifications = 0;
 
     @OneToOne(cascade = {CascadeType.ALL})
-    Bild foto;
+    private Bild foto;
 
-    String encode;
+    private String encode;
 }
