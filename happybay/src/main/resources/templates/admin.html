@@ -28,7 +28,7 @@
         </tbody>
     </table>
     <br/>
-    <p>--------------------------------------</p>
+    <p>------------------------------------------------------------</p>
     <br/>
     <table class="table">
         <thead>
@@ -47,7 +47,12 @@
             <td th:text="${geraetMitKonflikt.mieter}">Mieter</td>
             <td></td>
             <td></td>
-            <td></td>
+            <td><form action="/punishAccount" method="post">
+                <input type="hidden" name="username" th:value="${geraetMitKonflikt.mieter}">
+                <input type="hidden" name="geraetId" th:value="${geraetMitKonflikt.id}">
+                <br>
+                <input type="submit" value="Nehme Kaution">
+            </form></td>
         </tr>
         </tbody>
     </table>

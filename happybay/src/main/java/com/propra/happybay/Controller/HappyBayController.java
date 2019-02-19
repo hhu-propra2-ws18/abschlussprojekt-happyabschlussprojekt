@@ -291,6 +291,7 @@ public class HappyBayController {
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         newNotification.setBesitzer(geraet.getBesitzer());
+        newNotification.setZeitraum(geraet.getZeitraum());
         notificationRepository.save(newNotification);
 
         return "redirect:/rentThings";
@@ -313,6 +314,7 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
+        geraet.setZeitraum(notification.getZeitraum());
         geraetRepository.save(geraet);
 
 
@@ -348,10 +350,10 @@ public class HappyBayController {
         geraet.setReturnStatus("default");
         geraet.setMieter(null);
         geraetRepository.save(geraet);
-        double amount = notification.getZeitraum()*geraet.getKosten();
-        //bezahlen und Reservierung aufheben
-        //int index =
-        proPayService.ueberweisen(notification.getAnfragePerson(),notification.getBesitzer(),amount);
+        double amount = geraet.getZeitraum()*geraet.getKosten();
+        System.out.println(amount);
+        System.out.println("############################");
+        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), amount);
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         System.out.println(geraetMitReservationID.getReservationID());
         System.out.println("############################");
@@ -422,6 +424,19 @@ public class HappyBayController {
         model.addAttribute("person", person);
         proPayService.erhoeheAmount(person.getUsername(), 10);
         proPayService.saveAccount(person.getUsername());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "redirect:/admin";
+    }
+    @PostMapping("/punishAccount")
+    public String punishAccount(Model model, @ModelAttribute("username") String username,@ModelAttribute("geraetId") Long geraetId) throws IOException {
+        Person person = personRepository.findByUsername(username).get();
+        model.addAttribute("person", person);
+        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
+        proPayService.punishReservation(person.getUsername(), geraetMitReservationID.getReservationID());
+        Geraet geraet = geraetRepository.findById(geraetMitReservationID.getGeraetID()).get();
+        proPayService.saveAccount(geraet.getBesitzer());
+        proPayService.saveAccount(geraet.getMieter());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
         return "redirect:/admin";

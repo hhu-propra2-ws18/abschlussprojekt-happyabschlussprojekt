@@ -25,7 +25,7 @@
     <form th:action="@{/propay}"  method="post" >
 
         <label for="amount">betrag:</label>
-        <input style="margin-bottom: 10px" type="text" class="form-control" name="amount" id="amount" th:value="${transferRequest.getAmount()}"/>
+        <input style="margin-bottom: 10px" type="number" class="form-control" name="amount" id="amount" th:value="${transferRequest.getAmount()}"/>
 
         <button type="submit" class="btn btn-primary">Save</button>
     </form>

@@ -42,12 +42,12 @@ public class ProPayService {
 
     public void erhoeheAmount(String username, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/" + username);
-        makeQuery(amount, url);
+        makeQuery(amount, "amount", url);
 
     }
     public void ueberweisen(String username, String besizer, double amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
-        makeQuery(amount, url);
+        makeQuery(amount, "amount", url);
 
     }
     public int erzeugeReservation(String mieter, String besitzer, double amount) throws IOException {
@@ -78,10 +78,20 @@ public class ProPayService {
 
     public void releaseReservation(String username, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/release/"  + username);
+        makeQueryPunish(reservationId, "reservationId",url);
+
+    }
+    public void punishReservation(String username, int reservationId) throws IOException {
+        URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
+        makeQueryPunish(reservationId, "reservationId",url);
+
+    }
+
+    private void makeQuery(double amount, String amountString, URL url) throws IOException {
         String query = "";
-        query = query + URLEncoder.encode("reservationId", "UTF-8");
+        query = query + URLEncoder.encode(amountString, "UTF-8");
         query = query + "=";
-        query = query + URLEncoder.encode("" + reservationId, "UTF-8");
+        query = query + URLEncoder.encode("" + amount, "UTF-8");
 
         byte[] queryBytes = query.toString().getBytes("UTF-8");
 
@@ -95,15 +105,9 @@ public class ProPayService {
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 
     }
-    public void punishReservation(String username, double reservationId) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
-        makeQuery(reservationId, url);
-
-    }
-
-    private void makeQuery(double amount, URL url) throws IOException {
+    private void makeQueryPunish(int amount, String amountString, URL url) throws IOException {
         String query = "";
-        query = query + URLEncoder.encode("amount", "UTF-8");
+        query = query + URLEncoder.encode(amountString, "UTF-8");
         query = query + "=";
         query = query + URLEncoder.encode("" + amount, "UTF-8");
 
