@@ -288,7 +288,9 @@ public class HappyBayController {
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
-        GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID(reservationId,geraet.getId());
+        GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID();
+        geraetMitReservationID.setGeraetID(geraet.getId());
+        geraetMitReservationID.setReservationID(reservationId);
         geraetMitReservationIDRepository.save(geraetMitReservationID);
         return "redirect:/user/notifications";
     }
@@ -317,7 +319,9 @@ public class HappyBayController {
         //int index =
         proPayService.ueberweisen(notification.getAnfragePerson(),notification.getBesitzer(),amount);
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
-        //proPayService.releaseReservation(notification.getAnfragePerson(),);
+        System.out.println(geraetMitReservationID.getReservationID());
+        System.out.println("############################");
+        proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
     }
