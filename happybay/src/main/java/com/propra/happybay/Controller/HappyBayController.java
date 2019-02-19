@@ -247,7 +247,7 @@ public class HappyBayController {
         person.setEncode(encodeBild(person.getFoto()));
 
         Geraet geraet = geraetRepository.findById(id).get();
-        model.addAttribute("user", person);
+        model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
         return "edit";
     }
@@ -437,6 +437,14 @@ public class HappyBayController {
         model.addAttribute("person",person);
         model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         return "admin";
+    }
+
+    @GetMapping("/geraet/addLikes/{id}")
+    public String like(@PathVariable Long id) {
+        Geraet geraet = geraetRepository.findById(id).get();
+        geraet.setLikes(geraet.getLikes() + 1);
+        geraetRepository.save(geraet);
+        return "redirect:/";
     }
 
     private String encodeBild(Bild bild){
