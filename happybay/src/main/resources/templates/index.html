@@ -48,12 +48,22 @@
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="key">
                     <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
         </div>
     </nav>
+
+    <div class="card">
+        <div class="card-body" style="text-align: center;background-color: orange" th:each="remindRentThing:${remindRentThings}">
+            <p th:text="${remindRentThing.getTitel()}+'läuft aus, bitte senden Sie es rechtzeitig zurück.'"></p>
+        </div>
+        <div class="card-body" style="text-align: center;background-color: red" th:each="overTimeThing:${overTimeThings}">
+            <p th:text="${overTimeThing.getTitel()}+'ist abgelaufen, bitte senden Sie es sofort zurück'"></p>
+        </div>
+    </div>
+
     <br>
     <div class="container">
         <div class="row justify-content-around">

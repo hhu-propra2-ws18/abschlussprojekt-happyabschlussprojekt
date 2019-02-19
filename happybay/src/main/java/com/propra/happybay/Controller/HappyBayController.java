@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -45,15 +46,49 @@ public class HappyBayController {
 
 
     @GetMapping("/")
-    public String index(Model model, Principal principal){
+    public String index(Model model, Principal principal,@RequestParam(value="key",required = false,defaultValue = "") String key){
         if(principal != null){
             String name = principal.getName();
             if(personRepository.findByUsername(name).isPresent()) {
                 model.addAttribute("person", personRepository.findByUsername(name).get());
+
+                List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
+                List<Geraet> remindRentThings=new ArrayList<>();
+                List<Geraet> overTimeThings=new ArrayList<>();
+                LocalDate deadLine = LocalDate.now().plusDays(3);
+                for(Geraet geraet: rentThings){
+                    if(geraet.getEndzeitpunkt().isBefore(deadLine)||geraet.getEndzeitpunkt().isEqual(deadLine)){
+                        if(LocalDate.now().isAfter(geraet.getEndzeitpunkt())){
+                            overTimeThings.add(geraet);
+                        }else{
+                            remindRentThings.add(geraet);
+                        }
+                    }
+                }
+                model.addAttribute("remindRentThings",remindRentThings);
+                model.addAttribute("overTimeThings",overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAll();
+        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%"+key+"%");
+        System.out.println(key+geraete);
+        //List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
+            if(geraet.getBilder().size()==0){
+                geraet.setBilder(null);
+            }
+            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+        }
+        model.addAttribute("geraete", geraete);
+        model.addAttribute("zahl",zahl);
+        return "index";
+    }
+
+    private List<Geraet> returnSearchInIndex(String key,Model model){
+        List<Geraet> geraetes = geraetRepository.findAllByTitelLike("%"+key+"%");
+        //List<Geraet> geraete = geraetRepository.findAll();
+        for (Geraet geraet: geraetes){
             if(geraet.getBilder().size()==0){
                 geraet.setBilder(null);
             }
@@ -62,9 +97,7 @@ public class HappyBayController {
             }
 
         }
-        model.addAttribute("geraete", geraete);
-        model.addAttribute("zahl",zahl);
-        return "index";
+        return geraetes;
     }
 
     @GetMapping("/addUser")
@@ -126,15 +159,21 @@ public class HappyBayController {
 
 
     @GetMapping("/profile")
-    public String profile(Model model, Principal principal) {
+    public String profile(Model model, Principal principal, @RequestParam(value="key",required = false,defaultValue = "") String key) {
 
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        if(person.getFoto()!=null){person.setEncode(encodeBild(person.getFoto())); }
+        System.out.println("swfwefw"+key);
+        if(key.equals("")) {
+            String name = principal.getName();
+            Person person = personRepository.findByUsername(name).get();
+            if(person.getFoto()!=null){person.setEncode(encodeBild(person.getFoto())); }
 
-        model.addAttribute("zahl",zahl);
-        model.addAttribute("user", person);
-        return "profile";
+            model.addAttribute("zahl",zahl);
+            model.addAttribute("user", person);
+            return "profile";
+        }else {
+            return "redirect:/?key="+key;
+        }
+
     }
 
     @GetMapping("/myThings")
@@ -222,8 +261,8 @@ public class HappyBayController {
         notificationRepository.save(newNotification);
 
         Geraet geraet=geraetRepository.findById(newNotification.getGeraetId()).get();
-        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
-        geraet.setZeitraum(notification.getZeitraum());
+//        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
+//        geraet.setZeitraum(notification.getZeitraum());
 
         notificationRepository.save(newNotification);
 
@@ -365,6 +404,8 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
+        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
+        geraet.setEndzeitpunkt(endzeit);
 
         Person person = personRepository.findByUsername(mieter).get();
         MimeMessage message = sender.createMimeMessage();

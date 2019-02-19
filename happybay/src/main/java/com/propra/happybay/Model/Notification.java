@@ -19,5 +19,6 @@ public class Notification {
     Date mietezeitPunkt;
     int zeitraum;
 
+
 }
 

@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,14 +21,15 @@ public class Geraet {
     String besitzer;
 
     String mieter;
-    int zeitraum;
+    //int zeitraum;
     int kosten;
     double kaution;
     String abholort;
-    Date mietezeitpunkt;
+    LocalDate endzeitpunkt;
     String encode;
     String returnStatus="default";
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder=null;
+    int[] genre;
 }
 
