@@ -8,6 +8,7 @@ import java.util.List;
 public interface GeraetRepository extends CrudRepository<Geraet,Long> {
     List<Geraet> findAll();
     List<Geraet> findAllByBesitzer(String username);
+    List<Geraet> findAllByTitelLike(String key);
     void deleteById(Long id);
     List<Geraet> findAllByTitelLike(String key);
     List<Geraet> findAllByMieter(String mieterName);
