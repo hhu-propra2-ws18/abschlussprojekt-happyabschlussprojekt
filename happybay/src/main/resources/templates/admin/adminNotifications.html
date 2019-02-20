@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-
-
-
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/fragmentsAdmin.html :: header"></head>
 <body>
+<nav th:replace="admin/fragmentsAdmin.html :: topSiteBarAndMenu"></nav>
+<br/>
 
 <div class="container">
     <div class="row">
@@ -30,12 +26,10 @@
                                 <button type="submit">Ablehnen Return</button>
 
                             </form>
-                            <!--Here Mach API BEZAHLEN-->
                             <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
                                 <button type="submit">Annehmen Return</button>
 
                             </form>
-                            <!-- Button trigger modal -->
                         </div>
 
 

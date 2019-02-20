@@ -7,9 +7,9 @@
     .rating {
         display: inline-block;
         position: relative;
-        height: 50px;
-        line-height: 50px;
-        font-size: 50px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 30px;
     }
 
     .rating label {
@@ -72,66 +72,67 @@
 </style>
 <body>
 <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-<form class="rating">
-    <label>
-        <input type="radio" name="stars" value="1" />
-        <span class="icon">★</span>
-    </label>
-    <label>
-        <input type="radio" name="stars" value="2" />
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-    </label>
-    <label>
-        <input type="radio" name="stars" value="3" />
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-    </label>
-    <label>
-        <input type="radio" name="stars" value="4" />
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-    </label>
-    <label>
-        <input type="radio" name="stars" value="5" />
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-    </label>
-</form>
 
 <div class="card-group">
     <div th:each="rentThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
-            <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
+            <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
+                <img class="card-img-top">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">TITEL: </li>
+                        <li class="list-inline-item font-weight-bold">Titel: </li>
                         <li class="list-inline-item"  th:text="${rentThing.getTitel()}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >BESCHREIBUNG: </li>
+                        <li class="list-inline-item font-weight-bold" >Beschreibung: </li>
                         <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.beschreibung,100)}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >KOST: </li>
+                        <li class="list-inline-item font-weight-bold" >Kost: </li>
                         <li class="list-inline-item" th:text="${rentThing.getKosten() + '€'}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >KAUTION: </li>
+                        <li class="list-inline-item font-weight-bold" >Kaution: </li>
                         <li class="list-inline-item" th:text="${rentThing.getKaution() + '€'}"></li>
                     </ul>
 
-                    <a th:href="@{/geraet/{id}(id=${rentThing.getId()})}" >Details</a>
-                    <a th:href="@{/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a>
-                    <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Artikel war kaputt geworden !!!</a>
-                    <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wurde bearbeitet</a>
+                    <a th:href="@{/user/geraet/{id}(id=${rentThing.getId()})}" >Details</a><br/>
+                    <a onclick="openForm()" th:if="${rentThing.getReturnStatus()=='default'}">Artikel bewerten</a><br/>
+                    <form class="rating" th:if="${rentThing.getReturnStatus()=='default'}" id="ratingId" style="display: block">
+                        <label>
+                            <input type="radio" name="stars" value="1" />
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="2" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="3" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="4" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="5" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                    </form><br/>
+                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a><br/>
+                    <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Besitzer hat Konflikt ausgelöst.</a>
+                    <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wird bearbeitet</a>
 
                 </div>
             </div>
@@ -145,6 +146,15 @@
     $(':radio').change(function() {
         console.log('New star rating: ' + this.value);
     });
+</script>
+<script>
+    function openForm() {
+        document.getElementById("ratingId").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("ratingId").style.display = "none";
+    }
 </script>
 </body>
 </html>

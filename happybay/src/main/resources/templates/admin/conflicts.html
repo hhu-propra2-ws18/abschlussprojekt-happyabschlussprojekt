@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/fragmentsAdmin.html :: header"></head>
+<body>
+<nav th:replace="admin/fragmentsAdmin.html :: topSiteBarAndMenu"></nav>
+<br/>
+
+<table class="table container">
+    <thead>
+    <tr>
+        <th scope="col">Besitzer</th>
+        <th scope="col">Mieter</th>
+        <th scope="col">Punish</th>
+        <th scope="col">Release</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="geraetMitKonflikt : ${geraeteMitKonflikten}">
+        <td th:text="${geraetMitKonflikt.besitzer}">Besitzer</td>
+        <td th:text="${geraetMitKonflikt.mieter}">Mieter</td>
+        <td><form action="/admin/punishAccount" method="post">
+            <input type="hidden" name="username" th:value="${geraetMitKonflikt.mieter}">
+            <input type="hidden" name="geraetId" th:value="${geraetMitKonflikt.id}">
+            <br>
+            <input style="background-color: white; color: red" type="submit" value="Punish">
+        </form></td>
+        <td><form action="/admin/punishAccount" method="post">
+            <input type="hidden" name="username" th:value="${geraetMitKonflikt.mieter}">
+            <input type="hidden" name="geraetId" th:value="${geraetMitKonflikt.id}">
+            <br>
+            <input style="background-color: white; color: green" type="submit" value="Release">
+        </form></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

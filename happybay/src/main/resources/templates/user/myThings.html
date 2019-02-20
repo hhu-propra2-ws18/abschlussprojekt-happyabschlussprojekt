@@ -7,7 +7,7 @@
 <div class="container">
     <ul class="nav nav-tabs" style="border-bottom: none">
         <li class="nav-item">
-            <p style="margin: 15px;"><a class="badge badge-pill badge-primary" th:href="@{/addGeraet}">
+            <p style="margin: 15px;"><a class="badge badge-pill badge-primary" th:href="@{/user/addGeraet}">
                 <i class="fas fa-plus"></i>
                 Neues Gerät hinzüfugen
             </a>
@@ -35,11 +35,11 @@
                     </li>
                 </ul>
                 <div class="card-body">
-                    <a th:href="@{/geraet/{id}(id=${myThing.getId()})}" >Details</a>
+                    <a th:href="@{/user/geraet/{id}(id=${myThing.getId()})}" >Details</a>
                 </div>
                 <div class="card-body" th:if="${myThing.isVerfuegbar()}">
                     <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
-                    <form th:action="@{/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
+                    <form th:action="@{/user/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
                 </div>

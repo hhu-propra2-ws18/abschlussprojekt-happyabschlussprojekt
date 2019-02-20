@@ -20,7 +20,7 @@ public class HappybayApplication {
     }
 
     @Bean
-    InitializingBean sendDatabase() {
+    InitializingBean initializeAdmin() {
         return () -> {
             Person admin = new Person();
             admin.setUsername("admin");

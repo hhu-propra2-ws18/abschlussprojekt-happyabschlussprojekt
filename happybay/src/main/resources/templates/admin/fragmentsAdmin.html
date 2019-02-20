@@ -11,40 +11,28 @@
 
 <nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
     <div class="container">
-        <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
+        <a class="navbar-brand" th:href="@{/admin/allUsers}"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
                                               width="100px"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
-                </li>
-                <li sec:authorize="isAnonymous()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/profile}"> Anmelden</a>
-                </li>
-                <li sec:authorize="isAnonymous()" class="nav-item">
-                    <a class="nav-link" th:href="@{/register}"> Registrieren</a>
-                </li>
-                <li sec:authorize="isAuthenticated()"class="nav-item">
-                    <a class="nav-link" th:href="@{/user/profile}"> Meine Daten</a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/proPay}"> Mein ProPay</a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/myThings}"> Meine Geräte</a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/rentThings}"> Meine Ausleihen</a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/notifications}">
-                    <i class="fas fa-bell"></i>
-                        <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
+                    <a class="nav-link" href="/admin/allUsers"> Alle Benutzer
+                    <span class="badge badge-pill badge-info" th:text="${anzahlPersonen}">4</span>
                     </a>
                 </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item ml-auto">
+                <li sec:authorize="isAuthenticated()"class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/conflicts}"> Konflikte
+                    <span class="badge badge-pill badge-info" th:text="${anzahlKonflikte}">4</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/notifications}"> Anfragen für Konten Aufladen
+                        <span class="badge badge-pill badge-info" th:text="${anzahlNotifications}">4</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()" style="float: right" class="nav-item ml-auto">
                     <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
                 </li>
             </ul>
