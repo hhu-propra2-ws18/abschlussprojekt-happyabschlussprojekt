@@ -7,6 +7,7 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class DefaultController {
     public PasswordEncoder encoder;
     @Autowired
     private ProPayService proPayService;
+    @Autowired
+    private GeraetService geraetService;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
@@ -64,15 +67,8 @@ public class DefaultController {
                 model.addAttribute("overTimeThings", overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
 
-        for (Geraet geraet: geraete){
-            if (geraet.getBilder().get(0).getBild().length > 0) {
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-            }
-
-        }
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }
 
@@ -121,9 +117,5 @@ public class DefaultController {
         return "default/login";
     }
 
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
-    }
+
 }
