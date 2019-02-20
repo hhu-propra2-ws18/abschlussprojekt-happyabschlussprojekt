@@ -130,9 +130,13 @@
                             <span class="icon">★</span>
                         </label>
                     </form><br/>
-                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}" th:if="${rentThing.getReturnStatus()=='default'}">Artikel zurückgeben</a><br/>
-                    <a th:if="${rentThing.getReturnStatus()=='kaputt'}">Besitzer hat Konflikt ausgelöst.</a>
-                    <a th:if="${rentThing.getReturnStatus()=='waiting'}">Ihre Rückgabe wird bearbeitet</a>
+                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}"
+                       th:if="${rentThing.getReturnStatus() == T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
+                        zurückgeben</a><br/>
+                    <a th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
+                        Konflikt ausgelöst.</a>
+                    <a th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING}">Ihre Rückgabe
+                        wird bearbeitet</a>
 
                 </div>
             </div>

@@ -1,5 +1,6 @@
 package com.propra.happybay.Model;
 
+import com.propra.happybay.ReturnStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -25,7 +26,7 @@ public class Geraet {
     String abholort;
     Date mietezeitpunkt;
     String encode;
-    String returnStatus="default";
+    ReturnStatus returnStatus = ReturnStatus.DEFAULT;
     int likes = 0;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;

@@ -38,7 +38,7 @@
                     <a th:href="@{/user/geraet/{id}(id=${myThing.getId()})}" >Details</a>
                 </div>
                 <div class="card-body" th:if="${myThing.isVerfuegbar()}">
-                    <a th:href="@{/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
+                    <a th:href="@{/user/geraet/edit/{id}(id=${myThing.getId()})}">Edit</a>
                     <form th:action="@{/user/geraet/delete/{id}(id=${myThing.getId()})}" method="post">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>

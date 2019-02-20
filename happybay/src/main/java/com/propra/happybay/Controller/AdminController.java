@@ -2,6 +2,7 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
+import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,7 +48,7 @@ public class AdminController {
             }
         }
         anzahlPersonen = personenMitAccounts.size();
-        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus("kaputt");
+        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
         anzahlKonflikte = geraeteMitKonflikten.size();
         model.addAttribute("personenMitAccounts", personenMitAccounts);
         model.addAttribute("anzahlPersonen", anzahlPersonen);
@@ -76,7 +77,7 @@ public class AdminController {
 
     @GetMapping("/conflicts")
     public String conflicts(Model model) {
-        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus("kaputt");
+        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
         anzahlKonflikte = geraeteMitKonflikten.size();
         model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         model.addAttribute("anzahlPersonen", anzahlPersonen);

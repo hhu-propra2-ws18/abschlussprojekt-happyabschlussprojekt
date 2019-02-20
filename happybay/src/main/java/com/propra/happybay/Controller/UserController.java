@@ -2,6 +2,7 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
+import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +203,7 @@ public class UserController {
     public String geraetZurueck(@PathVariable Long id, Model model,Principal principal) {
         Geraet geraet = geraetRepository.findById(id).get();
 
-        geraet.setReturnStatus("waiting");
+        geraet.setReturnStatus(ReturnStatus.WAITING);
         geraetRepository.save(geraet);
 
         Notification newNotification = new Notification();
@@ -252,7 +253,7 @@ public class UserController {
     public String notificationRefuseReturn(@PathVariable Long id) {
         Notification notification=notificationRepository.findById(id).get();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        geraet.setReturnStatus("kaputt");
+        geraet.setReturnStatus(ReturnStatus.KAPUTT);
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
@@ -265,7 +266,7 @@ public class UserController {
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(true);
-        geraet.setReturnStatus("default");
+        geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
         double amount = geraet.getZeitraum()*geraet.getKosten();
