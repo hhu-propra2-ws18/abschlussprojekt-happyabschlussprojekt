@@ -78,7 +78,6 @@ public class HappyBayController {
             }
         }
         List<Geraet> geraete = geraetRepository.findAllByTitelLike("%"+key+"%");
-        System.out.println(key+geraete);
         //List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
             if(geraet.getBilder().size()==0){
@@ -154,7 +153,6 @@ public class HappyBayController {
     @GetMapping("/profile")
     public String profile(Model model, Principal principal, @RequestParam(value="key",required = false,defaultValue = "") String key) {
 
-        System.out.println("swfwefw"+key);
         if(key.equals("")) {
             String name = principal.getName();
             Person person = personRepository.findByUsername(name).get();
@@ -202,8 +200,15 @@ public class HappyBayController {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
         List<Geraet> geraetes=geraetRepository.findAllByMieter(mieterName);
+
         for (Geraet geraet: geraetes){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if(geraet.getBilder().size()==0){
+                geraet.setBilder(null);
+            }
+            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+
         }
         model.addAttribute("user",person);
         model.addAttribute("geraete", geraetes);
@@ -219,7 +224,9 @@ public class HappyBayController {
         for(Geraet geraet:geraetList){
             List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
             for(Notification notification:notificationList){
+                if(geraet.getBilder().size()>0){
                     notification.setEncode(encodeBild(geraet.getBilder().get(0)));
+                }
                     newNotification.add(notification);
             }
 

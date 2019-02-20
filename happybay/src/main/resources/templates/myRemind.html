@@ -55,7 +55,10 @@
                 <ul class="list-inline card-text" th:if="${myThing.getType()=='zurueck'}">
                     <span class="badge badge-warning">Neue Anfrage zum Zurückgeben</span>
                 </ul>
-                <img class="card-img-top" th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
+                <img th:if="${myThing.getEncode()==null}" class="card-img-top"
+                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="100px" width="100px">
+                <img th:unless="${myThing.getEncode()==null}" class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold">Zeitraum: </li>
