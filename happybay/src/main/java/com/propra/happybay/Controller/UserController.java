@@ -46,7 +46,10 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        person.setEncode(encodeBild(person.getFoto()));
+        if(person.getFoto().getBild().length>0){
+            person.setEncode(encodeBild(person.getFoto()));
+        }
+
         model.addAttribute("person", person);
         if (name.equals("admin")) { return "redirect:/admin/"; }
         else { return "user/profile"; }
@@ -60,7 +63,9 @@ public class UserController {
 
         List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
         for (Geraet geraet: geraets){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if (geraet.getBilder().get(0).getBild().length > 0) {
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
         }
         model.addAttribute("geraete",geraets);
         return "user/myThings";
@@ -72,7 +77,9 @@ public class UserController {
         Person person = personRepository.findByUsername(mieterName).get();
         List<Geraet> geraete = geraetRepository.findAllByMieter(mieterName);
         for (Geraet geraet : geraete) {
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if (geraet.getBilder().get(0).getBild().length > 0) {
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
         }
         model.addAttribute("person", person);
         model.addAttribute("geraete", geraete);
@@ -87,7 +94,9 @@ public class UserController {
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         for (Notification notification : notifications) {
-            notification.setEncode(encodeBild(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0)));
+            if (geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).getBild().length > 0) {
+                notification.setEncode(encodeBild(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0)));
+            }
         }
         model.addAttribute("notification", notifications);
 
@@ -190,7 +199,9 @@ public class UserController {
         for(int i=1;i<bilds.size();i++){
             encodes.add(encodeBild(bilds.get(i)));
         }
-        geraet.setEncode(encodeBild(bilds.get(0)));
+        if (geraet.getBilder().get(0).getBild().length > 0) {
+            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+        }
         model.addAttribute("encodes",encodes);
         //model.addAttribute("person", principal);
         model.addAttribute("person", personRepository.findByUsername(person).get());

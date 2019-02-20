@@ -65,13 +65,9 @@ public class DefaultController {
             }
         }
         List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
-        System.out.println(key + geraete);
-        //List<Geraet> geraete = geraetRepository.findAll();
+
         for (Geraet geraet: geraete){
-            if (geraet.getBilder().size() == 0) {
-                geraet.setBilder(null);
-            }
-            if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
+            if (geraet.getBilder().get(0).getBild().length > 0) {
                 geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
             }
 
@@ -99,6 +95,8 @@ public class DefaultController {
             model.addAttribute("errorList", errorList);
             return "default/register";
         }
+
+
         Bild bild = new Bild();
         bild.setBild(file.getBytes());
         person.setFoto(bild);
