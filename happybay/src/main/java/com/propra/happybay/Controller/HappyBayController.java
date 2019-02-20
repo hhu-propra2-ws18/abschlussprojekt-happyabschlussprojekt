@@ -2,6 +2,7 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
+import com.propra.happybay.Service.IGeraetService;
 import com.propra.happybay.Service.MailService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
@@ -50,6 +51,8 @@ public class HappyBayController {
     private JavaMailSender sender;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private IGeraetService geraetService;
 
 
 
@@ -77,17 +80,7 @@ public class HappyBayController {
                 model.addAttribute("overTimeThings",overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%"+key+"%");
-        //List<Geraet> geraete = geraetRepository.findAll();
-        for (Geraet geraet: geraete){
-            if(geraet.getBilder().size()==0){
-                geraet.setBilder(null);
-            }
-            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-            }
-        }
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         model.addAttribute("zahl",zahl);
         return "index";
     }
@@ -156,7 +149,7 @@ public class HappyBayController {
         if(key.equals("")) {
             String name = principal.getName();
             Person person = personRepository.findByUsername(name).get();
-            if(person.getFoto()!=null){person.setEncode(encodeBild(person.getFoto())); }
+            if(person.getFoto()!=null){person.setEncode(person.getFoto().encodeBild()); }
 
             model.addAttribute("zahl",zahl);
             model.addAttribute("user", person);
@@ -173,45 +166,18 @@ public class HappyBayController {
         Person person = personRepository.findByUsername(name).get();
 
         model.addAttribute("user", person);
-
-        List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
-        for (Geraet geraet: geraets){
-            if(geraet.getBilder().size()==0){
-                geraet.setBilder(null);
-            }
-            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-            }
-
-        }
-        model.addAttribute("geraete",geraets);
+        model.addAttribute("geraete",geraetService.getAllByBesitzerWithBilder(name));
         model.addAttribute("zahl",zahl);
         return "myThings";
-    }
-
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
     }
 
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
-        List<Geraet> geraetes=geraetRepository.findAllByMieter(mieterName);
 
-        for (Geraet geraet: geraetes){
-            if(geraet.getBilder().size()==0){
-                geraet.setBilder(null);
-            }
-            if(geraet.getBilder()!=null && geraet.getBilder().size()>0){
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-            }
-
-        }
         model.addAttribute("user",person);
-        model.addAttribute("geraete", geraetes);
+        model.addAttribute("geraete", geraetService.getAllByMieterWithBilder(mieterName));
         model.addAttribute("zahl",zahl);
         return "rentThings";
     }
@@ -225,7 +191,7 @@ public class HappyBayController {
             List<Notification> notificationList=notificationRepository.findAllByGeraetId(geraet.getId());
             for(Notification notification:notificationList){
                 if(geraet.getBilder().size()>0){
-                    notification.setEncode(encodeBild(geraet.getBilder().get(0)));
+                    notification.setEncode(geraet.getBilder().get(0).encodeBild());
                 }
                     newNotification.add(notification);
             }
@@ -331,17 +297,7 @@ public class HappyBayController {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
         List<Bild> bilds = geraet.getBilder();
-        List<String> encodes = new ArrayList<>();
-        if(bilds.size()>0){
-            for(int i=1;i<bilds.size();i++){
-                encodes.add(encodeBild(bilds.get(i)));
-            }
-            geraet.setEncode(encodeBild(bilds.get(0)));
-    }
-
-        if(geraet.getBilder().size()==0){
-            geraet.setBilder(null);
-        }
+        List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes",encodes);
         model.addAttribute("person", principal);
         model.addAttribute("user", personRepository.findByUsername(person).get());
