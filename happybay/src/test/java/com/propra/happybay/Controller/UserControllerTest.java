@@ -4,6 +4,7 @@ import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -108,11 +109,11 @@ public class UserControllerTest {
                 .setViewResolvers(viewResolver)
                 .build();
     }
-//    @After
-//    public void clear(){
-//        projektRepository.deleteAll();
-//        personRepository.deleteAll();
-//    }
+    @After
+    public void clear(){
+        personRepository.deleteAll();
+        geraetRepository.deleteAll();
+    }
 //    @Test
 //    public void MainPAGE_TEST() throws Exception{
 //        mockMvc.perform(get("/"))
