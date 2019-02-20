@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class MailService {
 
-    @Autowired
     private JavaMailSender sender;
     @Autowired
     private GeraetRepository geraetRepository;
