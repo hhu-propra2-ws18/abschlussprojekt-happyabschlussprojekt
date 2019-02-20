@@ -53,8 +53,12 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         person.setEncode(encodeBild(person.getFoto()));
         model.addAttribute("person", person);
-        if (name.equals("admin")) { return "redirect:/admin/"; }
-        else { return "user/profile"; }
+        if (name.equals("admin")) {
+            return "redirect:/admin/";
+        }
+        else {
+            return "user/profile";
+        }
     }
 
     @GetMapping("/myThings")
