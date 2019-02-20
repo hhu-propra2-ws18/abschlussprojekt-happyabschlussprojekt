@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -123,7 +124,7 @@ public class UserController {
 
         Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
+        geraet.setMietezeitpunkt(Date.valueOf(notification.getMietezeitPunkt().toLocalDate().plusDays(1)));
         geraet.setZeitraum(notification.getZeitraum());
 
         newNotification.setEncode(geraet.getEncode());

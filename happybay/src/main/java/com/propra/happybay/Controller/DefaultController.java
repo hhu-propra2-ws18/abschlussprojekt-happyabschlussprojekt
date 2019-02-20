@@ -107,6 +107,7 @@ public class DefaultController {
 
         personRepository.save(person);
         proPayService.saveAccount(person.getUsername());
+        person.setEncode(encodeBild(person.getFoto()));
         person.setPassword("");
         model.addAttribute("person", person);
         return "default/confirmationOfRegistration";
