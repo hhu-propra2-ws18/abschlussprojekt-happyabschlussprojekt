@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -40,23 +41,40 @@ public class DefaultController {
     private ProPayService proPayService;
 
     @GetMapping("/")
-    public String index(Model model, Principal principal){
+    public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
         if(principal != null){
             String name = principal.getName();
             if(personRepository.findByUsername(name).isPresent()) {
-                List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
-                Person person = personRepository.findByUsername(name).get();
-                person.setAnzahlNotifications(notifications.size());
-                personRepository.save(person);
-                model.addAttribute("person", person);
-            }
-            else {
-                model.addAttribute("person", new Person());
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+
+                List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
+                List<Geraet> remindRentThings = new ArrayList<>();
+                List<Geraet> overTimeThings = new ArrayList<>();
+                LocalDate deadLine = LocalDate.now().plusDays(3);
+                for (Geraet geraet : rentThings) {
+                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
+                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
+                            overTimeThings.add(geraet);
+                        } else {
+                            remindRentThings.add(geraet);
+                        }
+                    }
+                }
+                model.addAttribute("remindRentThings", remindRentThings);
+                model.addAttribute("overTimeThings", overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAll();
+        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
+        System.out.println(key + geraete);
+        //List<Geraet> geraete = geraetRepository.findAll();
         for (Geraet geraet: geraete){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            if (geraet.getBilder().size() == 0) {
+                geraet.setBilder(null);
+            }
+            if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
+                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+            }
+
         }
         model.addAttribute("geraete", geraete);
         return "default/index";

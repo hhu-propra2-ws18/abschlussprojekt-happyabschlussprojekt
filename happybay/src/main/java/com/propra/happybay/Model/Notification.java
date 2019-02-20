@@ -20,6 +20,5 @@ public class Notification {
     Date mietezeitPunkt;
     int zeitraum;
     String encode;
-
 }
 

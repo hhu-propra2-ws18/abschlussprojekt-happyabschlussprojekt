@@ -77,7 +77,7 @@
     <div th:each="rentThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
-                <img class="card-img-top">
+                <img class="card-img-top" th:src="@{'data:image/jpeg;base64,'+ ${rentThing.getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold">Titel: </li>

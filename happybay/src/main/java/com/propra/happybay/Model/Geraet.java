@@ -25,7 +25,7 @@ public class Geraet {
     int kosten;
     double kaution;
     String abholort;
-    //Date mietezeitpunkt;
+    Date mietezeitpunkt;
     LocalDate endzeitpunkt;
     String encode;
     ReturnStatus returnStatus = ReturnStatus.DEFAULT;
