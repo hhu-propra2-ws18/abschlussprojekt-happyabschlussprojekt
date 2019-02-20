@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,7 +25,8 @@ public class Geraet {
     int kosten;
     double kaution;
     String abholort;
-    Date mietezeitpunkt;
+    //Date mietezeitpunkt;
+    LocalDate endzeitpunkt;
     String encode;
     ReturnStatus returnStatus = ReturnStatus.DEFAULT;
     int likes = 0;
