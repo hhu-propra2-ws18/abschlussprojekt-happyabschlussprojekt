@@ -83,8 +83,7 @@ public class ProPayService {
     }
     public void punishReservation(String username, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
-        makeQueryPunish(reservationId, "reservationId",url);
-
+        makeQueryPunish(reservationId, "reservationId", url);
     }
 
     private void makeQuery(double amount, String amountString, URL url) throws IOException {

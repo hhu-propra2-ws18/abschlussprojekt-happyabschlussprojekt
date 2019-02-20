@@ -10,6 +10,7 @@
     <tr>
         <th scope="col">Besitzer</th>
         <th scope="col">Mieter</th>
+        <th scope="col">Grund</th>
         <th scope="col">Punish</th>
         <th scope="col">Release</th>
     </tr>
@@ -18,6 +19,7 @@
     <tr th:each="geraetMitKonflikt : ${geraeteMitKonflikten}">
         <td th:text="${geraetMitKonflikt.besitzer}">Besitzer</td>
         <td th:text="${geraetMitKonflikt.mieter}">Mieter</td>
+        <td th:text="${geraetMitKonflikt.grundReturn}"></td><br/>
         <td><form action="/admin/punishAccount" method="post">
             <input type="hidden" name="username" th:value="${geraetMitKonflikt.mieter}">
             <input type="hidden" name="geraetId" th:value="${geraetMitKonflikt.id}">

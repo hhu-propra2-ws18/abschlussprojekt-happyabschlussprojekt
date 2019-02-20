@@ -50,6 +50,7 @@
                     <div th:if="${myThing.getType()=='return'}" >
                         <form th:action="@{/user/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
                             <button type="submit">Ablehnen Return</button>
+                            <input type="text" name="grund" placeholder="Bitte geben Sie den Grund an:">
 
                         </form>
                         <!--Here Mach API BEZAHLEN-->

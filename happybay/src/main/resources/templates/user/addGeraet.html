@@ -10,16 +10,16 @@
     <div class="row justify-content-md-center">
         <form th:action="@{/user/addGeraet}"  method="post" enctype="multipart/form-data"><br/>
             <label for="titel">Titel:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" />
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" required/>
 
             <label for="beschreibung">Beschreibung:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" />
 
             <label for="kosten">Miete Pro Tag:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" />
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" required/>
 
             <label for="kaution">Kaution:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" />
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" required/>
 
             <label for="kaution">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" />

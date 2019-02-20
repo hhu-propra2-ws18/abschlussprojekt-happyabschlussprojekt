@@ -25,7 +25,8 @@ public class Geraet {
     String abholort;
     Date mietezeitpunkt;
     String encode;
-    String returnStatus="default";
+    String returnStatus = "default";
+    String grundReturn = "Das Gerät ist beschädigt";
     int likes = 0;
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder;

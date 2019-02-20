@@ -13,8 +13,6 @@ public class TransferRequest {
     @GeneratedValue
     Long id;
     String username;
-    int amount;
-
-
+    int amount = 0;
 }
 

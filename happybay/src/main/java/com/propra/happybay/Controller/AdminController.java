@@ -112,13 +112,32 @@ public class AdminController {
         Person person = personRepository.findByUsername(username).get();
         model.addAttribute("person", person);
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
-        proPayService.punishReservation(person.getUsername(), geraetMitReservationID.getReservationID());
+        proPayService.punishReservation(username, geraetMitReservationID.getReservationID());
         Geraet geraet = geraetRepository.findById(geraetMitReservationID.getGeraetID()).get();
+        geraet.setReturnStatus("default");
+        geraet.setVerfuegbar(true);
+        geraet.setMieter(null);
         proPayService.saveAccount(geraet.getBesitzer());
         proPayService.saveAccount(geraet.getMieter());
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
-        return "redirect:/admin/admin";
+        return "redirect:/admin/conflicts";
+    }
+
+    @PostMapping("/releaseAccount")
+    public String releaseAccount(Model model, @ModelAttribute("username") String username, @ModelAttribute("geraetId") Long geraetId) throws IOException {
+        Person person = personRepository.findByUsername(username).get();
+        model.addAttribute("person", person);
+        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
+        proPayService.releaseReservation(person.getUsername(), geraetMitReservationID.getReservationID());
+        Geraet geraet = geraetRepository.findById(geraetMitReservationID.getGeraetID()).get();
+        geraet.setVerfuegbar(true);
+        geraet.setMieter(null);
+        proPayService.saveAccount(geraet.getBesitzer());
+        proPayService.saveAccount(geraet.getMieter());
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        model.addAttribute("account", account);
+        return "redirect:/admin/conflicts";
     }
 
     @PostMapping("/propay")

@@ -41,7 +41,7 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        //person.setEncode(encodeBild(person.getFoto()));
+        person.setEncode(encodeBild(person.getFoto()));
         model.addAttribute("person", person);
         if (name.equals("admin")) { return "redirect:/admin/"; }
         else { return "user/profile"; }
@@ -180,6 +180,7 @@ public class UserController {
         model.addAttribute("geraet", geraet);
         return "user/geraet";
     }
+
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
         Geraet geraet=geraetRepository.findById(id).get();
@@ -187,6 +188,7 @@ public class UserController {
         model.addAttribute("person",besitzer);
         return "user/besitzerInfo";
     }
+
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
@@ -243,15 +245,14 @@ public class UserController {
         geraetMitReservationID.setReservationID(reservationId);
         geraetMitReservationIDRepository.save(geraetMitReservationID);
 
-
-
         return "redirect:/user/notifications";
     }
 
     @PostMapping("/notification/refuseReturn/{id}")
-    public String notificationRefuseReturn(@PathVariable Long id) {
+    public String notificationRefuseReturn(@PathVariable Long id, @ModelAttribute("grund") String grund) {
         Notification notification=notificationRepository.findById(id).get();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+        geraet.setGrundReturn(grund);
         geraet.setReturnStatus("kaputt");
         geraetRepository.save(geraet);
 

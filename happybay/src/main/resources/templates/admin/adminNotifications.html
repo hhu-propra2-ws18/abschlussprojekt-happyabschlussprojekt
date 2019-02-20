@@ -5,40 +5,34 @@
 <nav th:replace="admin/fragmentsAdmin.html :: topSiteBarAndMenu"></nav>
 <br/>
 
-<div class="container">
-    <div class="row">
-        <div th:each="myThing: ${transferRequestList}" class="col-sm-3">
-            <div class="clearfix" style="margin-bottom: 20px;">
-                <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                    <ul class="list-inline card-text" >
-                        <span class="badge badge-warning">Neue Überweisungsanfrage</span>
-                    </ul>
-
-                    <img class="card-img-top" src="https://www.apple.com/newsroom/images/product/iphone/standard/iPhone_X_family_line_up_big.jpg.large.jpg">
-                    <div class="card-body text-left">
-                        <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
-                            <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
-                        </ul>
-
-                        <div>
-                            <form th:action="@{/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
-                                <button type="submit">Ablehnen Return</button>
-
-                            </form>
-                            <form th:action="@{/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
-                                <button type="submit">Annehmen Return</button>
-
-                            </form>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<table class="table container">
+    <thead>
+    <tr>
+        <th scope="col">Benutzername</th>
+        <th scope="col">Betrag</th>
+        <th scope="col">Ablehnen</th>
+        <th scope="col">Genehmigen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transferRequest : ${transferRequests}">
+        <td th:text="${transferRequest.username}">Benutzername</td>
+        <td th:text="${transferRequest.amount}">Betrag</td>
+        <td><form action="/admin/erhoehungAblehenen" method="post">
+            <input type="hidden" name="username" th:value="${transferRequest.username}">
+            <input type="hidden" name="amount" th:value="${transferRequest.amount}">
+            <br>
+            <input style="background-color: white; color: red" type="submit" value="Ablehnen">
+        </form></td>
+        <td><form action="/admin/erhoehungGenehmigen" method="post">
+            <input type="hidden" name="username" th:value="${transferRequest.username}">
+            <input type="hidden" name="amount" th:value="${transferRequest.amount}">
+            <br>
+            <input style="background-color: white; color: green" type="submit" value="Genehmigen">
+        </form></td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
