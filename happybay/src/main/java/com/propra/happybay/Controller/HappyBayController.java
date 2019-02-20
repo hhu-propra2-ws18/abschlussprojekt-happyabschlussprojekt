@@ -243,12 +243,8 @@ public class HappyBayController {
         notificationRepository.save(newNotification);
 
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Du hast eine neue Anfrag über("+ geraet.getTitel() + ") von " + principal.getName());
-        helper.setSubject("Anfrag");
-        sender.send(message);
+
+        mailService.sendAnfragMail(person,geraet,principal);
 
         return "redirect:/";
     }
@@ -338,12 +334,8 @@ public class HappyBayController {
         notificationRepository.save(newNotification);
 
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Ihre Geraet (" + geraet.getTitel()+ ") wurde zur Bewerbung zurückgeschickt" );
-        helper.setSubject("Bewerbung zurücksenden");
-        sender.send(message);
+
+        mailService.sendReturnMail(person,geraet);
 
         return "redirect:/rentThings";
     }
@@ -359,12 +351,8 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
 
         Person person = personRepository.findByUsername(mieter).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird abgelehnt." );
-        helper.setSubject("Antragsergebnis");
-        sender.send(message);
+
+        mailService.sendRefuseRequestMail(person,geraet);
 
         notificationRepository.deleteById(id);
         return "redirect:/user/myRemind";
@@ -380,12 +368,8 @@ public class HappyBayController {
         geraet.setZeitraum(notification.getZeitraum());
 
         Person person = personRepository.findByUsername(mieter).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
-        helper.setSubject("Antragsergebnis");
-        sender.send(message);
+
+        mailService.sendAcceptRequestMail(person,geraet);
 
         LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
         geraet.setEndzeitpunkt(endzeit);
@@ -403,12 +387,8 @@ public class HappyBayController {
         geraetRepository.save(geraet);
 
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") wird abgelehnt." );
-        helper.setSubject("Ergebnis zurückgeben");
-        sender.send(message);
+
+        mailService.sendRefuseReturnMail(person,geraet);
         return "redirect:/user/myRemind";
     }
     @PostMapping("/notification/acceptReturn/{id}")
@@ -418,12 +398,8 @@ public class HappyBayController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
 
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setTo(person.getKontakt());
-        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
-        helper.setSubject("Ergebnis zurückgeben");
-        sender.send(message);
+
+        mailService.sendAcceptReturnMail(person,geraet);
 
         geraet.setMieter(null);
         geraet.setVerfuegbar(true);

@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
+import java.security.Principal;
 import java.util.List;
 
 @Data
@@ -54,4 +55,59 @@ public class MailService {
             }
         }
     }
+
+    public void sendAnfragMail(Person person, Geraet geraet, Principal principal) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Du hast eine neue Anfrag über("+ geraet.getTitel() + ") von " + principal.getName());
+        helper.setSubject("Anfrag");
+        sender.send(message);
+    }
+
+    public void sendReturnMail(Person person,Geraet geraet) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Geraet (" + geraet.getTitel()+ ") wurde zur Bewerbung zurückgeschickt" );
+        helper.setSubject("Bewerbung zurücksenden");
+        sender.send(message);
+    }
+
+    public void sendRefuseRequestMail(Person person,Geraet geraet) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+    }
+
+    public void sendAcceptRequestMail(Person person,Geraet geraet) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
+        helper.setSubject("Antragsergebnis");
+        sender.send(message);
+    }
+
+    public void sendRefuseReturnMail(Person person,Geraet geraet) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") wird abgelehnt." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
+    }
+
+    public void sendAcceptReturnMail(Person person,Geraet geraet) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(person.getKontakt());
+        helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
+        helper.setSubject("Ergebnis zurückgeben");
+        sender.send(message);
+    }
+
 }
