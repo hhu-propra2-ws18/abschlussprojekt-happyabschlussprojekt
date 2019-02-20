@@ -4,6 +4,7 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +33,14 @@ public class AdminController {
     GeraetRepository geraetRepository;
     @Autowired
     private TransferRequestRepository transferRequestRepository;
+    @Autowired
+    public PasswordEncoder encoder;
 
     static int anzahlKonflikte = 0;
     static int anzahlPersonen = 0;
     static int anzahlNotifications = 0;
 
-    @GetMapping("/")
+    @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
         List<Person> personList = personRepository.findAll();
@@ -53,6 +57,10 @@ public class AdminController {
         model.addAttribute("anzahlPersonen", anzahlPersonen);
         model.addAttribute("anzahlKonflikte", anzahlKonflikte);
         model.addAttribute("anzahlNotifications", anzahlNotifications);
+        Person admin = personRepository.findByUsername("admin").get();
+        if (encoder.matches("admin", admin.getPassword())) {
+            return "admin/changePassword";
+        }
         return "admin/allUsers";
     }
 
@@ -147,5 +155,13 @@ public class AdminController {
         transferRequest.setUsername(account);
         transferRequestRepository.save(transferRequest);
         return "redirect:/user/profile";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@ModelAttribute("newPassword") String newPassword) {
+        Person admin = personRepository.findByUsername("admin").get();
+        admin.setPassword(encoder.encode(newPassword));
+        personRepository.save(admin);
+        return "redirect:/admin";
     }
 }
