@@ -50,7 +50,7 @@ public class DefaultController {
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
                 List<Geraet> remindRentThings = new ArrayList<>();
                 List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(3);
+                LocalDate deadLine = LocalDate.now().plusDays(4);
                 for (Geraet geraet : rentThings) {
                     if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
                         if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
