@@ -16,7 +16,6 @@ import javax.mail.internet.MimeMessage;
 import java.security.Principal;
 import java.util.List;
 
-@Data
 @Service
 public class MailService {
 
