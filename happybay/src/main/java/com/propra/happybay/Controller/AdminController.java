@@ -123,7 +123,7 @@ public class AdminController {
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
         proPayService.punishReservation(username, geraetMitReservationID.getReservationID());
         Geraet geraet = geraetRepository.findById(geraetMitReservationID.getGeraetID()).get();
-        geraet.setReturnStatus("default");
+        geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setVerfuegbar(true);
         geraet.setMieter(null);
         proPayService.saveAccount(geraet.getBesitzer());
