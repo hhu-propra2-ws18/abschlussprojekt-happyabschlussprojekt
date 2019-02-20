@@ -1,9 +1,11 @@
 package com.propra.happybay.Model;
 
+import com.propra.happybay.ReturnStatus;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,8 +26,9 @@ public class Geraet {
     double kaution;
     String abholort;
     Date mietezeitpunkt;
+    LocalDate endzeitpunkt;
     String encode;
-    String returnStatus = "default";
+    ReturnStatus returnStatus = ReturnStatus.DEFAULT;
     String grundReturn = "Das Gerät ist beschädigt";
     int likes = 0;
     @OneToMany(cascade = CascadeType.ALL)

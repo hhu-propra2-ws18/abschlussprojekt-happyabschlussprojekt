@@ -18,10 +18,7 @@ public class Comment {
 
     String sender;
 
-    String empfaenger;
-
     Date date;
-
 
 }
 

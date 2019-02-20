@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
+@EnableScheduling
 public class HappybayApplication {
     @Autowired
     private PersonRepository personRepository;
@@ -26,10 +28,9 @@ public class HappybayApplication {
             admin.setUsername("admin");
             admin.setPassword(encoder.encode("admin"));
             admin.setRole("ROLE_ADMIN");
-            if(!personRepository.findByUsername("admin").isPresent()) {
+            if (!personRepository.findByUsername("admin").isPresent()) {
                 personRepository.save(admin);
             }
         };
     }
 }
-
