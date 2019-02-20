@@ -1,6 +1,6 @@
 package com.propra.happybay;
 
-import com.propra.happybay.Service.UserService;
+import com.propra.happybay.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
