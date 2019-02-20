@@ -42,9 +42,10 @@ public class UserController {
     @Autowired
     private MailService mailService;
 
-    public UserController(GeraetRepository geraetRepository, PersonRepository personRepository, PasswordEncoder encoder, TransferRequestRepository transferRequestRepository, ProPayService proPayService, AccountRepository accountRepository, NotificationRepository notificationRepository, GeraetMitReservationIDRepository geraetMitReservationIDRepository) {
-
+    public UserController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
+
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
