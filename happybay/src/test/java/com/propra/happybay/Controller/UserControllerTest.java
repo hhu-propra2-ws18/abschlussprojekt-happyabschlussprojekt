@@ -1,7 +1,9 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
+import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -74,41 +78,76 @@ public class UserControllerTest {
         }
     };
     private Person person = new Person();
+    private Geraet geraet = new Geraet();
     @Autowired
     private WebApplicationContext context;
     @Autowired
     public PasswordEncoder encoder;
+//    @Mock
+//    Principal principal = new Principal() {
+//        @Override
+//        public String getName() {
+//            return "test";
+//        }
+//    };
 
     private MockMvc mvc;
 
     @Autowired
     PersonRepository personRepository;
+    @Autowired
+    GeraetRepository geraetRepository;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         person.setUsername("test");
-        person.setPassword(encoder.encode("test"));
         person.setId(1L);
-//        Bild bild = new Bild();
-//        bild.setBild(file.getBytes());
-//        person.setFoto(bild);
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        person.setFoto(bild);
+        person.setAdresse("test dusseldorf");
         personRepository.save(person);
+
+        geraet.setTitel("Das ist ein Test");
+        geraet.setId(2L);
+        geraet.setBesitzer(person.getUsername());
+        geraet.setKosten(3);
+        geraet.setKaution(10.0);
+        geraetRepository.save(geraet);
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
     }
-    @WithMockUser(value = "test")
+
+    @WithMockUser(value = "test", roles = "USER")
     @Test
-    public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-//        person.setUsername("test");
-//        person.setPassword(encoder.encode("test"));
-//        person.setId(1L);
-////        Bild bild = new Bild();
-////        bild.setBild(file.getBytes());
-////        person.setFoto(bild);
-//        personRepository.save(person);
+    public void proflie() throws Exception {
         mvc.perform(get("/user/profile").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @WithMockUser(value = "test", roles = "USER")
+    @Test
+    public void myThings() throws Exception {
+        mvc.perform(get("/user/myThings").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @WithMockUser(value = "test", roles = "USER")
+    @Test
+    public void makeNotifications() throws Exception {
+        mvc.perform(get("/user/notifications").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @WithMockUser(value = "test", roles = "USER")
+    @Test
+    public void anfragenGet() throws Exception {
+        mvc.perform(get("/user/anfragen/{id}",1L).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @WithMockUser(value = "test", roles = "USER")
+    @Test
+    public void anfragenPost() throws Exception {
+        mvc.perform(post("/user/addGeraet").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 

@@ -32,7 +32,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/addNewUser").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/user/profile").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/user/profile").hasAnyRole("USER")
                 .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
         http.logout().permitAll();
@@ -48,5 +48,10 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .withUser("test")
                 .password(encoder.encode("test"))
                 .roles("USER");
+        auth.inMemoryAuthentication()
+                .passwordEncoder(encoder)
+                .withUser("testAdmin")
+                .password(encoder.encode("testAdmin"))
+                .roles("ADMIN");
     }
 }

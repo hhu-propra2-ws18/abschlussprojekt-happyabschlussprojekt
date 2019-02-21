@@ -105,6 +105,8 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
+        System.out.println(id);
+        System.out.println("################");
 
         model.addAttribute("geraet",geraet1);
         model.addAttribute("notification", new Notification());
@@ -397,8 +399,6 @@ public class UserController {
     public String encodeBild(Bild bild){
         Base64.Encoder encoder = Base64.getEncoder();
         String encode = encoder.encodeToString(bild.getBild());
-        System.out.println("---------------");
-        System.out.println(encode);
         return encode;
     }
 }
