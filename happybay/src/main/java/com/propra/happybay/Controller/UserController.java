@@ -337,8 +337,7 @@ public class UserController {
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
         notificationRepository.deleteById(id);
-
-
+        geraetMitReservationIDRepository.deleteById(geraetMitReservationID.getReservationID());
         return "redirect:/user/notifications";
     }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
