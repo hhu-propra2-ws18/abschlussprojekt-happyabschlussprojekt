@@ -57,13 +57,13 @@
                 <button class="btn btn-primary" type="submit">Anfragen</button>
             </form>
         </div>
-        <!--<form th:action="@{'/user/BesitzerInfo/' +${geraet.getId()}}">-->
-            <!--<button class="btn btn-primary" type="submit">-->
-                <!--Besitzer:-->
-                <!--<p th:text="${geraet.getBesitzer()}">-->
-                <!--</p>-->
-            <!--</button>-->
-        <!--</form>-->
+        <form th:action="@{'/user/BesitzerInfo/' +${geraet.getId()}}">
+            <button class="btn btn-primary" type="submit">
+                Besitzer:
+                <p th:text="${geraet.getBesitzer()}">
+                </p>
+            </button>
+        </form>
     </div>
 </div>
 </body>

@@ -52,13 +52,13 @@
                     </div>
                     <div th:if="${myThing.getType()=='return'}" >
                         <form th:action="@{/user/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
-                            <input type="text" name="grund"/>
+                            <input type="text" class="form-control" name="grund"/>
                             <button type="submit">Ablehnen Return</button>
-                            <input type="text" name="grund" placeholder="Bitte geben Sie den Grund an:">
 
                         </form>
                         <!--Here Mach API BEZAHLEN-->
                         <form th:action="@{/user/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
+                            <input type="text" name="grund" class="form-control" placeholder="Bitte geben Sie den Grund an:">
                             <button type="submit">Annehmen Return</button>
 
                         </form>
