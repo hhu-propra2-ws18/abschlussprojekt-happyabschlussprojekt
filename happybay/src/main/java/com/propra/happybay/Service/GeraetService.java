@@ -40,20 +40,18 @@ public class GeraetService {
         return encodes;
     }
 
-    private List<Geraet> setEncode(List<Geraet> geraets){
-        for (Geraet geraet: geraets){
+    private List<Geraet> setEncode(List<Geraet> geraets) {
+        for (Geraet geraet : geraets) {
             if (geraet.getBilder().get(0).getBild().length > 0) {
                 geraet.setEncode(geraet.getBilder().get(0).encodeBild());
             }
         }
         return geraets;
-@Service
-public class GeraetService {
-    @Autowired
-    GeraetRepository geraetRepository;
-
-    public Geraet getById(Long Id) {
-        return geraetRepository.findById(Id).get();
     }
+
+
+    public Geraet getById(Long Id){
+            return geraetRepository.findById(Id).get();
+        }
 
 }

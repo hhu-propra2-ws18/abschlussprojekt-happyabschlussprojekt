@@ -26,7 +26,6 @@ public class MailService {
 
     @Scheduled(fixedRate=86400000)
     public void sendScheduledMail() throws Exception{
-
         List<Geraet> geraets = geraetRepository.findAll();
         for(int i=0;i<geraets.size();i++){
             if(geraets.get(i).isVerfuegbar()==false && geraets.get(i).getZeitraum()<=3 && geraets.get(i).getZeitraum()>0){

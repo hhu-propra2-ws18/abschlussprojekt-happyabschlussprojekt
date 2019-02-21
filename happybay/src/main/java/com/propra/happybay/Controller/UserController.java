@@ -4,7 +4,7 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.GeraetService;
-import com.propra.happybay.Service.MailService;
+
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -272,7 +272,7 @@ public class UserController {
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
-        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
+        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), (int)geraet.getKaution());
         GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID();
         geraetMitReservationID.setGeraetID(geraet.getId());
         geraetMitReservationID.setReservationID(reservationId);
