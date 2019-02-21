@@ -94,17 +94,17 @@ public class UserController {
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         System.out.println(notifications);
-//        for (Notification notification : notifications) {
-//            if (geraetRepository.
-//                    findById(notification.getGeraetId())
-//                    .get()
-//                    .getBilder()
-//                    .get(0)
-//                    .getBild()
-//                    .length > 0) {
-//                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
-//            }
-//        }
+        for (Notification notification : notifications) {
+            if (geraetRepository.
+                    findById(notification.getGeraetId())
+                    .get()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
+                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+            }
+        }
         model.addAttribute("notification", notifications);
 
         List<TransferRequest> transferRequestList=transferRequestRepository.findAll();
