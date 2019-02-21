@@ -46,7 +46,9 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        person.setEncode(encodeBild(person.getFoto()));
+        if(person.getFoto() != null) {
+            person.setEncode(encodeBild(person.getFoto()));
+        }
         model.addAttribute("person", person);
         if (name.equals("admin")) { return "redirect:/admin/"; }
         else { return "user/profile"; }

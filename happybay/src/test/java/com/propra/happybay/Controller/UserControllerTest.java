@@ -86,6 +86,13 @@ public class UserControllerTest {
 
     @Before
     public void setup() {
+        person.setUsername("test");
+        person.setPassword(encoder.encode("test"));
+        person.setId(1L);
+//        Bild bild = new Bild();
+//        bild.setBild(file.getBytes());
+//        person.setFoto(bild);
+        personRepository.save(person);
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -94,16 +101,13 @@ public class UserControllerTest {
     @WithMockUser(value = "test")
     @Test
     public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-        person.setUsername("test");
-        person.setPassword(encoder.encode("test"));
-        person.setId(1L);
-        person.setEncode(null);
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
-        personRepository.save(person);
-        System.out.println("#############");
-        System.out.println(personRepository.findByUsername("test"));
+//        person.setUsername("test");
+//        person.setPassword(encoder.encode("test"));
+//        person.setId(1L);
+////        Bild bild = new Bild();
+////        bild.setBild(file.getBytes());
+////        person.setFoto(bild);
+//        personRepository.save(person);
         mvc.perform(get("/user/profile").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
