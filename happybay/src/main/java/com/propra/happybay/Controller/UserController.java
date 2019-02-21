@@ -206,18 +206,20 @@ public class UserController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
+        //创建personInfo 为了comment
+        Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes",encodes);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
+        model.addAttribute("personForComment",personForComment);
         return "user/geraet";
     }
 
     //This is comment block
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
-        Geraet geraet=geraetRepository.findById(id).get();
-        Person besitzer=personRepository.findByUsername(geraet.getBesitzer()).get();
+        Person besitzer=personRepository.findById(id).get();
         besitzer.setEncode(encodeBild(besitzer.getFoto()));
 
         model.addAttribute("comments",besitzer.getComments());
