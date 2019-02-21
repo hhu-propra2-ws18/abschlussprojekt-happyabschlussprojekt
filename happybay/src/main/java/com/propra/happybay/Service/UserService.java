@@ -16,6 +16,7 @@ public class UserService implements org.springframework.security.core.userdetail
     @Autowired
     private PersonRepository personRepository;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Person> userOptional = personRepository.findByUsername(username);
