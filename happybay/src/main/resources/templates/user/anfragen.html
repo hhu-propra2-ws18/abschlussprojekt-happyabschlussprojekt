@@ -8,13 +8,16 @@
 <div class="container">
     <div class="card" style="padding: 10px; margin-bottom: 10px">
         <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} "  method="post">
-            <label for="zeitraum">Zeitraum:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="zeitraum" id="zeitraum" th:value="${notification.getZeitraum()}" />
-
-            <label for="mietezeitPunkt">Miete Start Datum:</label>
-            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitPunkt" id="mietezeitPunkt" th:value="${notification.getMietezeitPunkt()}" />
+            <label for="mietezeitpunktStart">Miete Start Datum:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+                   id="mietezeitpunktStart"/>
+            <br/>
+            <label for="mietezeitpunktEnd">Miete End Datum:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+                   id="mietezeitpunktEnd"/>
             <label for="message">Message:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message" th:value="${notification.getMietezeitPunkt()}" />
+            <br/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message"/>
             <input type="hidden" name="besitzer" th:value="${geraet.besitzer}">
 
             <button type="submit" class="btn btn-primary">Schicken</button>

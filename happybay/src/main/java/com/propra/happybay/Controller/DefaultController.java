@@ -6,6 +6,7 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.DefaultServices.DefaultService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
@@ -39,7 +40,8 @@ public class DefaultController {
     public PasswordEncoder encoder;
     @Autowired
     private ProPayService proPayService;
-
+    @Autowired
+    private GeraetService geraetService;
     @Autowired
     private DefaultService defaultService;
 
@@ -54,32 +56,21 @@ public class DefaultController {
                 List<Geraet> remindRentThings = new ArrayList<>();
                 List<Geraet> overTimeThings = new ArrayList<>();
                 LocalDate deadLine = LocalDate.now().plusDays(4);
-                for (Geraet geraet : rentThings) {
-                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-                            overTimeThings.add(geraet);
-                        } else {
-                            remindRentThings.add(geraet);
-                        }
-                    }
-                }
-                model.addAttribute("remindRentThings", remindRentThings);
-                model.addAttribute("overTimeThings", overTimeThings);
+//                for (Geraet geraet : rentThings) {
+//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
+//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
+//                            overTimeThings.add(geraet);
+//                        } else {
+//                            remindRentThings.add(geraet);
+//                        }
+//                    }
+//                }
+//                model.addAttribute("remindRentThings", remindRentThings);
+//                model.addAttribute("overTimeThings", overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
-        System.out.println(key + geraete);
-        //List<Geraet> geraete = geraetRepository.findAll();
-        for (Geraet geraet: geraete){
-            if (geraet.getBilder().size() == 0) {
-                geraet.setBilder(null);
-            }
-            if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
-                geraet.setEncode(defaultService.encodeBild(geraet.getBilder().get(0)));
-            }
 
-        }
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }
 

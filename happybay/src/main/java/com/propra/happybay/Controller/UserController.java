@@ -4,7 +4,9 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
+import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.UserServices.MailService;
+import com.propra.happybay.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -41,6 +41,14 @@ public class UserController {
     private GeraetMitReservationIDRepository geraetMitReservationIDRepository;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RentEventRepository rentEventRepository;
+
+    @Autowired
+    private GeraetService geraetService;
 
     public UserController(PersonRepository personRepository) {
         this.personRepository = personRepository;
@@ -51,14 +59,13 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        person.setEncode(encodeBild(person.getFoto()));
+        if(person.getFoto().getBild().length>0){
+            person.setEncode(person.getFoto().encodeBild());
+        }
+
         model.addAttribute("person", person);
-        if (name.equals("admin")) {
-            return "redirect:/admin/";
-        }
-        else {
-            return "user/profile";
-        }
+        if (name.equals("admin")) { return "redirect:/admin/"; }
+        else { return "user/profile"; }
     }
 
     @GetMapping("/myThings")
@@ -66,12 +73,7 @@ public class UserController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
-
-        List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
-        for (Geraet geraet: geraets){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-        }
-        model.addAttribute("geraete",geraets);
+        model.addAttribute("geraete",geraetService.getAllByBesitzerWithBilder(name));
         return "user/myThings";
     }
 
@@ -79,12 +81,8 @@ public class UserController {
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
-        List<Geraet> geraete = geraetRepository.findAllByMieter(mieterName);
-        for (Geraet geraet : geraete) {
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-        }
         model.addAttribute("person", person);
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllByMieterWithBilder(mieterName));
         return "user/rentThings";
     }
 
@@ -95,8 +93,17 @@ public class UserController {
         model.addAttribute("person", person);
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
+        System.out.println(notifications);
         for (Notification notification : notifications) {
-            notification.setEncode(encodeBild(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0)));
+            if (geraetRepository.
+                    findById(notification.getGeraetId())
+                    .get()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
+                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+            }
         }
         model.addAttribute("notification", notifications);
 
@@ -126,13 +133,13 @@ public class UserController {
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
-        newNotification.setMietezeitPunkt(Date.valueOf(notification.getMietezeitPunkt().toLocalDate().plusDays(1)));
+        newNotification.setMietezeitpunktStart(notification.getMietezeitpunktStart());
+        newNotification.setMietezeitpunktEnd(notification.getMietezeitpunktEnd());
         newNotification.setBesitzer(notification.getBesitzer());
 
 
         Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
         geraet.setZeitraum(notification.getZeitraum());
 
         newNotification.setEncode(geraet.getEncode());
@@ -160,6 +167,8 @@ public class UserController {
             bild.setBild(file.getBytes());
             bilds.add(bild);
         }
+        RentEvent verfuegbar = new RentEvent();
+        verfuegbar.setTimeInterval(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd()));
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
         geraet.setLikes(0);
@@ -168,8 +177,11 @@ public class UserController {
         Person person=personRepository.findByUsername(principal.getName()).get();
         int aktionPunkte=person.getAktionPunkte();
         person.setAktionPunkte(aktionPunkte+10);
-
         geraetRepository.save(geraet);
+
+        geraet.getVerfuegbareEvents().add(verfuegbar);
+        geraetRepository.save(geraet);
+
         return "redirect:/user/myThings";
     }
 
@@ -194,14 +206,8 @@ public class UserController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
-        List<Bild> bilds = geraet.getBilder();
-        List<String> encodes = new ArrayList<>();
-        for(int i=1;i<bilds.size();i++){
-            encodes.add(encodeBild(bilds.get(i)));
-        }
-        geraet.setEncode(encodeBild(bilds.get(0)));
+        List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes",encodes);
-        //model.addAttribute("person", principal);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "user/geraet";
@@ -218,7 +224,6 @@ public class UserController {
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
-        person.setEncode(encodeBild(person.getFoto()));
 
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", person);
@@ -274,8 +279,16 @@ public class UserController {
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
         geraet.setZeitraum(notification.getZeitraum());
-        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
-        geraet.setEndzeitpunkt(endzeit);
+//        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
+//        geraet.setEndzeitpunkt(endzeit);
+//        geraetRepository.save(geraet);
+
+        RentEvent rentEvent = new RentEvent();
+        rentEvent.setMieter(mieter);
+        rentEvent.setTimeInterval(new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd()));
+        geraet.getRentEvents().add(rentEvent);
+        int index = userService.positionOfFreeBlock(geraet, rentEvent);
+        userService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
@@ -310,19 +323,21 @@ public class UserController {
         Notification notification = notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        geraet.setVerfuegbar(true);
-        geraet.setReturnStatus(ReturnStatus.DEFAULT);
-        geraet.setMieter(null);
-        geraetRepository.save(geraet);
-        double amount = geraet.getZeitraum()*geraet.getKosten();
-        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
-        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
-        proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
-        notificationRepository.deleteById(id);
 
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
 
+        geraet.setVerfuegbar(true);
+        geraet.setReturnStatus(ReturnStatus.DEFAULT);
+        geraet.setMieter(null);
+        geraetRepository.save(geraet);
+        double amount = 3;//eraet.getZeitraum()*geraet.getKosten();
+        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
+
+        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
+        proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
+        notificationRepository.deleteById(id);
+        geraetMitReservationIDRepository.deleteById(geraetMitReservationID.getReservationID());
         return "redirect:/user/notifications";
     }
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
@@ -399,11 +414,5 @@ public class UserController {
         geraet.setLikes(geraet.getLikes() + 1);
         geraetRepository.save(geraet);
         return "redirect:/";
-    }
-
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
     }
 }
