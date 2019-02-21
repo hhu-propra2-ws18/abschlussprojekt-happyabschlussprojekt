@@ -47,6 +47,13 @@ public class GeraetService {
             }
         }
         return geraets;
+@Service
+public class GeraetService {
+    @Autowired
+    GeraetRepository geraetRepository;
+
+    public Geraet getById(Long Id) {
+        return geraetRepository.findById(Id).get();
     }
 
 }

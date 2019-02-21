@@ -6,7 +6,7 @@ import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.MailService;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserValidator;
+import com.propra.happybay.Service.UserServices.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -45,6 +46,11 @@ public class UserController {
     @Autowired
     private GeraetService geraetService;
 
+    public UserController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
+
+
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
@@ -54,8 +60,12 @@ public class UserController {
         }
 
         model.addAttribute("person", person);
-        if (name.equals("admin")) { return "redirect:/admin/"; }
-        else { return "user/profile"; }
+        if (name.equals("admin")) {
+            return "redirect:/admin/";
+        }
+        else {
+            return "user/profile";
+        }
     }
 
     @GetMapping("/myThings")
@@ -116,7 +126,7 @@ public class UserController {
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
-        newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
+        newNotification.setMietezeitPunkt(Date.valueOf(notification.getMietezeitPunkt().toLocalDate().plusDays(1)));
         newNotification.setBesitzer(notification.getBesitzer());
 
 
@@ -298,7 +308,7 @@ public class UserController {
         geraet.setMieter(null);
         geraetRepository.save(geraet);
         double amount = geraet.getZeitraum()*geraet.getKosten();
-        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), amount);
+        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
         notificationRepository.deleteById(id);

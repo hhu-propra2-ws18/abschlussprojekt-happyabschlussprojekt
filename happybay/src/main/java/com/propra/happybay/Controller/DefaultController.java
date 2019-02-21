@@ -8,6 +8,7 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.DefaultServices.DefaultService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class DefaultController {
     @Autowired
     private GeraetService geraetService;
 
+    @Autowired
+    private DefaultService defaultService;
+
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
         if(principal != null){
@@ -53,7 +57,7 @@ public class DefaultController {
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
                 List<Geraet> remindRentThings = new ArrayList<>();
                 List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(3);
+                LocalDate deadLine = LocalDate.now().plusDays(4);
                 for (Geraet geraet : rentThings) {
                     if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
                         if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
@@ -91,8 +95,6 @@ public class DefaultController {
             model.addAttribute("errorList", errorList);
             return "default/register";
         }
-
-
         Bild bild = new Bild();
         bild.setBild(file.getBytes());
         person.setFoto(bild);

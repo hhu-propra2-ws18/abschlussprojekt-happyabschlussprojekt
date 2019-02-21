@@ -40,33 +40,21 @@ public class ProPayService {
     }
 
 
-    public void erhoeheAmount(String username, double amount) throws IOException {
+    public void erhoeheAmount(String username, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/" + username);
         makeQuery(amount, "amount", url);
 
     }
-    public void ueberweisen(String username, String besizer, double amount) throws IOException {
+
+    public void ueberweisen(String username, String besizer, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
 
     }
-    public int erzeugeReservation(String mieter, String besitzer, double amount) throws IOException {
+
+    public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/reserve/"  + mieter + "/" + besitzer);
-        String query = "";
-        query = query + URLEncoder.encode("amount", "UTF-8");
-        query = query + "=";
-        query = query + URLEncoder.encode("" + amount, "UTF-8");
-
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(queryBytes);
-
-        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        Reader reader = makeQuery(amount, "amount", url);
         System.out.println("########################");
 
         String response = ((BufferedReader) reader).readLine();
@@ -78,21 +66,21 @@ public class ProPayService {
 
     public void releaseReservation(String username, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/release/"  + username);
-        makeQueryPunish(reservationId, "reservationId",url);
+        makeQuery(reservationId, "reservationId", url);
 
     }
     public void punishReservation(String username, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/punish/"  + username);
-        makeQueryPunish(reservationId, "reservationId", url);
+        makeQuery(reservationId, "reservationId", url);
     }
 
-    private void makeQuery(double amount, String amountString, URL url) throws IOException {
+    private Reader makeQuery(int amount, String amountString, URL url) throws IOException {
         String query = "";
         query = query + URLEncoder.encode(amountString, "UTF-8");
         query = query + "=";
         query = query + URLEncoder.encode("" + amount, "UTF-8");
 
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
+        byte[] queryBytes = query.getBytes("UTF-8");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
@@ -102,25 +90,7 @@ public class ProPayService {
         connection.getOutputStream().write(queryBytes);
 
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-
-    }
-    private void makeQueryPunish(int amount, String amountString, URL url) throws IOException {
-        String query = "";
-        query = query + URLEncoder.encode(amountString, "UTF-8");
-        query = query + "=";
-        query = query + URLEncoder.encode("" + amount, "UTF-8");
-
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(queryBytes);
-
-        Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-
+        return reader;
     }
 
 }
