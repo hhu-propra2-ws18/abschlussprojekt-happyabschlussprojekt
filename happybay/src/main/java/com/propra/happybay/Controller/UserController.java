@@ -5,8 +5,8 @@ import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.GeraetService;
-import com.propra.happybay.Service.MailService;
 import com.propra.happybay.Service.UserServices.MailService;
+import com.propra.happybay.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -43,6 +41,12 @@ public class UserController {
     private GeraetMitReservationIDRepository geraetMitReservationIDRepository;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RentEventRepository rentEventRepository;
+
     @Autowired
     private GeraetService geraetService;
 
@@ -90,7 +94,13 @@ public class UserController {
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         for (Notification notification : notifications) {
-            if (geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).getBild().length > 0) {
+            if (geraetRepository.
+                    findById(notification.getGeraetId())
+                    .get()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
                 notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
             }
         }
@@ -122,13 +132,13 @@ public class UserController {
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
-        newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
+        newNotification.setMietezeitpunktStart(notification.getMietezeitpunktStart());
+        newNotification.setMietezeitpunktEnd(notification.getMietezeitpunktEnd());
         newNotification.setBesitzer(notification.getBesitzer());
 
 
         Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        geraet.setMietezeitpunkt(notification.getMietezeitPunkt());
         geraet.setZeitraum(notification.getZeitraum());
 
         newNotification.setEncode(geraet.getEncode());
@@ -156,6 +166,8 @@ public class UserController {
             bild.setBild(file.getBytes());
             bilds.add(bild);
         }
+        RentEvent verfuegbar = new RentEvent();
+        verfuegbar.setTimeInterval(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd()));
         geraet.setBilder(bilds);
         geraet.setVerfuegbar(true);
         geraet.setLikes(0);
@@ -164,8 +176,11 @@ public class UserController {
         Person person=personRepository.findByUsername(principal.getName()).get();
         int aktionPunkte=person.getAktionPunkte();
         person.setAktionPunkte(aktionPunkte+10);
-
         geraetRepository.save(geraet);
+
+        geraet.getVerfuegbareEvents().add(verfuegbar);
+        geraetRepository.save(geraet);
+
         return "redirect:/user/myThings";
     }
 
@@ -263,8 +278,16 @@ public class UserController {
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
         geraet.setZeitraum(notification.getZeitraum());
-        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
-        geraet.setEndzeitpunkt(endzeit);
+//        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
+//        geraet.setEndzeitpunkt(endzeit);
+//        geraetRepository.save(geraet);
+
+        RentEvent rentEvent = new RentEvent();
+        rentEvent.setMieter(mieter);
+        rentEvent.setTimeInterval(new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd()));
+        geraet.getRentEvents().add(rentEvent);
+        int index = userService.positionOfFreeBlock(geraet, rentEvent);
+        userService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
@@ -303,14 +326,16 @@ public class UserController {
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
-        double amount = geraet.getZeitraum()*geraet.getKosten();
+        double amount = 3;//eraet.getZeitraum()*geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
+
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        mailService.sendAcceptReturnMail(person, geraet);
+
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
         notificationRepository.deleteById(id);
 
-        Person person = personRepository.findByUsername(geraet.getMieter()).get();
-        mailService.sendAcceptReturnMail(person, geraet);
 
         return "redirect:/user/notifications";
     }

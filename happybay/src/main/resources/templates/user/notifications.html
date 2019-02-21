@@ -22,16 +22,16 @@
                      th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Zeitraum: </li>
-                        <li class="list-inline-item"  th:text="${myThing.getZeitraum()}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold" >Message: </li>
                         <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.getMessage(),100)}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >Miete ZeitPunkt: </li>
-                        <li class="list-inline-item" th:text="${myThing.getMietezeitPunkt()}"></li>
+                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktStart:</li>
+                        <li class="list-inline-item" th:text="${myThing.getMietezeitpunktStart()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktEnd:</li>
+                        <li class="list-inline-item" th:text="${myThing.getMietezeitpunktEnd()}"></li>
                     </ul>
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold">Anfrage Person: </li>

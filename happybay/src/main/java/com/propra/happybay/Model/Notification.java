@@ -17,7 +17,8 @@ public class Notification {
     String message;
     String besitzer;
     String anfragePerson;
-    Date mietezeitPunkt;
+    Date mietezeitpunktStart;
+    Date mietezeitpunktEnd;
     int zeitraum;
     String encode;
 }

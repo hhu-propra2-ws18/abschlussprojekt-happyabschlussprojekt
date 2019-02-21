@@ -56,17 +56,17 @@ public class DefaultController {
                 List<Geraet> remindRentThings = new ArrayList<>();
                 List<Geraet> overTimeThings = new ArrayList<>();
                 LocalDate deadLine = LocalDate.now().plusDays(4);
-                for (Geraet geraet : rentThings) {
-                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-                            overTimeThings.add(geraet);
-                        } else {
-                            remindRentThings.add(geraet);
-                        }
-                    }
-                }
-                model.addAttribute("remindRentThings", remindRentThings);
-                model.addAttribute("overTimeThings", overTimeThings);
+//                for (Geraet geraet : rentThings) {
+//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
+//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
+//                            overTimeThings.add(geraet);
+//                        } else {
+//                            remindRentThings.add(geraet);
+//                        }
+//                    }
+//                }
+//                model.addAttribute("remindRentThings", remindRentThings);
+//                model.addAttribute("overTimeThings", overTimeThings);
             }
         }
 
