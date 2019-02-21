@@ -37,6 +37,15 @@ public class HappybayApplication {
             }
         };
     }
+    @Bean
+    InitializingBean initializeTest() {
+        return () -> {
+            Person admin = new Person();
+            admin.setUsername("test");
+            admin.setPassword(encoder.encode("test"));
+            admin.setRole("ROLE_TEST");
+        };
+    }
 
     @Bean
     public JavaMailSender getSender() {
