@@ -392,9 +392,11 @@ public class UserController {
         return "redirect:/";
     }
 
-    private String encodeBild(Bild bild){
+    public String encodeBild(Bild bild){
         Base64.Encoder encoder = Base64.getEncoder();
         String encode = encoder.encodeToString(bild.getBild());
+        System.out.println("---------------");
+        System.out.println(encode);
         return encode;
     }
 }
