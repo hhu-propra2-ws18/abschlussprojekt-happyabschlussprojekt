@@ -4,6 +4,8 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
+import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.MailService;
 import com.propra.happybay.Service.UserServices.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +43,8 @@ public class UserController {
     private GeraetMitReservationIDRepository geraetMitReservationIDRepository;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private GeraetService geraetService;
 
     public UserController(PersonRepository personRepository) {
         this.personRepository = personRepository;
@@ -51,14 +55,13 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        person.setEncode(encodeBild(person.getFoto()));
+        if(person.getFoto().getBild().length>0){
+            person.setEncode(person.getFoto().encodeBild());
+        }
+
         model.addAttribute("person", person);
-        if (name.equals("admin")) {
-            return "redirect:/admin/";
-        }
-        else {
-            return "user/profile";
-        }
+        if (name.equals("admin")) { return "redirect:/admin/"; }
+        else { return "user/profile"; }
     }
 
     @GetMapping("/myThings")
@@ -66,12 +69,7 @@ public class UserController {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
-
-        List<Geraet> geraets = geraetRepository.findAllByBesitzer(name);
-        for (Geraet geraet: geraets){
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-        }
-        model.addAttribute("geraete",geraets);
+        model.addAttribute("geraete",geraetService.getAllByBesitzerWithBilder(name));
         return "user/myThings";
     }
 
@@ -79,12 +77,8 @@ public class UserController {
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
         Person person = personRepository.findByUsername(mieterName).get();
-        List<Geraet> geraete = geraetRepository.findAllByMieter(mieterName);
-        for (Geraet geraet : geraete) {
-            geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-        }
         model.addAttribute("person", person);
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllByMieterWithBilder(mieterName));
         return "user/rentThings";
     }
 
@@ -96,7 +90,9 @@ public class UserController {
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         for (Notification notification : notifications) {
-            notification.setEncode(encodeBild(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0)));
+            if (geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).getBild().length > 0) {
+                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+            }
         }
         model.addAttribute("notification", notifications);
 
@@ -126,7 +122,7 @@ public class UserController {
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
         newNotification.setZeitraum(notification.getZeitraum());
-        newNotification.setMietezeitPunkt(Date.valueOf(notification.getMietezeitPunkt().toLocalDate().plusDays(1)));
+        newNotification.setMietezeitPunkt(notification.getMietezeitPunkt());
         newNotification.setBesitzer(notification.getBesitzer());
 
 
@@ -194,14 +190,8 @@ public class UserController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
-        List<Bild> bilds = geraet.getBilder();
-        List<String> encodes = new ArrayList<>();
-        for(int i=1;i<bilds.size();i++){
-            encodes.add(encodeBild(bilds.get(i)));
-        }
-        geraet.setEncode(encodeBild(bilds.get(0)));
+        List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes",encodes);
-        //model.addAttribute("person", principal);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         return "user/geraet";
@@ -218,7 +208,6 @@ public class UserController {
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
-        person.setEncode(encodeBild(person.getFoto()));
 
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", person);
@@ -399,11 +388,5 @@ public class UserController {
         geraet.setLikes(geraet.getLikes() + 1);
         geraetRepository.save(geraet);
         return "redirect:/";
-    }
-
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
     }
 }

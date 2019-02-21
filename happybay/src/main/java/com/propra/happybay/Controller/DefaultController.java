@@ -6,6 +6,7 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.DefaultServices.DefaultService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
@@ -39,7 +40,8 @@ public class DefaultController {
     public PasswordEncoder encoder;
     @Autowired
     private ProPayService proPayService;
-
+    @Autowired
+    private GeraetService geraetService;
     @Autowired
     private DefaultService defaultService;
 
@@ -67,19 +69,8 @@ public class DefaultController {
                 model.addAttribute("overTimeThings", overTimeThings);
             }
         }
-        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
-        System.out.println(key + geraete);
-        //List<Geraet> geraete = geraetRepository.findAll();
-        for (Geraet geraet: geraete){
-            if (geraet.getBilder().size() == 0) {
-                geraet.setBilder(null);
-            }
-            if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
-                geraet.setEncode(defaultService.encodeBild(geraet.getBilder().get(0)));
-            }
 
-        }
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }
 
