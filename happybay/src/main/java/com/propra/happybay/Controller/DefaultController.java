@@ -2,11 +2,11 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Notification;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.DefaultServices.DefaultService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,9 @@ public class DefaultController {
     @Autowired
     private ProPayService proPayService;
 
+    @Autowired
+    private DefaultService defaultService;
+
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
         if(principal != null){
@@ -72,7 +75,7 @@ public class DefaultController {
                 geraet.setBilder(null);
             }
             if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
+                geraet.setEncode(defaultService.encodeBild(geraet.getBilder().get(0)));
             }
 
         }
@@ -123,9 +126,5 @@ public class DefaultController {
         return "default/login";
     }
 
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
-    }
+
 }

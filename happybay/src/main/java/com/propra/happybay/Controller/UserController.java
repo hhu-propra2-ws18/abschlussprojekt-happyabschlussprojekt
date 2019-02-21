@@ -279,7 +279,7 @@ public class UserController {
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
-        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
+        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), (int) geraet.getKaution());
         GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID();
         geraetMitReservationID.setGeraetID(geraet.getId());
         geraetMitReservationID.setReservationID(reservationId);
@@ -315,7 +315,7 @@ public class UserController {
         geraet.setMieter(null);
         geraetRepository.save(geraet);
         double amount = geraet.getZeitraum()*geraet.getKosten();
-        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), amount);
+        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());
         notificationRepository.deleteById(id);

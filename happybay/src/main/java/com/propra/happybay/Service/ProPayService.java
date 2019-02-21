@@ -40,17 +40,19 @@ public class ProPayService {
     }
 
 
-    public void erhoeheAmount(String username, double amount) throws IOException {
+    public void erhoeheAmount(String username, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/" + username);
         makeQuery(amount, "amount", url);
 
     }
-    public void ueberweisen(String username, String besizer, double amount) throws IOException {
+
+    public void ueberweisen(String username, String besizer, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
 
     }
-    public int erzeugeReservation(String mieter, String besitzer, double amount) throws IOException {
+
+    public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/reserve/"  + mieter + "/" + besitzer);
         Reader reader = makeQuery(amount, "amount", url);
         System.out.println("########################");
@@ -72,7 +74,7 @@ public class ProPayService {
         makeQuery(reservationId, "reservationId", url);
     }
 
-    private Reader makeQuery(double amount, String amountString, URL url) throws IOException {
+    private Reader makeQuery(int amount, String amountString, URL url) throws IOException {
         String query = "";
         query = query + URLEncoder.encode(amountString, "UTF-8");
         query = query + "=";
