@@ -93,17 +93,18 @@ public class UserController {
         model.addAttribute("person", person);
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
-        for (Notification notification : notifications) {
-            if (geraetRepository.
-                    findById(notification.getGeraetId())
-                    .get()
-                    .getBilder()
-                    .get(0)
-                    .getBild()
-                    .length > 0) {
-                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
-            }
-        }
+        System.out.println(notifications);
+//        for (Notification notification : notifications) {
+//            if (geraetRepository.
+//                    findById(notification.getGeraetId())
+//                    .get()
+//                    .getBilder()
+//                    .get(0)
+//                    .getBild()
+//                    .length > 0) {
+//                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+//            }
+//        }
         model.addAttribute("notification", notifications);
 
         List<TransferRequest> transferRequestList=transferRequestRepository.findAll();
@@ -322,15 +323,16 @@ public class UserController {
         Notification notification = notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
+
+        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        mailService.sendAcceptReturnMail(person, geraet);
+
         geraet.setVerfuegbar(true);
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
         double amount = 3;//eraet.getZeitraum()*geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
-
-        Person person = personRepository.findByUsername(geraet.getMieter()).get();
-        mailService.sendAcceptReturnMail(person, geraet);
 
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
         proPayService.releaseReservation(notification.getAnfragePerson(),geraetMitReservationID.getReservationID());

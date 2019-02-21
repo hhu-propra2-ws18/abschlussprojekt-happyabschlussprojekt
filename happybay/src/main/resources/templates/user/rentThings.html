@@ -100,8 +100,12 @@
                     </ul>
 
                     <a th:href="@{/user/geraet/{id}(id=${rentThing.getId()})}" >Details</a><br/>
-                    <a onclick="openForm()" th:if="${rentThing.getReturnStatus()=='default'}">Artikel bewerten</a><br/>
-                    <form class="rating" th:if="${rentThing.getReturnStatus()=='default'}" id="ratingId" style="display: block">
+                    <a onclick="openForm()"
+                       th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
+                        bewerten</a><br/>
+                    <form class="rating"
+                          th:if="${rentThing.getReturnStatus()== T(com.propra.happybay.ReturnStatus).DEFAULT}"
+                          id="ratingId" style="display: block">
                         <label>
                             <input type="radio" name="stars" value="1" />
                             <span class="icon">★</span>
