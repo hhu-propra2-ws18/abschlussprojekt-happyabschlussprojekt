@@ -28,10 +28,13 @@ public class AdminService {
     private TransferRequestRepository transferRequestRepository;
     @Autowired
     public PasswordEncoder encoder;
+    @Autowired
+    private ProPayService proPayService;
 
     public static int anzahlKonflikte = 0;
     public static int anzahlPersonen = 0;
     public static int anzahlNotifications = 0;
+
 
     public List<PersonMitAccount> createPersonAccont() {
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
@@ -51,6 +54,18 @@ public class AdminService {
         model.addAttribute("anzahlKonflikte", anzahlKonflikte);
         model.addAttribute("anzahlNotifications", anzahlNotifications);
         model.addAttribute("personenMitAccounts", createPersonAccont());
+    }
+
+    public void setGeraetToNew(Long geraetId, boolean setDefault) {
+        Geraet geraet = geraetRepository.findById(geraetId).get();
+        if (setDefault) {
+            geraet.setReturnStatus(ReturnStatus.DEFAULT);
+        }
+        geraet.setVerfuegbar(true);
+        geraet.setMieter(null);
+        geraetRepository.save(geraet);
+        proPayService.saveAccount(geraet.getBesitzer());
+        proPayService.saveAccount(geraet.getMieter());
     }
 
     public String isInitPassword() {

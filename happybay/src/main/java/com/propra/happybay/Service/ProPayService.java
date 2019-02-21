@@ -78,7 +78,7 @@ public class ProPayService {
         query = query + "=";
         query = query + URLEncoder.encode("" + amount, "UTF-8");
 
-        byte[] queryBytes = query.toString().getBytes("UTF-8");
+        byte[] queryBytes = query.getBytes("UTF-8");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");

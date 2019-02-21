@@ -27,12 +27,6 @@ public class AdminController {
     @Autowired
     private ProPayService proPayService;
     @Autowired
-    GeraetRepository geraetRepository;
-    @Autowired
-    public PasswordEncoder encoder;
-    @Autowired
-    private GeraetService geraetService;
-    @Autowired
     private PersonService personService;
     @Autowired
     private AdminService adminService;
@@ -78,12 +72,8 @@ public class AdminController {
     @PostMapping("/punishAccount")
     public String punishAccount(Model model, @ModelAttribute("username") String username, @ModelAttribute("geraetId") Long geraetId) throws IOException {
         proPayService.punishReservation(username, adminService.getGeraeteMitReservationID(geraetId).getReservationID());
-        Geraet geraet = geraetService.getById(adminService.getGeraeteMitReservationID(geraetId).getGeraetID());
-        geraet.setReturnStatus(ReturnStatus.DEFAULT);
-        geraet.setVerfuegbar(true);
-        geraet.setMieter(null);
-        proPayService.saveAccount(geraet.getBesitzer());
-        proPayService.saveAccount(geraet.getMieter());
+        adminService.setGeraetToNew(adminService.getGeraeteMitReservationID(geraetId).getGeraetID(), true);
+
         model.addAttribute("person", personService.getByUsername(username));
         model.addAttribute("account", adminService.getAccountByUsername(username));
         return "redirect:/admin/conflicts";
@@ -93,11 +83,7 @@ public class AdminController {
     public String releaseAccount(Model model, @ModelAttribute("username") String username, @ModelAttribute("geraetId") Long geraetId) throws IOException {
         GeraetMitReservationID geraetMitReservationID = adminService.getGeraeteMitReservationID(geraetId);
         proPayService.releaseReservation(username, geraetMitReservationID.getReservationID());
-        Geraet geraet = geraetRepository.findById(geraetMitReservationID.getGeraetID()).get();
-        geraet.setVerfuegbar(true);
-        geraet.setMieter(null);
-        proPayService.saveAccount(geraet.getBesitzer());
-        proPayService.saveAccount(geraet.getMieter());
+        adminService.setGeraetToNew(geraetId, false);
         model.addAttribute("person", personService.getByUsername(username));
         model.addAttribute("account", adminService.getAccountByUsername(username));
         return "redirect:/admin/conflicts";
