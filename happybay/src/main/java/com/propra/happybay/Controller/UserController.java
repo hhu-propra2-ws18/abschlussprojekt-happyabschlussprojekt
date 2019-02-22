@@ -5,8 +5,8 @@ import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.UserDetailsServiceImpl;
 import com.propra.happybay.Service.UserServices.MailService;
-import com.propra.happybay.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -42,7 +43,7 @@ public class UserController {
     @Autowired
     private MailService mailService;
     @Autowired
-    private UserService userService;
+    private UserDetailsServiceImpl userService;
 
     @Autowired
     private RentEventRepository rentEventRepository;
@@ -92,11 +93,19 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
 
-        List<Notification> notifications = notificationService.findAllByBesitzer(signedInPersonUsername);
+        List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
+        for (Notification notification : notifications) {
+            if (geraetRepository.
+                    findById(notification.getGeraetId())
+                    .get()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
+                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+            }
+        }
         model.addAttribute("notifications", notifications);
-
-        List<TransferRequest> transferRequestList=transferRequestRepository.findAll();
-        model.addAttribute("transferRequestList",transferRequestList);
 
         return "user/notifications";
     }
@@ -192,20 +201,19 @@ public class UserController {
     }
     @GetMapping("/geraet/{id}")
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
-        String signedInPersonUsername = principal.getName();
-        Person person = personService.getByUsername(signedInPersonUsername);
-        model.addAttribute("person", person);
-
+        String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
         //创建personInfo 为了comment
         Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes", encodes);
+        model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
         model.addAttribute("personForComment",personForComment);
         return "user/geraet";
     }
 
+    //This is comment block
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
         Person besitzer=personRepository.findById(id).get();
@@ -220,28 +228,29 @@ public class UserController {
 
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
-        Geraet geraet = geraetRepository.findById(id).get();
-        String besitzer = geraet.getBesitzer();
-        model.addAttribute("geraet", geraet);
+        Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
 
-        Person person = personService.getByUsername(besitzer);
+        Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", person);
+        model.addAttribute("geraet", geraet);
         return "user/edit";
     }
 
     @GetMapping("/geraet/zurueckgeben/{id}")
-    public String geraetZurueck(@PathVariable Long id, Principal principal) throws Exception {
-        String signedInPersonUsername = principal.getName();
+    public String geraetZurueck(@PathVariable Long id, Model model, Principal principal) throws Exception {
         Geraet geraet = geraetRepository.findById(id).get();
 
         geraet.setReturnStatus(ReturnStatus.WAITING);
 
         geraetRepository.save(geraet);
 
-        Notification notification = notificationService.makeNotification(signedInPersonUsername,
-                id, geraet);
-        notification.setType("return");
-        notificationRepository.save(notification);
+        Notification newNotification = new Notification();
+        newNotification.setType("return");
+        newNotification.setAnfragePerson(principal.getName());
+        newNotification.setGeraetId(id);
+        newNotification.setBesitzer(geraet.getBesitzer());
+        newNotification.setZeitraum(geraet.getZeitraum());
+        notificationRepository.save(newNotification);
 
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
         mailService.sendReturnMail(person, geraet);
@@ -267,7 +276,7 @@ public class UserController {
         return "redirect:/user/notifications";
     }
     @PostMapping("/notification/acceptRequest/{id}")
-    public String notificationAcceptRequest(@PathVariable Long id) throws Exception {
+    public String notificationAcceptRequest(@PathVariable Long id, Principal principal) throws Exception {
 
         Notification notification = notificationRepository.findById(id).get();
         String mieter = notification.getAnfragePerson();
@@ -284,7 +293,7 @@ public class UserController {
         rentEvent.setTimeInterval(timeInterval);
         geraet.getRentEvents().add(rentEvent);
         geraet.setZeitraum(timeInterval.getDuration());
-        int index = userServiceImpl.positionOfFreeBlock(geraet, rentEvent);
+        int index = userService.positionOfFreeBlock(geraet, rentEvent);
         userService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
 
@@ -332,7 +341,7 @@ public class UserController {
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
-        double amount = 3;//eraet.getZeitraum()*geraet.getKosten();
+        double amount = geraet.getZeitraum() * geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
 
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
@@ -341,7 +350,6 @@ public class UserController {
         geraetMitReservationIDRepository.deleteByReservationID(geraetMitReservationID.getReservationID());
         return "redirect:/user/notifications";
     }
-
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
     public String changeImg(Model model, Principal principal){
         String name = principal.getName();
@@ -418,7 +426,4 @@ public class UserController {
         return "redirect:/";
     }
 
-    public UserController(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 }
