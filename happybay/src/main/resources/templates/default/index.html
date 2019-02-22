@@ -6,14 +6,14 @@
 <div class="card">
     <div class="card-body" style="text-align: center;background-color:#F7F4E9"
          th:each="remindRentThing:${remindRentThings}">
-        < img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width:
+        <img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width:
         20px">
         <a href="/rentThings" style="color:orange;font-weight:bold"
            th:text="${remindRentThing.getTitel()}+' läuft aus, bitte senden Sie es rechtzeitig zurück.'"></a>
     </div>
     <div class="card-body" style="text-align: center;background-color:#F7F4E9"
          th:each="overTimeThing:${overTimeThings}">
-        < img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width:
+        <img src="https://pngimage.net/wp-content/uploads/2018/05/alert-logo-png-3.png" style="height: 20px;width:
         20px">
         <a href="/rentThings" style="color:red;font-weight:bold"
            th:text="${overTimeThing.getTitel()}+' ist abgelaufen, bitte senden Sie es sofort zurück'"></a>
@@ -23,7 +23,9 @@
     <div class="container">
         <div class="row justify-content-around">
             <div class="col-5 w-50 card" style="width: 15rem;" th:each="Thing: ${geraete}" >
-                <img class="card-img-top"
+                <img th:if="${Thing.getEncode()==null}" class="card-img-top"
+                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                <img th:unless="${Thing.getEncode()==null}" class="card-img-top"
                      th:src="@{'data:image/jpeg;base64,'+ ${Thing.getEncode()}}">
                 <div class="card-body">
                     <h5 class="card-title">TITEL : </h5>

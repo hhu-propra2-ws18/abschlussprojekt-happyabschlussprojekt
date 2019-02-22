@@ -10,9 +10,7 @@
     <div style="margin: 15px">
         <ul class="list-inline card-text">
             <li class="list-inline-item">
-                <a th:href="@{/user/PersonInfo/Profile/ChangeProfile}">
-                    <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${person.getEncode()}}" height="100px" width="100px">
-                </a>
+                <img class="img-circle" th:src="@{'data:image/jpeg;base64,'+ ${person.getEncode()}}" height="100px" width="100px">
             </li>
             <br>
             <li class="list-inline-item font-weight-bold">Username:</li>
@@ -26,7 +24,27 @@
             <br>
             <li class="list-inline-item font-weight-bold">Aktion Punkte:</li>
             <li class="list-inline-item" th:text="${person.getAktionPunkte()}"></li>
+        </ul>
+    </div>
+</div>
 
+<div class="card text-center">
+    <div class="card-header">Kommentare</div>
+    <!--<h2>Kommentare zu seinen Leihgaben </h2>-->
+    <!--<div class="card-body">-->
+
+    <!--</div>-->
+
+    <h5 class="card-title" style="text-align: center">Kommentare zu seinen geliehenen Artikeln</h5>
+    <div class="card-body" style="text-align: left" th:each="comment:${comments}">
+        <ul class="list-inline card-text">
+            <li class="list-inline-item" >
+                <a th:href="@{/user/BesitzerInfo/{id}(id=${comment.getPersonId()})}" th:text="${comment.getSenderFrom()}"></a>
+            </li>
+            <br>
+            <li class="list-inline-item" th:text="'   ' + ${comment.getMessage()}"></li>
+            <br>
+            <li class="list-inline-item" style="color: darkgrey" th:text="'Kommentare über '+${comment.getGeraetTitel()} +' am ' + ${comment.getDate()}"></li>
         </ul>
     </div>
 </div>

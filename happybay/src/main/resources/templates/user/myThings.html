@@ -19,7 +19,9 @@
     <div class="container">
         <div class="row justify-content-around">
             <div class="col-5 w-50 card" style="width: 15rem;" th:each="myThing: ${geraete}" >
-                <img class="card-img-top"
+                <img th:if="${myThing.getEncode()==null}" class="card-img-top"
+                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                <img th:unless="${myThing.getEncode()==null}" class="card-img-top"
                      th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
                 <div class="card-body">
                     <h5 class="card-title">TITEL : </h5>
@@ -32,6 +34,18 @@
                     <li class="list-group-item">
                         <span th:if="${myThing.isVerfuegbar()}==true" class="badge badge-success">Verfügbar</span>
                         <span th:if="${myThing.isVerfuegbar()}==false" class="badge badge-danger">Besetzt</span>
+                    </li>
+                    <li th:each="rentEvent: ${myThing.getRentEvents()}">
+                        <tr>
+                            <td th:text="'Von: '+${rentEvent.getTimeInterval().getStart()} + ' bis ' + ${rentEvent.getTimeInterval().getEnd()}"></td>
+                        </tr>
+                    </li>
+                    <br/>
+                    Verfuegbar
+                    <li th:each="verfugbarEvent: ${myThing.getVerfuegbareEvents()}">
+                        <tr>
+                            <td th:text="'Von: '+${verfugbarEvent.getTimeInterval().getStart()} + ' bis ' + ${verfugbarEvent.getTimeInterval().getEnd()}"></td>
+                        </tr>
                     </li>
                 </ul>
                 <div class="card-body">

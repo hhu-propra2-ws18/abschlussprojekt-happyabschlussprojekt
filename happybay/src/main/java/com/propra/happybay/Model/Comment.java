@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -12,13 +13,16 @@ public class Comment {
     @Id
     @GeneratedValue
     Long id;
-    Long geraetId;
+
+    Long personId;
+
+    String geraetTitel;
 
     String message;
 
-    String sender;
+    String senderFrom;
 
-    Date date;
+    LocalDate date;
 
 }
 

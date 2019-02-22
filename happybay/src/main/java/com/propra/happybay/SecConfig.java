@@ -1,6 +1,6 @@
 package com.propra.happybay;
 
-import com.propra.happybay.Service.UserService;
+import com.propra.happybay.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +27,14 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/user/**").authenticated()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST,"/add").permitAll()
                 .antMatchers("/addNewUser").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/user/profile").hasAnyRole("USER")
+                .antMatchers("/aboutUs").permitAll()
+                .antMatchers("/user/profile").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
         http.logout().permitAll();
