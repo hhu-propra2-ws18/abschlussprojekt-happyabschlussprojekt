@@ -78,6 +78,8 @@ public class DefaultController {
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) throws IOException {
         userValidator.validate(person, bindingResult);
+        System.out.println("################");
+        System.out.println(bindingResult.hasErrors());
         if (bindingResult.hasErrors()) {
             BindingResultWithErrors bindingResultWithErrors=new BindingResultWithErrors(bindingResult);
             bindingResultWithErrors.findErrorList();

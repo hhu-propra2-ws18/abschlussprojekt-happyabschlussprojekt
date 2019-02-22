@@ -8,38 +8,48 @@ import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.PictureService;
 import com.propra.happybay.Service.ProPayService;
+import com.propra.happybay.Service.UserValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.beans.PropertyEditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static reactor.core.publisher.Mono.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,6 +58,48 @@ public class DefaultControllerTest {
     private Account account = new Account();
     private Geraet geraet=new Geraet();
     private List<Geraet> geraetList=new ArrayList<>();
+    private MultipartFile file = new MultipartFile() {
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getOriginalFilename() {
+            return null;
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public long getSize() {
+            return 0;
+        }
+
+        @Override
+        public byte[] getBytes() throws IOException {
+            return new byte[0];
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void transferTo(File dest) throws IOException, IllegalStateException {
+
+        }
+    };
+    private Bild bild = new Bild();
     @MockBean
     private PersonRepository personRepository;
     @MockBean
@@ -59,6 +111,12 @@ public class DefaultControllerTest {
     @Autowired
     private WebApplicationContext context;
     private MockMvc mvc;
+    @MockBean
+    BindingResult result;
+    @MockBean
+    UserValidator userValidator;
+    @MockBean
+    PictureService pictureService;
     @Before
     public void setup() throws IOException {
         person.setUsername("testAdmin");
@@ -70,7 +128,6 @@ public class DefaultControllerTest {
         //gerät
         geraet.setId(2L);
         geraet.setReturnStatus(ReturnStatus.KAPUTT);
-        geraet.setEndzeitpunkt(LocalDate.of(2000,10,10));
         geraetList.add(geraet);
 
         mvc = MockMvcBuilders
@@ -80,34 +137,32 @@ public class DefaultControllerTest {
     }
     @WithMockUser(value = "test",roles = "USER")
     @Test
-    public void index_USER_isPresent() throws Exception {
-        Mockito.when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        Mockito.when(geraetRepository.findAllByMieter(any())).thenReturn(geraetList);
-        Mockito.when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
-        mvc.perform(get("/").param("key","key"))
-                .andExpect(status().isOk());
-    }
-    @WithMockUser(value = "test",roles = "USER")
-    @Test
-    public void index_USER_noPresent() throws Exception {
-        Mockito.when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+    public void index_USER() throws Exception {
+        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }
     @Test
     public void index_NO_USER() throws Exception {
-        Mockito.when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void addToDatabase() throws Exception {
-        mvc.perform(post("/addNewUser")
-                .flashAttr("person",person)
-                .param("file"))
+//        when(result.hasErrors()).thenReturn(true);
+        when(pictureService.getBildFromInput(file)).thenReturn(bild);
+        mvc.perform(post("/addNewUser").flashAttr("person",person).flashAttr("file",file))
                 .andExpect(status().isOk());
     }
+//    @Test
+//    public void addToDatabaseWithError() throws Exception {
+////        when(result.hasErrors()).thenReturn(true);
+//        when(result.hasErrors()).thenReturn(true);
+//        mvc.perform(post("/addNewUser").flashAttr("person",person).flashAttr("file",file))
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     public void register() throws Exception {
