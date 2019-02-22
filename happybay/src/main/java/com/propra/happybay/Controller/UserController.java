@@ -18,6 +18,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -190,14 +191,16 @@ public class UserController {
     //This is comment block
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
-        Person besitzer=personRepository.findById(id).get();
-        besitzer.setEncode(encodeBild(besitzer.getFoto()));
 
-        model.addAttribute("comments",besitzer.getComments());
-        model.addAttribute("person",besitzer);
+
+
+
         Geraet geraet = geraetRepository.findById(id).get();
         Person besitzer = personRepository.findByUsername(geraet.getBesitzer()).get();
-        model.addAttribute("person", besitzer);
+        besitzer.setEncode(encodeBild(besitzer.getFoto()));
+        model.addAttribute("comments",besitzer.getComments());
+        model.addAttribute("person",besitzer);
+
         return "user/besitzerInfo";
     }
 

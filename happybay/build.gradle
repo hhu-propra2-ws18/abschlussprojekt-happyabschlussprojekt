@@ -62,5 +62,7 @@ buildscript {
         testCompile('org.springframework.boot:spring-boot-starter-test')
         // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.3.RELEASE'
-
+        testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '1.18'
+        testCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.1.0.RELEASE'
+        testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.20.0', ext: 'pom'    
     }
