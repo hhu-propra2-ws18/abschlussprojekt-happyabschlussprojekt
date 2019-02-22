@@ -11,12 +11,12 @@ public class RentEvent {
     @Id
     @GeneratedValue
     Long Id;
+    int reservationId;
+    Long geraetId;
 
     @Embedded
     TimeInterval timeInterval;
-
     String mieter; //username
-
     ReturnStatus returnStatus = ReturnStatus.DEFAULT;
 
 }

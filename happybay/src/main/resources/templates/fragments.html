@@ -87,7 +87,8 @@
                     font-weight: bold; margin-left: 20px; opacity: 0.6">
                     <tr>
                         <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
-                            ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                            ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
+                            ' von ' + ${rentEvent.mieter}"></td>
                     </tr>
                 </li>
             </ul>

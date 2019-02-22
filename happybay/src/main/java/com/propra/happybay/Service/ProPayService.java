@@ -80,17 +80,17 @@ public class ProPayService {
         int reservationIdInt = reservationId.intValue();
 
         URL url = new URL("http://localhost:8888/reservation/release/"  + mieter);
-        makeQuery(reservationIdInt, "reservationId",url);
+        makeQuery(reservationIdInt, "reservationId", url);
 
         saveAccount(mieter);
         saveAccount(geraet.getBesitzer());
+
+        //GeraetMitReservationID geraetMitReservationID = adminService.getGeraeteMitReservationID(geraetId);
+        //proPayService.releaseReservation(username, geraetMitReservationID.getReservationID());
     }
 
     public void punishReservation(String mieter, Long geraetId) throws IOException {
         Geraet geraet = geraetRepository.findById(geraetId).get();
-        System.out.println();
-        System.out.println(mieter);
-        System.out.println();
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
         Long reservationId = geraetMitReservationID.getReservationID();
         int reservationIdInt = reservationId.intValue();
