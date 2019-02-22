@@ -159,7 +159,7 @@ public class ProPayServiceTest {
 
         }
 
-        verify(getRequestedFor(urlEqualTo("/account/Anton")));
+        verify(postRequestedFor(urlEqualTo("/reservation/release/Anton")));
     }
 
 
@@ -175,7 +175,7 @@ public class ProPayServiceTest {
 
         }
 
-        verify(postRequestedFor(urlEqualTo("/reservation/reserve/Anton/Tony")));
+        verify(postRequestedFor(urlEqualTo("/reservation/punish/Anton")));
     }
 
 

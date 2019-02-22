@@ -13,10 +13,14 @@ public class PictureService {
     public List<Bild> returnListOfPictures(MultipartFile[] files) throws IOException {
         List<Bild> bilder = new ArrayList<>();
         for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilder.add(bild);
+            bilder.add(getBildFromInput(file));
         }
         return bilder;
+    }
+
+    public Bild getBildFromInput(MultipartFile file) throws IOException {
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        return bild;
     }
 }
