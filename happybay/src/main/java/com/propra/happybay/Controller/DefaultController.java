@@ -3,6 +3,8 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.NormalObject.BindingResultWithErrors;
+import com.propra.happybay.NormalObject.GeraetMitZeit;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
@@ -51,23 +53,15 @@ public class DefaultController {
             String name = principal.getName();
             if (personRepository.findByUsername(name).isPresent()) {
                 notificationService.updateAnzahl(name);
-                model.addAttribute("person", personRepository.findByUsername(name).get());
 
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
-                List<Geraet> remindRentThings = new ArrayList<>();
-                List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(4);
-//                for (Geraet geraet : rentThings) {
-//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-//                            overTimeThings.add(geraet);
-//                        } else {
-//                            remindRentThings.add(geraet);
-//                        }
-//                    }
-//                }
-//                model.addAttribute("remindRentThings", remindRentThings);
-//                model.addAttribute("overTimeThings", overTimeThings);
+
+                GeraetMitZeit geraetMitZeit=new GeraetMitZeit(rentThings);
+                geraetMitZeit.pruefGeraetZeit();
+
+                model.addAttribute("person", personRepository.findByUsername(name).get());
+                model.addAttribute("remindRentThings", geraetMitZeit.getRemindRentThings());
+                model.addAttribute("overTimeThings", geraetMitZeit.getOverTimeThings());
             }
             else {
                 model.addAttribute("person", new Person());
@@ -84,28 +78,26 @@ public class DefaultController {
     }
 
     @PostMapping("/addNewUser")
-    public String addToDatabase(@RequestParam("file") MultipartFile file,
+    public String addToDatabase(@RequestParam(value = "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
-            List<String> errorList = new ArrayList<>();
-            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
-                errorList.add(bindingResult.getAllErrors().get(i).getCode());
-            }
-            System.out.println(errorList);
-            model.addAttribute("errorList", errorList);
+            BindingResultWithErrors bindingResultWithErrors=new BindingResultWithErrors(bindingResult);
+            bindingResultWithErrors.findErrorList();
+            model.addAttribute("errorList", bindingResultWithErrors.getErrorList());
             return "default/register";
         }
-
         person.setFoto(pictureService.getBildFromInput(file));
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
 
         personRepository.save(person);
         proPayService.saveAccount(person.getUsername());
-        person.setPassword("");
+
+        person.setPassword(null);
         model.addAttribute("person", person);
+
         return "default/confirmationOfRegistration";
     }
 
