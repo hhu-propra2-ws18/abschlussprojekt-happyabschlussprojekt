@@ -9,7 +9,7 @@ import javax.persistence.Id;
 @Entity
 public class GeraetMitReservationID {
     @Id
-    private int reservationID;
+    private Long reservationID;
     private Long geraetID;
 
 }
