@@ -38,8 +38,6 @@ public class AdminController {
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
         InformationForMenuBadges informationForMenuBadges = adminServiceImpl.returnInformationForMenuBadges();
-        System.out.println("###############");
-        System.out.println(informationForMenuBadges.getNumberOfConflicts());
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         if (adminServiceImpl.isAdminHasDefaultPassword()) {
             return "admin/changePassword";
