@@ -112,7 +112,7 @@ public class UserControllerTest {
         geraet.setId(2L);
         geraet.setBesitzer(person.getUsername());
         geraet.setKosten(3);
-        geraet.setKaution(10.0);
+        geraet.setKaution(10);
         geraetRepository.save(geraet);
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)

@@ -56,6 +56,7 @@ public class UserController {
     }
 
 
+
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
