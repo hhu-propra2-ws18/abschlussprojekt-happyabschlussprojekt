@@ -73,18 +73,11 @@ public class ProPayService {
         return Integer.parseInt(lines2[0]);
     }
 
-    public void releaseReservation(String mieter, Long geraetId) throws IOException {
-        Geraet geraet = geraetRepository.findById(geraetId).get();
-        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
-        Long reservationId = geraetMitReservationID.getReservationID();
-        int reservationIdInt = reservationId.intValue();
-
+    public void releaseReservation(String mieter, int reservationId) throws IOException {
         URL url = new URL("http://localhost:8888/reservation/release/"  + mieter);
-        makeQuery(reservationIdInt, "reservationId", url);
+        makeQuery(reservationId, "reservationId", url);
 
         saveAccount(mieter);
-        saveAccount(geraet.getBesitzer());
-
         //GeraetMitReservationID geraetMitReservationID = adminService.getGeraeteMitReservationID(geraetId);
         //proPayService.releaseReservation(username, geraetMitReservationID.getReservationID());
     }

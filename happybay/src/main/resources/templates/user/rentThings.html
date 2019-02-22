@@ -77,34 +77,34 @@
     <div th:each="rentThing: ${geraete}" class="col-sm-3">
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
-                <img th:if="${rentThing.getEncode()==null}" class="card-img-top"
+                <img th:if="${rentThing.geraet.getEncode()==null}" class="card-img-top"
                      src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-                <img th:unless="${rentThing.getEncode()==null}" class="card-img-top"
-                     th:src="@{'data:image/jpeg;base64,'+ ${rentThing.getEncode()}}">
+                <img th:unless="${rentThing.geraet.getEncode()==null}" class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${rentThing.geraet.getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold">Titel: </li>
-                        <li class="list-inline-item"  th:text="${rentThing.getTitel()}"></li>
+                        <li class="list-inline-item"  th:text="${rentThing.geraet.getTitel()}"></li>
                     </ul>
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold" >Beschreibung: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.beschreibung,100)}"></li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.geraet.beschreibung,100)}"></li>
                     </ul>
                     <ul class="list-inline card-text">
                         <li class="list-inline-item font-weight-bold" >Kost: </li>
-                        <li class="list-inline-item" th:text="${rentThing.getKosten() + '€'}"></li>
+                        <li class="list-inline-item" th:text="${rentThing.geraet.getKosten() + '€'}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
                         <li class="list-inline-item font-weight-bold" >Kaution: </li>
-                        <li class="list-inline-item" th:text="${rentThing.getKaution() + '€'}"></li>
+                        <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
                     </ul>
 
-                    <a th:href="@{/user/geraet/{id}(id=${rentThing.getId()})}" >Details</a><br/>
+                    <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}" >Details</a><br/>
                     <a onclick="openForm()"
-                       th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
+                       th:if="${rentThing.geraet.getReturnStatus()==T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
                         bewerten</a><br/>
                     <form class="rating"
-                          th:if="${rentThing.getReturnStatus()== T(com.propra.happybay.ReturnStatus).DEFAULT}"
+                          th:if="${rentThing.geraet.getReturnStatus()== T(com.propra.happybay.ReturnStatus).DEFAULT}"
                           id="ratingId" style="display: block">
                         <label>
                             <input type="radio" name="stars" value="1" />
@@ -137,12 +137,12 @@
                             <span class="icon">★</span>
                         </label>
                     </form><br/>
-                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.getId()})}"
-                       th:if="${rentThing.getReturnStatus() == T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
+                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
+                       th:if="${rentThing.rentEvent.getReturnStatus() == T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
                         zurückgeben</a><br/>
-                    <a th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
+                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
                         Konflikt ausgelöst.</a>
-                    <a th:if="${rentThing.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING}">Ihre Rückgabe
+                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING}">Ihre Rückgabe
                         wird bearbeitet</a>
 
                 </div>

@@ -2,6 +2,7 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -31,6 +33,8 @@ public class AdminController {
     private TransferRequestRepository transferRequestRepository;
     @Autowired
     private GeraetService geraetService;
+    @Autowired
+    private RentEventRepository rentEventRepository;
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
@@ -54,10 +58,18 @@ public class AdminController {
 
     @GetMapping("/conflicts")
     public String conflicts(Model model) {
-        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
+        List<RentEvent> rentEventsWithConflicts = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
+        List<GeraetMitRentEvent> geraetMitRentEventsWithConflicts = new ArrayList<>();
+        for (RentEvent rentEventWithConflict : rentEventsWithConflicts) {
+            Geraet geraet = geraetRepository.findById(rentEventWithConflict.getGeraetId()).get();
+            GeraetMitRentEvent geraetMitRentEvent = new GeraetMitRentEvent();
+            geraetMitRentEvent.setGeraet(geraet);
+            geraetMitRentEvent.setRentEvent(rentEventWithConflict);
+            geraetMitRentEventsWithConflicts.add(geraetMitRentEvent);
+        }
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
 
-        model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
+        model.addAttribute("geraetMitRentEventsWithConflicts", geraetMitRentEventsWithConflicts);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         return "admin/conflicts";
     }
@@ -86,9 +98,11 @@ public class AdminController {
     }
 
     @PostMapping("/releaseAccount")
-    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("geraetId") Long geraetId) throws IOException {
-        proPayService.releaseReservation(mieter, geraetId);
-        geraetService.restoreToDefault(geraetId);
+    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
+        proPayService.releaseReservation(mieter, reservationId);
+        Geraet geraet = geraetRepository.findById(rentEventRepository.findByReservationId(reservationId).getGeraetId()).get();
+        geraet.getRentEvents().remove(rentEventRepository.findByReservationId(reservationId));
+        rentEventRepository.deleteByReservationId(reservationId);
         return "redirect:/admin/conflicts";
     }
 

@@ -13,6 +13,7 @@ public class Notification {
     @GeneratedValue
     Long id;
     Long geraetId;
+    Long rentEventId;
     String type;
     String message;
     String besitzer;
