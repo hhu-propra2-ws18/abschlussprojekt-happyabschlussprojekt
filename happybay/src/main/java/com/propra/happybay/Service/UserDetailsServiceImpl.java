@@ -1,4 +1,4 @@
-package com.propra.happybay.Service.UserServices;
+package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 
     @Autowired
     private PersonRepository personRepository;

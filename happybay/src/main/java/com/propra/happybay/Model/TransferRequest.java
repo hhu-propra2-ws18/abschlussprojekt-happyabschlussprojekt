@@ -14,5 +14,12 @@ public class TransferRequest {
     Long id;
     String username;
     int amount = 0;
+
+    public TransferRequest(String username, int amount) {
+        this.username = username;
+        this.amount = amount;
+    }
+
+    public TransferRequest() {}
 }
 

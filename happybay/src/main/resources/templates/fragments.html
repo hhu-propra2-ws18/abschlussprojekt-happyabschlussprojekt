@@ -40,7 +40,7 @@
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a class="nav-link" th:href="@{/user/notifications}">
-                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-bell" style="color: gold"></i>
                         <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
                     </a>
                 </li>
@@ -55,5 +55,138 @@
         </div>
 </nav>
 
+<div th:fragment="geraetContainer" class="container">
+    <div class="row justify-content-around">
+        <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
+            <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
+                 src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+            <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
+                     width: 100%; object-fit: cover"
+                 th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
+            <div class="card-body">
+                <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
+                        font-size: x-large">Content</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
+                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST : </li>
+                <li class="list-group-item" th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:</li>
+                <br/>
+                <span class="badge badge-success">Verfügbar</span>
+                <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+                    font-weight: bold; margin-left: 20px">
+                    <tr>
+                        <td th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                            ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                    </tr>
+                </li>
+                <br/>
+                <span class="badge badge-danger">Schon verliehen</span>
+                <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                    font-weight: bold; margin-left: 20px; opacity: 0.6">
+                    <tr>
+                        <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                            ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                    </tr>
+                </li>
+
 </body>
 </html>
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head th:fragment="header">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <!--<title>HappyBay</title>-->
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">-->
+    <!--<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">-->
+<!--</head>-->
+<!--<div>-->
+
+    <!--<div th:fragment="topSiteBarAndMenu">-->
+<!--<nav class="nav" style="position: relative; background-color: deepskyblue"   >-->
+     <!--&lt;!&ndash;${person != null} ? 'background-color:' + ${user.color} : 'background-color: deepskyblue'">&ndash;&gt;-->
+    <!--<a href="/" class="nav-link" style="color: white; align: left">-->
+        <!--<img class="rounded" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4" height="50px"-->
+             <!--width="50px">-->
+    <!--</a>-->
+<!--</nav>-->
+
+<!--<ul class="nav nav-tabs" style="background-color: white">-->
+    <!--<li class="nav-item">-->
+        <!--<a href="/">-->
+            <!--<span class="glyphicon glyphicon-home"></span>-->
+            <!--Startseite-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li id="meineDaten" class="nav-item" style="display: inline-block">-->
+        <!--<a class="nav-link" th:href="@{/user/profile}">Meine Daten</a>-->
+    <!--</li>-->
+    <!--<li class="nav-item" style="display: inline-block">-->
+        <!--<a class="nav-link" th:href="@{/user/propay}">Mein ProPay</a>-->
+    <!--</li>-->
+    <!--<li id="meineGeraete" class="nav-item" style="display: inline-block;">-->
+        <!--<a class="nav-link" th:href="@{/user/myThings}">Meine Geräte</a>-->
+    <!--</li>-->
+    <!--<li id="meineAusleihen" onclick="this.className.replace(this.className + ' active')" class="nav-item" style="display: inline-block">-->
+        <!--<a class="nav-link" th:href="@{/user/rentThings}">Meine Ausleihen</a>-->
+    <!--</li>-->
+    <!--&lt;!&ndash;<li id="benachrichtigungen" onclick="changeClass(this)" class="nav-item ml-auto">&ndash;&gt;-->
+    <!--&lt;!&ndash;<label class="nav-link" th:text="'Hallo, ' + ${user.getUsername()}"></label>&ndash;&gt;-->
+    <!--&lt;!&ndash;</li>&ndash;&gt;-->
+    <!--<form class="form-inline my-2 my-lg-0 ml-auto">-->
+        <!--<input class="form-control mr-sm-2" type="search" placeholder="Nach passenden Artikel suchen" aria-label="Search" name="key">-->
+        <!--&lt;!&ndash;<button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>&ndash;&gt;-->
+    <!--</form>-->
+    <!--<li class="nav-item">-->
+        <!--<a th:href="@{/user/notifications}">-->
+            <!--<span class="glyphicon glyphicon-bell" th:style="${4 > 3} ? 'color: gold' : ''"></span>-->
+            <!--<span class="badge badge-pill badge-info">4</span>-->
+            <!--<label th:text="'Hallo, ' + ${person.getUsername()}">Benachrichtigungen</label>-->
+        <!--</a>-->
+    <!--</li>-->
+    <!--<li style="float: right" class="nav-item">-->
+        <!--<a class="nav-link" th:href="@{/logout}">Abmelden</a>-->
+    <!--</li>-->
+<!--</ul>-->
+
+<!--&lt;!&ndash;<ul class="nav nav-tabs" style="border-bottom: none">&ndash;&gt;-->
+    <!--&lt;!&ndash;<li class="nav-item">&ndash;&gt;-->
+        <!--&lt;!&ndash;<a class="nav-link" th:href="@{/PersonInfo/Profile/ChangeProfile}">&ndash;&gt;-->
+            <!--&lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;-->
+            <!--&lt;!&ndash;Bearbeiten&ndash;&gt;-->
+        <!--&lt;!&ndash;</a>&ndash;&gt;-->
+    <!--&lt;!&ndash;</li>&ndash;&gt;-->
+<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<div style="margin: 15px">&ndash;&gt;-->
+    <!--&lt;!&ndash;<ul class="list-inline card-text">&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item font-weight-bold">Name:</li>&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item"&ndash;&gt;-->
+            <!--&lt;!&ndash;th:text="${user.getVorname()} + ' ' + ${person.getNachname()}"></li>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+    <!--&lt;!&ndash;<ul class="list-inline card-text">&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item font-weight-bold">Kontakt:</li>&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item" th:text="${user.getKontakt()}"></li>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+    <!--&lt;!&ndash;<ul class="list-inline card-text">&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item font-weight-bold">Adresse:</li>&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item" th:text="${user.getAdresse()}"></li>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+    <!--&lt;!&ndash;<ul class="list-inline card-text">&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item font-weight-bold">Username:</li>&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item" th:text="${user.getUsername()}"></li>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+    <!--&lt;!&ndash;<ul class="list-inline card-text">&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item font-weight-bold">Angemeldet als:</li>&ndash;&gt;-->
+        <!--&lt;!&ndash;<li class="list-inline-item" th:text="${user.getRole()}"></li>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<footer th:fragment="footer" class="alert alert-secondary" style="position: fixed; bottom: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;margin: 0; width: 100%">&ndash;&gt;-->
+    <!--&lt;!&ndash;<p>© Made by Happy-Gruppe</p>&ndash;&gt;-->
+<!--&lt;!&ndash;</footer>&ndash;&gt;-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->

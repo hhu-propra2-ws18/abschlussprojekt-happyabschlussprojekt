@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface GeraetMitReservationIDRepository extends CrudRepository<GeraetMitReservationID,Integer> {
-
     GeraetMitReservationID findByGeraetID(Long geraetId);
+    void deleteByReservationID(Long reservationId);
 }
