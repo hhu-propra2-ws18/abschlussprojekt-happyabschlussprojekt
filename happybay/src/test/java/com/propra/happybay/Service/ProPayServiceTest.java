@@ -149,7 +149,7 @@ public class ProPayServiceTest {
     public void testReleaseReservation_CorrectUrl() {
         ProPayService proPayInterface = new ProPayService();
 
-        stubFor(post(urlEqualTo("/reservation/release/Anton"))
+        stubFor(post(urlEqualTo("/account/Anton"))
                 .willReturn(aResponse().withStatus(200)));
 
 
@@ -159,7 +159,7 @@ public class ProPayServiceTest {
 
         }
 
-        verify(postRequestedFor(urlEqualTo("/reservation/release/Anton")));
+        verify(getRequestedFor(urlEqualTo("/account/Anton")));
     }
 
 
@@ -175,7 +175,7 @@ public class ProPayServiceTest {
 
         }
 
-        verify(postRequestedFor(urlEqualTo("/reservation/punish/Anton")));
+        verify(postRequestedFor(urlEqualTo("/account/Anton")));
     }
 
 
