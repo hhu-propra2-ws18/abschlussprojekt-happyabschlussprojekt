@@ -40,7 +40,7 @@
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a class="nav-link" th:href="@{/user/notifications}">
-                    <i class="fas fa-bell" style="color: gold"></i>
+                    <i class="fas fa-bell"></i>
                         <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
                     </a>
                 </li>
@@ -89,6 +89,9 @@
                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
                     </tr>
                 </li>
+                <div class="card-body">
+                    <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" >Details</a>
+                </div>
 
 </body>
 </html>
