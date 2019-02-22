@@ -5,6 +5,7 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
+import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
     @Autowired
+    private AdminServiceImpl adminServiceImpl;
+    @Autowired
     private GeraetRepository geraetRepository;
     @Autowired
     private TransferRequestRepository transferRequestRepository;
@@ -34,9 +37,11 @@ public class AdminController {
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
-        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        InformationForMenuBadges informationForMenuBadges = adminServiceImpl.returnInformationForMenuBadges();
+        System.out.println("###############");
+        System.out.println(informationForMenuBadges.getNumberOfConflicts());
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
-        if (adminService.isAdminHasDefaultPassword()) {
+        if (adminServiceImpl.isAdminHasDefaultPassword()) {
             return "admin/changePassword";
         }
         return "redirect:/admin/allUsers";
@@ -44,8 +49,8 @@ public class AdminController {
 
     @GetMapping("/allUsers")
     public String allUsers(Model model) {
-        List<PersonMitAccount> personenMitAccounts = adminService.returnAllPersonsWithAccounts();
-        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        List<PersonMitAccount> personenMitAccounts = adminServiceImpl.returnAllPersonsWithAccounts();
+        InformationForMenuBadges informationForMenuBadges = adminServiceImpl.returnInformationForMenuBadges();
 
         model.addAttribute("personenMitAccounts", personenMitAccounts);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
@@ -55,7 +60,7 @@ public class AdminController {
     @GetMapping("/conflicts")
     public String conflicts(Model model) {
         List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
-        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        InformationForMenuBadges informationForMenuBadges = adminServiceImpl.returnInformationForMenuBadges();
 
         model.addAttribute("geraeteMitKonflikten", geraeteMitKonflikten);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
@@ -65,7 +70,7 @@ public class AdminController {
     @GetMapping("/notifications")
     public String adminNotifications(Model model){
         List<TransferRequest> transferRequests = transferRequestRepository.findAll();
-        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        InformationForMenuBadges informationForMenuBadges = adminServiceImpl.returnInformationForMenuBadges();
 
         model.addAttribute("transferRequests", transferRequests);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
@@ -101,7 +106,7 @@ public class AdminController {
 
     @PostMapping("/changePassword")
     public String changePassword(@ModelAttribute("newPassword") String newPassword) {
-        adminService.changeAdminPassword(newPassword);
+        adminServiceImpl.changeAdminPassword(newPassword);
         return "redirect:/admin";
     }
 
