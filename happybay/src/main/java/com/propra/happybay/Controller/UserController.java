@@ -50,6 +50,8 @@ public class UserController {
     private PersonService personService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private PictureService pictureService;
 
     private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -356,9 +358,7 @@ public class UserController {
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
+        person.setFoto(pictureService.getBildFromInput(file));
         person.setNachname(p.getNachname());
         person.setKontakt(p.getKontakt());
         person.setVorname(p.getVorname());

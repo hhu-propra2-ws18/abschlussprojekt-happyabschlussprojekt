@@ -6,11 +6,8 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.*;
 import com.propra.happybay.Service.DefaultServices.DefaultService;
-import com.propra.happybay.Service.NotificationService;
-import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -45,6 +42,8 @@ public class DefaultController {
     private GeraetService geraetService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private PictureService pictureService;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
@@ -98,9 +97,8 @@ public class DefaultController {
             model.addAttribute("errorList", errorList);
             return "default/register";
         }
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
+
+        person.setFoto(pictureService.getBildFromInput(file));
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
 
