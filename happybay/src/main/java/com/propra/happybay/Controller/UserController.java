@@ -121,7 +121,7 @@ public class UserController {
         return "user/anfragen";
     }
 
-    @PostMapping("/anfragen/{id}")
+    @PostMapping(value = "/anfragen/{id}",headers = "content-type=multipart/*")
     public String anfragen(@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) throws Exception {
         notification.setType("request");
         notification.setGeraetId(id);

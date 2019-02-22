@@ -2,12 +2,16 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.Notification;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,10 +26,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -74,6 +82,8 @@ public class UserControllerTest {
     };
     private Person person = new Person();
     private Geraet geraet = new Geraet();
+    @InjectMocks
+    private UserController controller;
     @Autowired
     private WebApplicationContext context;
     @Autowired
@@ -90,11 +100,12 @@ public class UserControllerTest {
 
     @Autowired
     PersonRepository personRepository;
-    @Autowired
+    @Mock
     GeraetRepository geraetRepository;
-
+    private Notification notification=new Notification();
     @Before
     public void setup() throws IOException {
+        controller=new UserController(personRepository);
         person.setUsername("test");
         person.setId(1L);
         Bild bild = new Bild();
@@ -102,15 +113,20 @@ public class UserControllerTest {
         person.setFoto(bild);
         person.setAdresse("test dusseldorf");
         personRepository.save(person);
-
+        //
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
         geraet.setBesitzer(person.getUsername());
         geraet.setKosten(3);
         geraet.setKaution(10);
         geraetRepository.save(geraet);
+        //
+        notification.setGeraetId(2L);
+        //
+        MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
+                .dispatchOptions(true)
                 .apply(springSecurity())
                 .build();
     }
@@ -136,13 +152,19 @@ public class UserControllerTest {
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void anfragenGet() throws Exception {
-        mvc.perform(get("/user/anfragen/{id}",1L).contentType(MediaType.APPLICATION_JSON))
+        when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
+        mvc.perform(get("/user/anfragen/{id}",2L).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void anfragenPost() throws Exception {
-        mvc.perform(post("/user/addGeraet").contentType(MediaType.APPLICATION_JSON))
+        when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
+        mvc.perform(post("/user/anfragen/{id}",2L)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .flashAttr("notification",notification))
+
                 .andExpect(status().isOk());
     }
 
