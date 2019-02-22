@@ -221,7 +221,9 @@ public class UserController {
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
         Person besitzer=personRepository.findById(id).get();
-        besitzer.setEncode(encodeBild(besitzer.getFoto()));
+        if(besitzer.getFoto().getBild().length>0){
+            besitzer.setEncode(besitzer.getFoto().encodeBild());
+        }
 
         model.addAttribute("comments",besitzer.getComments());
         model.addAttribute("person",besitzer);
@@ -360,7 +362,7 @@ public class UserController {
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
-        double amount = 3;//eraet.getZeitraum()*geraet.getKosten();
+        double amount = geraet.getZeitraum()*geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
 
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
