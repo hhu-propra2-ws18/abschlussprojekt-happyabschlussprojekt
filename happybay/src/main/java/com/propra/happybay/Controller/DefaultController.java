@@ -53,12 +53,9 @@ public class DefaultController {
             String name = principal.getName();
             if (personRepository.findByUsername(name).isPresent()) {
                 notificationService.updateAnzahl(name);
-
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
-
                 GeraetMitZeit geraetMitZeit=new GeraetMitZeit(rentThings);
                 geraetMitZeit.pruefGeraetZeit();
-
                 model.addAttribute("person", personRepository.findByUsername(name).get());
                 model.addAttribute("remindRentThings", geraetMitZeit.getRemindRentThings());
                 model.addAttribute("overTimeThings", geraetMitZeit.getOverTimeThings());
@@ -67,7 +64,6 @@ public class DefaultController {
                 model.addAttribute("person", new Person());
             }
         }
-
         model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }

@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static reactor.core.publisher.Mono.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -68,6 +70,7 @@ public class DefaultControllerTest {
         //gerät
         geraet.setId(2L);
         geraet.setReturnStatus(ReturnStatus.KAPUTT);
+        geraet.setEndzeitpunkt(LocalDate.of(2000,10,10));
         geraetList.add(geraet);
 
         mvc = MockMvcBuilders
@@ -77,7 +80,16 @@ public class DefaultControllerTest {
     }
     @WithMockUser(value = "test",roles = "USER")
     @Test
-    public void index_USER() throws Exception {
+    public void index_USER_isPresent() throws Exception {
+        Mockito.when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
+        Mockito.when(geraetRepository.findAllByMieter(any())).thenReturn(geraetList);
+        Mockito.when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        mvc.perform(get("/").param("key","key"))
+                .andExpect(status().isOk());
+    }
+    @WithMockUser(value = "test",roles = "USER")
+    @Test
+    public void index_USER_noPresent() throws Exception {
         Mockito.when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
