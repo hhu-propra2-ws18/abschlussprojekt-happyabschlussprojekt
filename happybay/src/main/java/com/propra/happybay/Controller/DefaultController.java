@@ -2,11 +2,13 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Notification;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.DefaultServices.DefaultService;
+import com.propra.happybay.Service.NotificationService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,44 +41,41 @@ public class DefaultController {
     public PasswordEncoder encoder;
     @Autowired
     private ProPayService proPayService;
+    @Autowired
+    private GeraetService geraetService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        if(principal != null){
+        if (principal != null) {
             String name = principal.getName();
-            if(personRepository.findByUsername(name).isPresent()) {
+            if (personRepository.findByUsername(name).isPresent()) {
+                notificationService.updateAnzahl(name);
                 model.addAttribute("person", personRepository.findByUsername(name).get());
 
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
                 List<Geraet> remindRentThings = new ArrayList<>();
                 List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(3);
-                for (Geraet geraet : rentThings) {
-                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-                            overTimeThings.add(geraet);
-                        } else {
-                            remindRentThings.add(geraet);
-                        }
-                    }
-                }
-                model.addAttribute("remindRentThings", remindRentThings);
-                model.addAttribute("overTimeThings", overTimeThings);
+                LocalDate deadLine = LocalDate.now().plusDays(4);
+//                for (Geraet geraet : rentThings) {
+//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
+//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
+//                            overTimeThings.add(geraet);
+//                        } else {
+//                            remindRentThings.add(geraet);
+//                        }
+//                    }
+//                }
+//                model.addAttribute("remindRentThings", remindRentThings);
+//                model.addAttribute("overTimeThings", overTimeThings);
+            }
+            else {
+                model.addAttribute("person", new Person());
             }
         }
-        List<Geraet> geraete = geraetRepository.findAllByTitelLike("%" + key + "%");
-        System.out.println(key + geraete);
-        //List<Geraet> geraete = geraetRepository.findAll();
-        for (Geraet geraet: geraete){
-            if (geraet.getBilder().size() == 0) {
-                geraet.setBilder(null);
-            }
-            if (geraet.getBilder() != null && geraet.getBilder().size() > 0) {
-                geraet.setEncode(encodeBild(geraet.getBilder().get(0)));
-            }
 
-        }
-        model.addAttribute("geraete", geraete);
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }
 
@@ -123,9 +122,5 @@ public class DefaultController {
         return "default/login";
     }
 
-    private String encodeBild(Bild bild){
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
-    }
+
 }

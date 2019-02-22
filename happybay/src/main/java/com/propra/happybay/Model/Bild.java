@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.util.Base64;
 
 @Data
 @Entity
@@ -16,4 +17,10 @@ public class Bild {
     @Basic(fetch = FetchType.LAZY)
     @Column(name="gerat_bilder", columnDefinition="longblob", nullable=true)
     private byte[] bild;
+
+    public String encodeBild(){
+        Base64.Encoder encoder = Base64.getEncoder();
+        String encode = encoder.encodeToString(bild);
+        return encode;
+    }
 }
