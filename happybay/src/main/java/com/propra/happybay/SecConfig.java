@@ -50,5 +50,10 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .withUser("test")
                 .password(encoder.encode("test"))
                 .roles("USER");
+        auth.inMemoryAuthentication()
+                .passwordEncoder(encoder)
+                .withUser("testAdmin")
+                .password(encoder.encode("testAdmin"))
+                .roles("ADMIN");
     }
 }

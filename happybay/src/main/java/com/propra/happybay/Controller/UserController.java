@@ -15,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -50,6 +52,7 @@ public class UserController {
     private NotificationService notificationService;
 
     private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
@@ -176,16 +179,28 @@ public class UserController {
         model.addAttribute("person", person);
 
         Geraet geraet = geraetRepository.findById(id).get();
+        //创建personInfo 为了comment
+        Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes", encodes);
         model.addAttribute("geraet", geraet);
+        model.addAttribute("personForComment",personForComment);
         return "user/geraet";
     }
+
+    //This is comment block
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model){
+
+
+
+
         Geraet geraet = geraetRepository.findById(id).get();
         Person besitzer = personRepository.findByUsername(geraet.getBesitzer()).get();
-        model.addAttribute("person", besitzer);
+        besitzer.setEncode(encodeBild(besitzer.getFoto()));
+        model.addAttribute("comments",besitzer.getComments());
+        model.addAttribute("person",besitzer);
+
         return "user/besitzerInfo";
     }
 
@@ -280,18 +295,40 @@ public class UserController {
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         mailService.sendRefuseReturnMail(person, geraet);
 
+        //从这里改了comment
+        Comment comment = new Comment();
+        comment.setDate(LocalDate.now());
+        comment.setGeraetTitel(geraet.getTitel());
+        comment.setMessage(grund);
+        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
+        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
+        person.getComments().add(comment);
+        personRepository.save(person);
+        //
+
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
     }
 
     @PostMapping("/notification/acceptReturn/{id}")
-    public String notificationAcceptReturn(@PathVariable Long id) throws Exception {
+    public String notificationAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund) throws Exception {
         Notification notification = notificationRepository.findById(id).get();
 
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
 
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
+
+        //从这里改了comment
+        Comment comment = new Comment();
+        comment.setDate(LocalDate.now());
+        comment.setGeraetTitel(geraet.getTitel());
+        comment.setMessage(grund);
+        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
+        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
+        person.getComments().add(comment);
+        personRepository.save(person);
+        //这里结束
 
         geraet.setVerfuegbar(true);
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
@@ -384,5 +421,12 @@ public class UserController {
 
     public UserController(PersonRepository personRepository) {
         this.personRepository = personRepository;
+    }
+
+    //delate after
+    public String encodeBild(Bild bild) {
+        Base64.Encoder encoder = Base64.getEncoder();
+        String encode = encoder.encodeToString(bild.getBild());
+        return encode;
     }
 }

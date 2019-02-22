@@ -3,21 +3,18 @@ package com.propra.happybay.Service;
 import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Reservation;
 import com.propra.happybay.Repository.AccountRepository;
-import com.propra.happybay.Repository.PersonRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureWireMock(port = 8888)
@@ -88,7 +85,7 @@ public class ProPayServiceTest {
         stubFor(post(urlEqualTo("/account/Anton"))
                 .willReturn(aResponse().withStatus(200)));
         try{
-            propayservice.erhoeheAmount("Anton", 100.0);
+            propayservice.erhoeheAmount("Anton", 100);
         }catch(Exception e){
 
 
@@ -105,7 +102,7 @@ public class ProPayServiceTest {
                 .willReturn(aResponse().withStatus(200)));
 
         try{
-            proPayInterface.ueberweisen("Anton", "Tony", 100.0);
+            proPayInterface.ueberweisen("Anton", "Tony", 100);
         }catch(Exception e){
 
 
@@ -121,7 +118,7 @@ public class ProPayServiceTest {
         stubFor(post(urlEqualTo("/reservation/reserve/Anton/Tony"))
                 .willReturn(aResponse().withStatus(200)));
         try{
-             proPayInterface.erzeugeReservation("Anton", "Tony", 100.0);
+             proPayInterface.erzeugeReservation("Anton", "Tony", 100);
         }catch(Exception e){
 
         }
@@ -136,7 +133,7 @@ public class ProPayServiceTest {
         stubFor(post(urlEqualTo("/reservation/reserve/Anton/Tony"))
                 .willReturn(aResponse().withStatus(200)));
         try{
-            int id = proPayInterface.erzeugeReservation("Anton", "Tony", 100.0);
+            int id = proPayInterface.erzeugeReservation("Anton", "Tony", 100);
             assertEquals(0,id);
 
         }catch(Exception e){
@@ -157,7 +154,7 @@ public class ProPayServiceTest {
 
 
         try{
-            proPayInterface.releaseReservation("Anton", 1);
+            proPayInterface.releaseReservation("Anton", 1l);
         }catch(Exception e){
 
         }
@@ -173,7 +170,7 @@ public class ProPayServiceTest {
         stubFor(post(urlEqualTo("/reservation/punish/Anton"))
                 .willReturn(aResponse().withStatus(200)));
         try{
-            proPayInterface.punishReservation("Anton",1);
+            proPayInterface.punishReservation("Anton",1l);
         }catch(Exception e){
 
         }
