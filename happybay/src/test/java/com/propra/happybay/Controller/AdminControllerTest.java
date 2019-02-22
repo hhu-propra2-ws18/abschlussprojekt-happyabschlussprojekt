@@ -5,10 +5,13 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
+import com.propra.happybay.Service.GeraetService;
+import com.propra.happybay.Service.ProPayService;
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,6 +61,10 @@ public class AdminControllerTest {
     WebApplicationContext context;
     @MockBean
     AdminService adminService;
+    @MockBean
+    ProPayService proPayService;
+    @MockBean
+    GeraetService geraetService;
     @MockBean
     GeraetRepository geraetRepository;
     private MockMvc mvc;
@@ -146,14 +154,16 @@ public class AdminControllerTest {
     }
     @WithMockUser(value = "testAdmin", roles = "ADMIN")
     @Test
-    public void release_test() throws Exception {
+    public void propay_test() throws Exception {
         Mockito.when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
         Mockito.when(adminService.returnAllPersonsWithAccounts()).thenReturn(personMitAccountList);
-        mvc.perform(post("/admin/erhoeheAmount")
-                .flashAttr("username","testAdmin"))
+        mvc.perform(post("/admin/propay")
+                .flashAttr("amount",10)
+                .flashAttr("account","testAdmin"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }
+
 }
 
 
