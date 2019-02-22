@@ -49,6 +49,7 @@ public class NotificationService {
     public void updateAnzahl(String name) {
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
         Person person = personService.getByUsername(name);
-        person.setAnzahlNotifications(notifications.size());
+        person.setAnzahlNotifications(notifications
+                .size());
     }
 }
