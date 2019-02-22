@@ -58,6 +58,7 @@
 <div th:fragment="geraetContainer" class="container">
     <div class="row justify-content-around">
         <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
+            <div th:fragment="oneGeraetWithoutDelete">
             <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
                  src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
             <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
@@ -69,7 +70,7 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
-                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST : </li>
+                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + ' €/Tag'}">KOST : </li>
                 <li class="list-group-item" th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:</li>
                 <br/>
                 <span class="badge badge-success">Verfügbar</span>
@@ -89,10 +90,14 @@
                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
                     </tr>
                 </li>
+            </ul>
                 <div class="card-body">
                     <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" >Details</a>
                 </div>
-
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 

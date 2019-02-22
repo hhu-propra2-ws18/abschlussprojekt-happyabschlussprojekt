@@ -87,7 +87,7 @@ public class UserController {
         Person person = personService.getByUsername(mieterName);
         model.addAttribute("person", person);
 
-        List<Geraet> geraete = geraetService.getAllByBesitzerWithBilder(mieterName);
+        List<Geraet> geraete = geraetService.getAllByMieterWithBilder(mieterName);
         model.addAttribute("geraete", geraete);
         return "user/rentThings";
     }
@@ -100,10 +100,10 @@ public class UserController {
         model.addAttribute("person", person);
 
         List<Notification> notifications = notificationService.findAllByBesitzer(signedInPersonUsername);
-        model.addAttribute("notification", notifications);
+        model.addAttribute("notifications", notifications);
 
-        List<TransferRequest> transferRequestList = transferRequestRepository.findAll();
-        model.addAttribute("transferRequestList",transferRequestList);
+        //List<TransferRequest> transferRequestList = transferRequestRepository.findAll();
+        //model.addAttribute("transferRequestList",transferRequestList);
         return "user/notifications";
     }
 
@@ -121,8 +121,8 @@ public class UserController {
     @PostMapping("/anfragen/{id}")
     public String anfragen(@PathVariable Long id, @ModelAttribute Notification notification, Principal principal) throws Exception {
         notification.setType("request");
+        notification.setAnfragePerson(principal.getName());
         notification.setGeraetId(id);
-
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
 
@@ -238,7 +238,7 @@ public class UserController {
         return "redirect:/user/notifications";
     }
     @PostMapping("/notification/acceptRequest/{id}")
-    public String notificationAcceptRequest(@PathVariable Long id, Principal principal) throws Exception {
+    public String notificationAcceptRequest(@PathVariable Long id) throws Exception {
 
         Notification notification = notificationRepository.findById(id).get();
         String mieter = notification.getAnfragePerson();

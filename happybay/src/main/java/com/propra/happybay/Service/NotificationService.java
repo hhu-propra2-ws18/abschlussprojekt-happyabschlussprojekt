@@ -5,7 +5,6 @@ import com.propra.happybay.Model.Notification;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
-import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.UserServices.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
