@@ -4,6 +4,7 @@ import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.ReturnStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,7 +30,8 @@ public class MailService {
 
         List<Geraet> geraets = geraetRepository.findAll();
         for(int i=0;i<geraets.size();i++){
-            if(geraets.get(i).isVerfuegbar()==false && geraets.get(i).getZeitraum()<=3 && geraets.get(i).getZeitraum()>0){
+            if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() <= 3 && geraets.get(i).getZeitraum() > 0
+                    && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
                 Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
                 MimeMessage message1 = sender.createMimeMessage();
                 MimeMessageHelper helper1 = new MimeMessageHelper(message1);
@@ -39,8 +41,8 @@ public class MailService {
                 sender.send(message1);
                 geraets.get(i).setZeitraum(geraets.get(i).getZeitraum()-1);
                 geraetRepository.save(geraets.get(i));
-            }
-            else if(geraets.get(i).isVerfuegbar()==false && geraets.get(i).getZeitraum()==0){
+            } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() == 0
+                    && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
                 Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
                 MimeMessage message1 = sender.createMimeMessage();
                 MimeMessageHelper helper1 = new MimeMessageHelper(message1);

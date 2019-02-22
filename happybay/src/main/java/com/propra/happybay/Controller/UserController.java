@@ -94,7 +94,6 @@ public class UserController {
         model.addAttribute("person", person);
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
-        System.out.println(notifications);
         for (Notification notification : notifications) {
             if (geraetRepository.
                     findById(notification.getGeraetId())
@@ -245,7 +244,7 @@ public class UserController {
         Geraet geraet = geraetRepository.findById(id).get();
 
         geraet.setReturnStatus(ReturnStatus.WAITING);
-        geraet.setZeitraum(-1);
+
         geraetRepository.save(geraet);
 
         Notification newNotification = new Notification();
@@ -287,15 +286,16 @@ public class UserController {
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
         geraet.setVerfuegbar(false);
         geraet.setMieter(mieter);
-        geraet.setZeitraum(notification.getZeitraum());
+
 //        LocalDate endzeit = notification.getMietezeitPunkt().toLocalDate().plusDays(notification.getZeitraum());
 //        geraet.setEndzeitpunkt(endzeit);
 //        geraetRepository.save(geraet);
-
+        TimeInterval timeInterval = new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd());
         RentEvent rentEvent = new RentEvent();
         rentEvent.setMieter(mieter);
-        rentEvent.setTimeInterval(new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd()));
+        rentEvent.setTimeInterval(timeInterval);
         geraet.getRentEvents().add(rentEvent);
+        geraet.setZeitraum(timeInterval.getDuration());
         int index = userService.positionOfFreeBlock(geraet, rentEvent);
         userService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
@@ -323,16 +323,7 @@ public class UserController {
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         mailService.sendRefuseReturnMail(person, geraet);
 
-        //从这里改了comment
-        Comment comment = new Comment();
-        comment.setDate(LocalDate.now());
-        comment.setGeraetTitel(geraet.getTitel());
-        comment.setMessage(grund);
-        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
-        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
-        person.getComments().add(comment);
-        personRepository.save(person);
-        //
+        userService.makeComment(geraet, person, grund);
 
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
@@ -347,22 +338,14 @@ public class UserController {
         Person person = personRepository.findByUsername(geraet.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
 
-        //从这里改了comment
-        Comment comment = new Comment();
-        comment.setDate(LocalDate.now());
-        comment.setGeraetTitel(geraet.getTitel());
-        comment.setMessage(grund);
-        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
-        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
-        person.getComments().add(comment);
-        personRepository.save(person);
-        //这里结束
+        userService.makeComment(geraet, person, grund);
 
         geraet.setVerfuegbar(true);
         geraet.setReturnStatus(ReturnStatus.DEFAULT);
         geraet.setMieter(null);
         geraetRepository.save(geraet);
         double amount = geraet.getZeitraum()*geraet.getKosten();
+        System.out.println("****************************" + amount);
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
 
         GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraet.getId());
@@ -447,10 +430,4 @@ public class UserController {
         return "redirect:/";
     }
 
-    //delate after
-    public String encodeBild(Bild bild) {
-        Base64.Encoder encoder = Base64.getEncoder();
-        String encode = encoder.encodeToString(bild.getBild());
-        return encode;
-    }
 }

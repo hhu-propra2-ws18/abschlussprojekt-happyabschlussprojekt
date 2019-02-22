@@ -1,9 +1,6 @@
 package com.propra.happybay.Service.UserServices;
 
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Person;
-import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -71,6 +69,17 @@ public class UserService implements org.springframework.security.core.userdetail
         geraet.getVerfuegbareEvents().add(rentEvent2);
         geraet.getVerfuegbareEvents().remove(index);
         geraetRepository.save(geraet);
+    }
+
+    public void makeComment(Geraet geraet, Person person, String grund) {
+        Comment comment = new Comment();
+        comment.setDate(LocalDate.now());
+        comment.setGeraetTitel(geraet.getTitel());
+        comment.setMessage(grund);
+        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
+        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
+        person.getComments().add(comment);
+        personRepository.save(person);
     }
 }
 
