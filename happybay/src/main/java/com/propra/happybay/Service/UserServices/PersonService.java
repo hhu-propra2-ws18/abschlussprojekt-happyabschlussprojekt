@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.PersonRepository;
@@ -12,5 +12,13 @@ public class PersonService {
 
     public Person getByUsername(String username) {
         return personRepository.findByUsername(username).get();
+    }
+
+
+    public void increaseAktionPunkte(String signedInPersonUsername) {
+        Person person = getByUsername(signedInPersonUsername);
+        int aktionPunkte = person.getAktionPunkte();
+        person.setAktionPunkte(aktionPunkte + 10);
+        personRepository.save(person);
     }
 }

@@ -49,7 +49,7 @@
 //    @WithMockUser("test")
 //    @Test
 //    public void profile() throws Exception {
-//        mvc.perform(get("/user/profile").contentType(MediaType.APPLICATION_JSON))
+//        mvc.perform(get("/").contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
 //                .andExpect(status().isOk());
 //    }

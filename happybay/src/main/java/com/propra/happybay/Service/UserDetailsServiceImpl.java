@@ -1,4 +1,4 @@
-package com.propra.happybay.Service.UserServices;
+package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
-public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 
     @Autowired
     private PersonRepository personRepository;

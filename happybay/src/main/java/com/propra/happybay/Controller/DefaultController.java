@@ -8,6 +8,7 @@ import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.DefaultServices.DefaultService;
+import com.propra.happybay.Service.NotificationService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,14 @@ public class DefaultController {
     @Autowired
     private GeraetService geraetService;
     @Autowired
-    private DefaultService defaultService;
+    private NotificationService notificationService;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        if(principal != null){
+        if (principal != null) {
             String name = principal.getName();
-            if(personRepository.findByUsername(name).isPresent()) {
+            if (personRepository.findByUsername(name).isPresent()) {
+                notificationService.updateAnzahl(name);
                 model.addAttribute("person", personRepository.findByUsername(name).get());
 
                 List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
@@ -67,6 +69,9 @@ public class DefaultController {
 //                }
 //                model.addAttribute("remindRentThings", remindRentThings);
 //                model.addAttribute("overTimeThings", overTimeThings);
+            }
+            else {
+                model.addAttribute("person", new Person());
             }
         }
 

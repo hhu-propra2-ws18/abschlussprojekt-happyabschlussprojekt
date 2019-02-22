@@ -12,31 +12,31 @@
 <nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
     <div class="container">
         <a class="navbar-brand" th:href="@{/admin/}"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
-                                              width="100px"></a>
+                                                          width="100px"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/allUsers"> Alle Benutzer
-                    <span class="badge badge-pill badge-info" th:text="${anzahlPersonen}">4</span>
-                    </a>
-                </li>
-                <li sec:authorize="isAuthenticated()"class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/conflicts}"> Konflikte
-                    <span class="badge badge-pill badge-info" th:text="${anzahlKonflikte}">4</span>
-                    </a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/notifications}"> Anfragen für Konten Aufladen
-                        <span class="badge badge-pill badge-info" th:text="${anzahlNotifications}">4</span>
-                    </a>
-                </li>
-                <li sec:authorize="isAuthenticated()" style="float: right" class="nav-item ml-auto">
-                    <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
-                </li>
-            </ul>
-        </div>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/allUsers"> Alle Benutzer
+                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfPersons}">4</span>
+                </a>
+            </li>
+            <li sec:authorize="isAuthenticated()"class="nav-item">
+                <a class="nav-link" th:href="@{/admin/conflicts}"> Konflikte
+                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfConflicts}">4</span>
+                </a>
+            </li>
+            <li sec:authorize="isAuthenticated()" class="nav-item">
+                <a class="nav-link" th:href="@{/admin/notifications}"> Anfragen für Konten Aufladen
+                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfNotifications}">4</span>
+                </a>
+            </li>
+            <li sec:authorize="isAuthenticated()" style="float: right" class="nav-item ml-auto">
+                <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
+            </li>
+        </ul>
+    </div>
 </nav>
 
 </body>

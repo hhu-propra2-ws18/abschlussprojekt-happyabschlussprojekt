@@ -63,7 +63,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Du hast eine neue Anfrag über("+ geraet.getTitel() + ") von " + principal.getName());
         helper.setSubject("Anfrag");
-        sender.send(message);
+        //sender.send(message);
     }
 
     public void sendReturnMail(Person person,Geraet geraet) throws Exception{
@@ -72,7 +72,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Ihre Geraet (" + geraet.getTitel()+ ") wurde zur Bewerbung zurückgeschickt" );
         helper.setSubject("Bewerbung zurücksenden");
-        sender.send(message);
+        //sender.send(message);
     }
 
     public void sendRefuseRequestMail(Person person,Geraet geraet) throws Exception{
@@ -81,7 +81,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird abgelehnt." );
         helper.setSubject("Antragsergebnis");
-        sender.send(message);
+        //sender.send(message);
     }
 
     public void sendAcceptRequestMail(Person person,Geraet geraet) throws Exception{
@@ -90,7 +90,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Ihre Mietanfrage (" + geraet.getTitel()+ ") wird akzeptiert." );
         helper.setSubject("Antragsergebnis");
-        sender.send(message);
+        //sender.send(message);
     }
 
     public void sendRefuseReturnMail(Person person,Geraet geraet) throws Exception{
@@ -99,7 +99,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") wird abgelehnt." );
         helper.setSubject("Ergebnis zurückgeben");
-        sender.send(message);
+        //sender.send(message);
     }
 
     public void sendAcceptReturnMail(Person person,Geraet geraet) throws Exception{
@@ -108,7 +108,7 @@ public class MailService {
         helper.setTo(person.getKontakt());
         helper.setText("Ihre Rückkehr über(" + geraet.getTitel()+ ") ist erfolgreich." );
         helper.setSubject("Ergebnis zurückgeben");
-        sender.send(message);
+        //sender.send(message);
     }
 
 }
