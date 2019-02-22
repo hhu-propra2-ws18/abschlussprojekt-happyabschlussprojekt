@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -322,13 +323,14 @@ public class UserController {
 
         //从这里改了comment
         Comment comment = new Comment();
-        comment.setDate(geraet.getEndzeitpunkt());
+        comment.setDate(LocalDate.now());
         comment.setGeraetTitel(geraet.getTitel());
         comment.setMessage(grund);
         comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
         comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
         person.getComments().add(comment);
         personRepository.save(person);
+        //
 
         notificationRepository.deleteById(id);
         return "redirect:/user/notifications";
@@ -345,7 +347,7 @@ public class UserController {
 
         //从这里改了comment
         Comment comment = new Comment();
-        comment.setDate(geraet.getEndzeitpunkt());
+        comment.setDate(LocalDate.now());
         comment.setGeraetTitel(geraet.getTitel());
         comment.setMessage(grund);
         comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
