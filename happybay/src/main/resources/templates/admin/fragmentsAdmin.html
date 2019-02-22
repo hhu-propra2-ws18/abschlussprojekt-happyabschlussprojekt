@@ -27,11 +27,6 @@
                     <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfConflicts}">4</span>
                 </a>
             </li>
-            <li sec:authorize="isAuthenticated()" class="nav-item">
-                <a class="nav-link" th:href="@{/admin/notifications}"> Anfragen für Konten Aufladen
-                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfNotifications}">4</span>
-                </a>
-            </li>
             <li sec:authorize="isAuthenticated()" style="float: right" class="nav-item ml-auto">
                 <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
             </li>

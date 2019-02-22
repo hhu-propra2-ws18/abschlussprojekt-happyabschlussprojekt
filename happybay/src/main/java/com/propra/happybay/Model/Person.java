@@ -22,14 +22,11 @@ public class Person {
     @Transient
     private String passwordConfirm;
     private String role;
-    private String color;
     private int anzahlNotifications = 0;
-    private int aktionPunkte=0;
+    private int aktionPunkte = 0;
     @OneToOne(cascade = {CascadeType.ALL})
     private Bild foto;
-
     private String encode;
-
     @OneToMany(cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 }

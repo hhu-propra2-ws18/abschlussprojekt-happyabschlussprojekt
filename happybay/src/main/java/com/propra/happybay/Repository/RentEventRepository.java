@@ -11,5 +11,6 @@ public interface RentEventRepository extends CrudRepository<RentEvent, Long> {
     List<RentEvent> findAllByReturnStatus(ReturnStatus returnStatus);
     RentEvent findByReservationId(int reservationId);
     void deleteByReservationId(int reservationId);
+    void delete(RentEvent rentEvent);
 
 }

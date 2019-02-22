@@ -11,7 +11,4 @@ public interface GeraetRepository extends CrudRepository<Geraet,Long> {
     List<Geraet> findAllByBesitzer(String username);
     List<Geraet> findAllByTitelLike(String key);
     void deleteById(Long id);
-    List<Geraet> findAllByMieter(String mieterName);
-
-    List<Geraet> findAllByReturnStatus(ReturnStatus status);
 }

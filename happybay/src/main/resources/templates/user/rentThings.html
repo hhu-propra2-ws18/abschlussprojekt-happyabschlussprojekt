@@ -100,43 +100,43 @@
                     </ul>
 
                     <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}" >Details</a><br/>
-                    <a onclick="openForm()"
-                       th:if="${rentThing.geraet.getReturnStatus()==T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
-                        bewerten</a><br/>
-                    <form class="rating"
-                          th:if="${rentThing.geraet.getReturnStatus()== T(com.propra.happybay.ReturnStatus).DEFAULT}"
-                          id="ratingId" style="display: block">
-                        <label>
-                            <input type="radio" name="stars" value="1" />
-                            <span class="icon">★</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="stars" value="2" />
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="stars" value="3" />
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="stars" value="4" />
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="stars" value="5" />
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                            <span class="icon">★</span>
-                        </label>
-                    </form><br/>
+                    <!--<a onclick="openForm()"-->
+                       <!--th:if="${rentThing.rent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel-->
+                        <!--bewerten</a><br/>-->
+                    <!--<form class="rating"-->
+                          <!--th:if="${rentThing.geraet.getReturnStatus()== T(com.propra.happybay.ReturnStatus).DEFAULT}"-->
+                          <!--id="ratingId" style="display: block">-->
+                        <!--<label>-->
+                            <!--<input type="radio" name="stars" value="1" />-->
+                            <!--<span class="icon">★</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input type="radio" name="stars" value="2" />-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input type="radio" name="stars" value="3" />-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input type="radio" name="stars" value="4" />-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input type="radio" name="stars" value="5" />-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                            <!--<span class="icon">★</span>-->
+                        <!--</label>-->
+                    <!--</form><br/>-->
                     <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
                        th:if="${rentThing.rentEvent.getReturnStatus() == T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
                         zurückgeben</a><br/>

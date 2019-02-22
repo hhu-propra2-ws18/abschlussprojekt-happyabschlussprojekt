@@ -1,12 +1,13 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
+import com.propra.happybay.Model.HelperClassesForViews.InformationForMenuBadges;
+import com.propra.happybay.Model.HelperClassesForViews.PersonMitAccount;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
-import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
-import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,10 +30,6 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private GeraetRepository geraetRepository;
-    @Autowired
-    private TransferRequestRepository transferRequestRepository;
-    @Autowired
-    private GeraetService geraetService;
     @Autowired
     private RentEventRepository rentEventRepository;
 
@@ -58,59 +55,40 @@ public class AdminController {
 
     @GetMapping("/conflicts")
     public String conflicts(Model model) {
-        List<RentEvent> rentEventsWithConflicts = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
-        List<GeraetMitRentEvent> geraetMitRentEventsWithConflicts = new ArrayList<>();
-        for (RentEvent rentEventWithConflict : rentEventsWithConflicts) {
-            Geraet geraet = geraetRepository.findById(rentEventWithConflict.getGeraetId()).get();
-            GeraetMitRentEvent geraetMitRentEvent = new GeraetMitRentEvent();
-            geraetMitRentEvent.setGeraet(geraet);
-            geraetMitRentEvent.setRentEvent(rentEventWithConflict);
-            geraetMitRentEventsWithConflicts.add(geraetMitRentEvent);
-        }
+        List<GeraetWithRentEvent> geraetWithRentEventsWithConflicts = adminService.getGeraetWithRentEventsWithConflicts();
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
-
-        model.addAttribute("geraetMitRentEventsWithConflicts", geraetMitRentEventsWithConflicts);
+        model.addAttribute("geraetWithRentEventsWithConflicts", geraetWithRentEventsWithConflicts);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         return "admin/conflicts";
     }
 
-    @GetMapping("/notifications")
-    public String adminNotifications(Model model){
-        List<TransferRequest> transferRequests = transferRequestRepository.findAll();
-        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
-
-        model.addAttribute("transferRequests", transferRequests);
-        model.addAttribute("informationForMenuBadges", informationForMenuBadges);
-        return "admin/adminNotifications";
-    }
-
-    @PostMapping("/erhoeheAmount")
-    public String erhoeheAmount(Model model, @ModelAttribute("username") String username) throws IOException {
-        proPayService.erhoeheAmount(username, 10);
-        return "redirect:/admin/allUsers";
-    }
-
     @PostMapping("/punishAccount")
-    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("geraetId") Long geraetId) throws IOException {
-        proPayService.punishReservation(mieter, geraetId);
-        geraetService.restoreToDefault(geraetId);
+    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
+        RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
+        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+        proPayService.punishReservation(mieter, geraet.getBesitzer(), reservationId, geraet.getKaution());
+        geraet.getRentEvents().remove(rentEvent);
+        geraetRepository.save(geraet);
+        rentEventRepository.delete(rentEvent);
         return "redirect:/admin/conflicts";
     }
+
 
     @PostMapping("/releaseAccount")
     public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
         proPayService.releaseReservation(mieter, reservationId);
-        Geraet geraet = geraetRepository.findById(rentEventRepository.findByReservationId(reservationId).getGeraetId()).get();
-        geraet.getRentEvents().remove(rentEventRepository.findByReservationId(reservationId));
-        rentEventRepository.deleteByReservationId(reservationId);
+        RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
+        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+        geraet.getRentEvents().remove(rentEvent);
+        geraetRepository.save(geraet);
+        rentEventRepository.delete(rentEvent);
         return "redirect:/admin/conflicts";
     }
 
     @PostMapping("/propay")
-    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account) {
-        TransferRequest transferRequest = new TransferRequest(account, amount);
-        transferRequestRepository.save(transferRequest);
-        return "redirect:/user/profile";
+    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account) throws IOException {
+        proPayService.erhoeheAmount(account, amount);
+        return "redirect:/";
     }
 
     @PostMapping("/changePassword")
@@ -119,15 +97,20 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PostMapping("/erhoehungAblehenen")
-    public String erhoehungAblehnen() {
-        // TODO
-        return "redirect:/admin/notifications";
-    }
+    // DAS IST OPTIONAL
+    //@GetMapping("/notifications")
+    //public String adminNotifications(Model model){
+    //    List<TransferRequest> transferRequests = transferRequestRepository.findAll();
+    //    InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+    //
+    //    model.addAttribute("transferRequests", transferRequests);
+    //    model.addAttribute("informationForMenuBadges", informationForMenuBadges);
+    //    return "admin/adminNotifications";
 
-    @PostMapping("/erhoehungGenehmigen")
-    public String erhoehungGenehmigen() {
-        // TODO
-        return "redirect:/admin/notifications";
-    }
+    //}
+    //@PostMapping("/erhoeheAmount")
+    //public String erhoeheAmount(@ModelAttribute("username") String username) throws IOException {
+    //    proPayService.erhoeheAmount(username, 10);
+    //    return "redirect:/admin/allUsers";
+    //}
 }

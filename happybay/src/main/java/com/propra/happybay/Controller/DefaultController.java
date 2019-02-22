@@ -6,11 +6,10 @@ import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Service.GeraetService;
-import com.propra.happybay.Service.DefaultServices.DefaultService;
-import com.propra.happybay.Service.NotificationService;
+import com.propra.happybay.Service.UserServices.GeraetService;
+import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserValidator;
+import com.propra.happybay.Service.DefaultServices.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -54,10 +52,10 @@ public class DefaultController {
                 notificationService.updateAnzahl(name);
                 model.addAttribute("person", personRepository.findByUsername(name).get());
 
-                List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
-                List<Geraet> remindRentThings = new ArrayList<>();
-                List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(4);
+                //List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
+                //List<Geraet> remindRentThings = new ArrayList<>();
+                //List<Geraet> overTimeThings = new ArrayList<>();
+                //LocalDate deadLine = LocalDate.now().plusDays(4);
 //                for (Geraet geraet : rentThings) {
 //                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
 //                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {

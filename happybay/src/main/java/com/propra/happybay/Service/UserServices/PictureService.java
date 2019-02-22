@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.Bild;
 import org.springframework.stereotype.Service;
