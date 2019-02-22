@@ -6,7 +6,6 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
-import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 import com.propra.happybay.Service.ProPayService;
 import org.junit.Before;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

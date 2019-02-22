@@ -4,7 +4,6 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.TransferRequestRepository;
 import com.propra.happybay.ReturnStatus;
-import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 import com.propra.happybay.Service.GeraetService;
 import com.propra.happybay.Service.ProPayService;
@@ -25,7 +24,7 @@ public class AdminController {
     @Autowired
     private ProPayService proPayService;
     @Autowired
-    private AdminService adminService;
+    private AdminServiceImpl adminService;
     @Autowired
     private AdminServiceImpl adminServiceImpl;
     @Autowired

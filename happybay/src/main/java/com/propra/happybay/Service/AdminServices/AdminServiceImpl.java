@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl{
     @Autowired
     PersonRepository personRepository;
     @Autowired
@@ -29,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
     public static int numberOfNotifications = 0;
 
 
-    @Override
+
     public List<PersonMitAccount> returnAllPersonsWithAccounts() {
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
         List<Person> personList = personRepository.findAll();
@@ -42,7 +42,7 @@ public class AdminServiceImpl implements AdminService {
         return personenMitAccounts;
     }
 
-    @Override
+
     public InformationForMenuBadges returnInformationForMenuBadges() {
         updateInformationForMenuBadges();
         InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
@@ -60,7 +60,7 @@ public class AdminServiceImpl implements AdminService {
         List<TransferRequest> transferRequests = transferRequestRepository.findAll();
         numberOfNotifications = transferRequests.size();
     }
-    @Override
+
     public boolean isAdminHasDefaultPassword() {
         Person admin = personRepository.findByUsername("admin").get();
         if (encoder.matches("admin", admin.getPassword())) {
@@ -69,7 +69,7 @@ public class AdminServiceImpl implements AdminService {
         return false;
     }
 
-    @Override
+
     public void changeAdminPassword(String newPassword) {
         Person admin = personRepository.findByUsername("admin").get();
         admin.setPassword(encoder.encode(newPassword));

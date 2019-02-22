@@ -5,7 +5,7 @@ import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.TransferRequestRepository;
-import com.propra.happybay.Service.AdminServices.AdminService;
+import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +21,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ public class AdminServiceTest {
     PasswordEncoder encoder;
 
     @InjectMocks
-    AdminService adminService;
+    AdminServiceImpl adminService;
 
 
     @Test
