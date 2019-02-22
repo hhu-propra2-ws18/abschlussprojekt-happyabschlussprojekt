@@ -30,9 +30,15 @@ public class ProPayServiceTest {
     public void testSaveAccount() {
         proPayService.saveAccount("Anton");
        Mockito.verify(accountRepository,times(1)).save(any());
-   //     assertEquals("Anton", accountRepository.findAll().get(0).getAccount());
     }
 
+    @Test
+    public void testUpdateAccount(){
+
+        proPayService.updateAccount("Anton");
+        Mockito.verify(accountRepository,times(1)).save(any());
+
+    }
     @Test
     public void testGetAccountInfoWithCorrectUrl() {
         ProPayService propayservice = new ProPayService();

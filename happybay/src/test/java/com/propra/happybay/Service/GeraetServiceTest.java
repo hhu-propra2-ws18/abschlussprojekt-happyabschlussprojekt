@@ -16,8 +16,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.test.StepVerifier;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,4 +86,39 @@ public class GeraetServiceTest {
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
     }
+
+    @Test
+    public void testGeraetBilder(){
+        Geraet fakeGeraet1 = new Geraet();
+
+        Bild fakeBild1 = new Bild();
+        fakeBild1.setBild(new byte[5]);
+
+        List<Bild> bilder1 = new ArrayList<>();
+        bilder1.add(fakeBild1);
+
+        fakeGeraet1.setBilder(bilder1);
+
+        Assertions.assertThat(geraetService.geraetBilder(fakeGeraet1).size()).isEqualTo(0);
+
+
+        Geraet fakeGeraet2 = new Geraet();
+
+        Bild fakeBild2 = new Bild();
+        fakeBild2.setBild(new byte[5]);
+
+        List<Bild> bilder2 = new ArrayList<>();
+        bilder2.add(fakeBild1);
+        bilder2.add(fakeBild2);
+
+        fakeGeraet2.setBilder(bilder2);
+
+        Assertions.assertThat(geraetService.geraetBilder(fakeGeraet2).size()).isEqualTo(1);
+
+    }
+
+
+
+
+
 }
