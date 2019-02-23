@@ -2,10 +2,14 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.RentEvent;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.ProPayService;
@@ -43,6 +47,8 @@ public class DefaultController {
     private GeraetService geraetService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private RentEventRepository rentEventRepository;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
@@ -51,7 +57,15 @@ public class DefaultController {
             if (personRepository.findByUsername(name).isPresent()) {
                 notificationService.updateAnzahl(name);
                 model.addAttribute("person", personRepository.findByUsername(name).get());
-
+                geraetService.checkRentEventStatus(name);
+                List<RentEvent> rentEvents = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE);
+                List<GeraetWithRentEvent> remindRentThings = new ArrayList<>();
+                for (RentEvent rentEvent : rentEvents) {
+                    GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+                    geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+                    geraetWithRentEvent.setRentEvent(rentEvent);
+                    remindRentThings.add(geraetWithRentEvent);
+                }
                 //List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
                 //List<Geraet> remindRentThings = new ArrayList<>();
                 //List<Geraet> overTimeThings = new ArrayList<>();
@@ -65,7 +79,7 @@ public class DefaultController {
 //                        }
 //                    }
 //                }
-//                model.addAttribute("remindRentThings", remindRentThings);
+                model.addAttribute("remindRentThings", remindRentThings);
 //                model.addAttribute("overTimeThings", overTimeThings);
             }
             else {

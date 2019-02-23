@@ -8,6 +8,7 @@ import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserDetailsServiceImpl;
 import com.propra.happybay.Service.UserServices.MailService;
+import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.UserServices.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,15 +47,17 @@ public class UserController {
     private RentEventRepository rentEventRepository;
     @Autowired
     PersonService personService;
+    @Autowired
+    NotificationService notificationService;
 
     public UserController(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
         Person person = personRepository.findByUsername(name).get();
         if(person.getFoto().getBild().length>0){
             person.setEncode(person.getFoto().encodeBild());
@@ -68,6 +71,7 @@ public class UserController {
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         model.addAttribute("geraete", geraetService.getAllByBesitzerWithBilder(name));
@@ -77,6 +81,8 @@ public class UserController {
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
+        notificationService.updateAnzahl(mieterName);
+
         Person person = personRepository.findByUsername(mieterName).get();
         model.addAttribute("person", person);
 
@@ -95,6 +101,8 @@ public class UserController {
     @GetMapping("/notifications")
     public String makeNotifications(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
+
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
 
@@ -173,9 +181,10 @@ public class UserController {
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
 
-        Person person=personRepository.findByUsername(principal.getName()).get();
-        int aktionPunkte=person.getAktionPunkte();
+        Person person = personRepository.findByUsername(principal.getName()).get();
+        int aktionPunkte = person.getAktionPunkte();
         person.setAktionPunkte(aktionPunkte+10);
+;
         geraetRepository.save(geraet);
 
         geraet.getVerfuegbareEvents().add(verfuegbar);
@@ -325,7 +334,7 @@ public class UserController {
         Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
         personService.makeComment(geraet, person, grund);
-
+        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
         proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());

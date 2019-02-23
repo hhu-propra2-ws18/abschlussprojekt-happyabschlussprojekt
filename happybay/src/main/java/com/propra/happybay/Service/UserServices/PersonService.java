@@ -3,10 +3,13 @@ package com.propra.happybay.Service.UserServices;
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PersonService {
@@ -14,6 +17,8 @@ public class PersonService {
     PersonRepository personRepository;
     @Autowired
     GeraetRepository geraetRepository;
+    @Autowired
+    RentEventRepository rentEventRepository;
 
     public Person getByUsername(String username) {
         return personRepository.findByUsername(username).get();
