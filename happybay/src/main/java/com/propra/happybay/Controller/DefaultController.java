@@ -57,36 +57,22 @@ public class DefaultController {
             if (personRepository.findByUsername(name).isPresent()) {
                 notificationService.updateAnzahl(name);
                 model.addAttribute("person", personRepository.findByUsername(name).get());
+
                 geraetService.checkRentEventStatus(name);
-                List<RentEvent> rentEvents = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE);
-                List<GeraetWithRentEvent> remindRentThings = new ArrayList<>();
-                for (RentEvent rentEvent : rentEvents) {
-                    GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-                    geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-                    geraetWithRentEvent.setRentEvent(rentEvent);
-                    remindRentThings.add(geraetWithRentEvent);
-                }
-                //List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
-                //List<Geraet> remindRentThings = new ArrayList<>();
-                //List<Geraet> overTimeThings = new ArrayList<>();
-                //LocalDate deadLine = LocalDate.now().plusDays(4);
-//                for (Geraet geraet : rentThings) {
-//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-//                            overTimeThings.add(geraet);
-//                        } else {
-//                            remindRentThings.add(geraet);
-//                        }
-//                    }
-//                }
+
+                List<RentEvent> rentEventsDedlineClose = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_CLOSE);
+                List<GeraetWithRentEvent> remindRentThings = geraetService.returnGeraeteWithRentEvents(rentEventsDedlineClose);
                 model.addAttribute("remindRentThings", remindRentThings);
-//                model.addAttribute("overTimeThings", overTimeThings);
+
+                List<RentEvent> rentEventsDeadlineOver = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_OVER);
+                List<GeraetWithRentEvent> overTimeThings = geraetService.returnGeraeteWithRentEvents(rentEventsDeadlineOver);
+                model.addAttribute("overTimeThings", overTimeThings);
             }
             else {
-                model.addAttribute("person", new Person());
+                Person dummyPerson = new Person();
+                model.addAttribute("person", dummyPerson);
             }
         }
-
         model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         return "default/index";
     }
@@ -133,6 +119,4 @@ public class DefaultController {
         model.addAttribute("person", new Person());
         return "default/login";
     }
-
-
 }

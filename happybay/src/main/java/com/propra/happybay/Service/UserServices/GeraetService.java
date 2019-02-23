@@ -2,6 +2,7 @@ package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.RentEvent;
 import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
@@ -97,13 +98,25 @@ public class GeraetService {
             TimeInterval timeInterval = rentEvent.getTimeInterval();
             Long end = timeInterval.getEnd().getTime();
             Long now = System.currentTimeMillis();
-            if (now + (1000*60*60*24) > end) {
-                rentEvent.setReturnStatus(ReturnStatus.DEADLINE);
-                System.out.println("Changes Status: ");
-                System.out.println();
-                System.out.println();
+            if (now + (1000*60*60*24) - end > 0) {
+                rentEvent.setReturnStatus(ReturnStatus.DEADLINE_CLOSE);
+                rentEventRepository.save(rentEvent);
+            }
+            if (now > end) {
+                rentEvent.setReturnStatus(ReturnStatus.DEADLINE_OVER);
                 rentEventRepository.save(rentEvent);
             }
         }
+    }
+
+    public List<GeraetWithRentEvent> returnGeraeteWithRentEvents(List<RentEvent> rentEventsDeadlineOver) {
+        List<GeraetWithRentEvent> overTimeThings = new ArrayList<>();
+        for (RentEvent rentEvent : rentEventsDeadlineOver) {
+            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setRentEvent(rentEvent);
+            overTimeThings.add(geraetWithRentEvent);
+        }
+        return overTimeThings;
     }
 }
