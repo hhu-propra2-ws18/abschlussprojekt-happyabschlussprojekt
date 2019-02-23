@@ -9,6 +9,7 @@ import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.ProPayService;
+import com.propra.happybay.Service.UserServices.GeraetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +33,8 @@ public class AdminController {
     private GeraetRepository geraetRepository;
     @Autowired
     private RentEventRepository rentEventRepository;
+    @Autowired
+    private GeraetService geraetService;
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
@@ -67,6 +70,7 @@ public class AdminController {
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
         proPayService.punishReservation(mieter, geraet.getBesitzer(), reservationId, geraet.getKaution());
+        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
@@ -79,6 +83,7 @@ public class AdminController {
         proPayService.releaseReservation(mieter, reservationId);
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);

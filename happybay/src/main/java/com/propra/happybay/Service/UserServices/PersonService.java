@@ -4,9 +4,13 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,10 @@ public class PersonService {
     GeraetRepository geraetRepository;
     @Autowired
     RentEventRepository rentEventRepository;
+    @Autowired
+    public PasswordEncoder encoder;
+    @Autowired
+    private ProPayService proPayService;
 
     public Person getByUsername(String username) {
         return personRepository.findByUsername(username).get();
@@ -67,5 +75,15 @@ public class PersonService {
         comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
         person.getComments().add(comment);
         personRepository.save(person);
+    }
+
+    public void makeAndSaveNewPerson(MultipartFile file, Person person) throws IOException {
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        person.setFoto(bild);
+        person.setRole("ROLE_USER");
+        person.setPassword(encoder.encode(person.getPassword()));
+        personRepository.save(person);
+        proPayService.saveAccount(person.getUsername());
     }
 }

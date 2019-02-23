@@ -138,7 +138,9 @@
                         <!--</label>-->
                     <!--</form><br/>-->
                     <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
-                       th:if="${rentThing.rentEvent.getReturnStatus() == T(com.propra.happybay.ReturnStatus).DEFAULT}">Artikel
+                       th:if="${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEFAULT} OR
+                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_OVER} OR
+                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_CLOSE}">Artikel
                         zurückgeben</a><br/>
                     <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
                         Konflikt ausgelöst.</a>
