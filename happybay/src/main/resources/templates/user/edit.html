@@ -11,24 +11,31 @@
 
     <div class="card" style="padding: 10px; margin-bottom: 10px">
         <form th:action="@{/user/geraet/edit/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post" enctype="multipart/form-data">
+
             <label for="titel">Bilder Hochladen(Max. 15MB)</label>
             <label>(Hinweis:Sie können mehrere Bilder hochladen. Das erste wird zum Cover Ihres Artikels und ersetzt alle Ihre alten Bilder.)</label>
             <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
 
+            <br>
             <label for="titel">Titel:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" th:value="${geraet.titel}" />
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" th:value="${geraet.titel}"
+                   placeholder="Eingabe Titel." required/>
 
             <label for="beschreibung">Beschreibung:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" th:value="${geraet.beschreibung}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" th:value="${geraet.beschreibung}"
+                   placeholder="Eingabe Beschreibung." required/>
 
             <label for="kosten">kosten Pro Tag:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"
+                   placeholder="Eingabe Miete Pro Tag." onchange="checkEditKosten()" required/>
 
             <label for="kaution">Kaution:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" th:value="${geraet.kaution}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" th:value="${geraet.kaution}"
+                   placeholder="Eingabe Kaution." onchange="checkEditKaution()" required/>
 
             <label for="kaution">Abholort:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"
+                   placeholder="Eingabe Abholort."  required/>
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
@@ -38,6 +45,54 @@
     </div>
 </div>
 <!--<div th:replace="index.html :: footer"></div>-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    function checkEditKosten() {
+        var kosten = $("#kosten").val();
+        if(kosten==""){
+            alert("Bitte eingabe Kosten pro Tag!");
+            $("#kosten").val("");
+            return false;
+        }else if(kosten<="0"){
+            alert("The nummber must be bigger than 0");
+            $("#kosten").val("");
+            return false;
+        }else{
+            for (i = 0 ; i < kosten.length ; i++) {
+                if ((kosten.charAt(i) < '0') || (kosten.charAt(i) > '9')){
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kosten").val("");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 
+    function checkEditKaution() {
+        var kaution = $("#kaution").val();
+        if(kaution==""){
+            alert("Bitte eingabe Kaution!");
+            $("#kaution").val("");
+            return false;
+        }else if(kaution<="0"){
+            alert("The nummber must be bigger than 0");
+            $("#kaution").val("");
+            return false;
+        }else{
+            for (i = 0 ; i < kaution.length ; i++) {
+                if ((kaution.charAt(i) < '0') || (kaution.charAt(i) > '9')){
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kaution").val("");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+</script>
 </body>
 </html>
