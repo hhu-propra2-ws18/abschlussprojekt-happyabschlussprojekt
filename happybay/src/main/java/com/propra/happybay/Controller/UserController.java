@@ -431,4 +431,9 @@ public class UserController {
         return "redirect:/";
     }
 
+    @ExceptionHandler(Exception.class)
+    public @ResponseBody String exception(){
+        return "Please pay attention to the prompt statement and reload the page！";
+    }
+
 }

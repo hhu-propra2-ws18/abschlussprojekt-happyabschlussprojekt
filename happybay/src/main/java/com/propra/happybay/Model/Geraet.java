@@ -31,8 +31,6 @@ public class Geraet {
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
 
-    Date mietezeitpunkt;
-
     LocalDate endzeitpunkt;
     String encode;
     ReturnStatus returnStatus = ReturnStatus.DEFAULT;
