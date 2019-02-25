@@ -53,7 +53,7 @@
         <label th:text="'Miete: ' + ${geraet.getKosten()}+' €/Tag'" style="color: blue"></label><br/>
         <label th:text="'Kaution: '+${geraet.getKaution()}+' €'" style="color: blue"></label>
         <div th:if="${(geraet.getBesitzer()!= person.username)}">
-            <form th:action="@{'/user/anfragen/' +${geraet.getId()}}">
+            <form th:action="@{'/user/anfragen/' +${geraet.getId()}}" >
                 <button class="btn btn-primary" type="submit">Anfragen</button>
             </form>
         </div>
@@ -66,5 +66,6 @@
         </form>
     </div>
 </div>
+
 </body>
 </html>

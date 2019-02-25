@@ -124,7 +124,9 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
+        Account account = accountRepository.findByAccount(name).get();
 
+        model.addAttribute("account",account);
         model.addAttribute("geraet",geraet1);
         model.addAttribute("notification", new Notification());
         return "user/anfragen";
@@ -211,7 +213,7 @@ public class UserController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
-        //创建personInfo 为了comment
+
         Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes", encodes);
