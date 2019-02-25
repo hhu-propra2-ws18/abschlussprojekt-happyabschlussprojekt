@@ -1,13 +1,11 @@
-//package com.propra.happybay.Service.AdminServices;
+//package com.propra.happybay.Service;
 //
-//import com.propra.happybay.Model.Account;
-//import com.propra.happybay.Model.Geraet;
-//import com.propra.happybay.Model.Person;
+//import com.propra.happybay.Model.*;
 //import com.propra.happybay.Repository.AccountRepository;
 //import com.propra.happybay.Repository.GeraetRepository;
 //import com.propra.happybay.Repository.PersonRepository;
 //import com.propra.happybay.Repository.TransferRequestRepository;
-//import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
+//import com.propra.happybay.Service.AdminServices.AdminService;
 //import org.assertj.core.api.Assertions;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -22,10 +20,11 @@
 //import org.springframework.test.context.web.WebAppConfiguration;
 //import org.springframework.web.context.WebApplicationContext;
 //
+//import static org.mockito.ArgumentMatchers.any;
+//import static org.mockito.Mockito.verify;
+//
 //import java.util.ArrayList;
 //import java.util.List;
-//
-//import static org.mockito.ArgumentMatchers.any;
 //
 //@RunWith(MockitoJUnitRunner.class)
 //@SpringBootTest
@@ -44,7 +43,7 @@
 //    PasswordEncoder encoder;
 //
 //    @InjectMocks
-//    AdminServiceImpl adminService;
+//    AdminService adminService;
 //
 //
 //    @Test

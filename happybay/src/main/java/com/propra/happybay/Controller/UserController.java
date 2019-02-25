@@ -52,17 +52,6 @@ public class UserController {
         this.personRepository = personRepository;
     }
 
-    @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
-        if (error != null)
-            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
-
-        if (logout != null)
-            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
-        model.addAttribute("person", new Person());
-        return "default/login";
-    }
-
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
@@ -73,7 +62,7 @@ public class UserController {
         }
 
         model.addAttribute("person", person);
-        if (name.equals("admin")) {
+        if (person.getRole().equals("ROLE_ADMIN")) {
             return "redirect://localhost:8080/admin";
         } else {
             return "user/profile";
@@ -96,27 +85,17 @@ public class UserController {
         notificationService.updateAnzahl(mieterName);
 
         Person person = personRepository.findByUsername(mieterName).get();
-        model.addAttribute("person", person);
 
         List<RentEvent> activeRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.ACTIVE);
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_CLOSE));
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_OVER));
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
-        for (RentEvent rentEvent : activeRentEvents) {
-            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-            geraetWithRentEvent.setRentEvent(rentEvent);
-            activeGeraete.add(geraetWithRentEvent);
-        }
+        personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
-        for (RentEvent rentEvent : bookedRentEvents) {
-            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-            geraetWithRentEvent.setRentEvent(rentEvent);
-            bookedGeraete.add(geraetWithRentEvent);
-        }
+        personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
+        model.addAttribute("person", person);
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
         return "user/rentThings";
@@ -151,16 +130,17 @@ public class UserController {
     public String anfragen(@PathVariable Long id, Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        Geraet geraet = geraetRepository.findById(id).get();
+        Account account = accountRepository.findByAccount(name).get();
+        model.addAttribute("account",account);
         model.addAttribute("person", person);
-        Geraet geraet1 = geraetRepository.findById(id).get();
-
-        model.addAttribute("geraet", geraet1);
+        model.addAttribute("geraet", geraet);
         model.addAttribute("notification", new Notification());
         return "user/anfragen";
     }
 
     @PostMapping("/anfragen/{id}")
-    public String anfragen(@PathVariable Long id, @ModelAttribute Notification notification,
+    public String anfragen(@PathVariable Long id, @ModelAttribute(name = "notification") Notification notification,
                            Principal principal) throws Exception {
 
         Notification newNotification = new Notification();
