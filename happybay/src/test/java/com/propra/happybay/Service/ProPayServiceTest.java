@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;//package com.propra.happybay.Service;
+//package com.propra.happybay.Service;//package com.propra.happybay.Service;
 //
 //import com.propra.happybay.Model.Account;
 //import com.propra.happybay.Model.Reservation;
@@ -26,7 +26,7 @@ package com.propra.happybay.Service;//package com.propra.happybay.Service;
 //    @InjectMocks
 //    ProPayService proPayService;
 //
-//    @Test
+    @Test
 //    public void testSaveAccount() {
 //        proPayService.saveAccount("Anton");
 //       Mockito.verify(accountRepository,times(1)).save(any());

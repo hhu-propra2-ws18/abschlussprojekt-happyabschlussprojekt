@@ -56,11 +56,14 @@ buildscript {
         testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '1.18'
         testCompile group: 'org.apache.ant', name: 'ant-testutil', version: '1.8.3'
         testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.20.0', ext: 'pom'
-
+        testCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock',version:'2.1.0.RELEASE'
         compile('org.springframework.boot:spring-boot-starter-web')
         compile('org.springframework.boot:spring-boot-starter-mail')
         testCompile('org.springframework.boot:spring-boot-starter-test')
         // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.3.RELEASE'
-
-    }
+        testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+        // example with adding Spock core and Spock Spring
+        testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+        // example with adding Spock core and Spock Spring
+ }
