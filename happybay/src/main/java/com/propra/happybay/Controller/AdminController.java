@@ -82,7 +82,8 @@ public class AdminController {
     public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
         proPayService.releaseReservation(mieter, reservationId);
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
-        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+        Long geraetId=rentEvent.getGeraetId();
+        Geraet geraet = geraetRepository.findById(geraetId).get();
         geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
@@ -94,16 +95,5 @@ public class AdminController {
     public String changePassword(@ModelAttribute("newPassword") String newPassword) {
         adminService.changeAdminPassword(newPassword);
         return "redirect://localhost:8080/admin";
-    }
-
-    @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
-        if (error != null)
-            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
-
-        if (logout != null)
-            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
-        model.addAttribute("person", new Person());
-        return "default/login";
     }
 }

@@ -1,4 +1,4 @@
-//package com.propra.happybay.Service.AdminServices;
+//package com.propra.happybay.Service;
 //
 //import com.propra.happybay.Model.Account;
 //import com.propra.happybay.Model.Geraet;
@@ -31,7 +31,7 @@
 //@SpringBootTest
 //@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
 //@WebAppConfiguration
-//public class AdminServiceTest {
+//public class AdminServiceImplTest {
 //    @Mock
 //    PersonRepository personRepository;
 //    @Mock
@@ -44,11 +44,11 @@
 //    PasswordEncoder encoder;
 //
 //    @InjectMocks
-//    AdminServiceImpl adminService;
+//    AdminServiceImpl adminServiceImpl;
 //
 //
 //    @Test
-//    public void return_information_for_menuBadges() {
+//    public void return_information_for_menuBadges(){
 //        List<Person> personList = new ArrayList<>();
 //        Person fakePerson1 = new Person();
 //        fakePerson1.setUsername("notadmin");
@@ -84,6 +84,16 @@
 //        info.setNumberOfPersons(3);
 //        info.setNumberOfNotifications(5);
 //
-//        Assertions.assertThat(adminService.returnInformationForMenuBadges()).isEqualTo(info);
+//        Assertions.assertThat(adminServiceImpl.returnInformationForMenuBadges()).isEqualTo(info);
 //    }
+//
+////    @Test
+////    public void is_admin_default_password(){
+////        Person admin = new Person();
+////        admin.setUsername("admin");
+////        admin.setPassword(encoder.encode("11111111"));
+////        Mockito.when(personRepository.findByUsername("admin")).thenReturn(java.util.Optional.ofNullable(admin));
+////        Assertions.assertThat(adminService.isAdminHasDefaultPassword()).isEqualTo(true);
+////
+////    }
 //}

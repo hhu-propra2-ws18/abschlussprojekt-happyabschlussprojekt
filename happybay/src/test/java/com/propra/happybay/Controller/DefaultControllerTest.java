@@ -1,9 +1,11 @@
 //package com.propra.happybay.Controller;
 //
-//import com.propra.happybay.Model.*;
+//import com.propra.happybay.Model.Account;
+//import com.propra.happybay.Model.Bild;
+//import com.propra.happybay.Model.Geraet;
+//import com.propra.happybay.Model.Person;
 //import com.propra.happybay.Repository.GeraetRepository;
 //import com.propra.happybay.Repository.PersonRepository;
-//import com.propra.happybay.Repository.TransferRequestRepository;
 //import com.propra.happybay.ReturnStatus;
 //import com.propra.happybay.Service.GeraetService;
 //import com.propra.happybay.Service.PictureService;
@@ -31,7 +33,6 @@
 //import java.util.List;
 //
 //import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.mock;
 //import static org.mockito.Mockito.when;
 //import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

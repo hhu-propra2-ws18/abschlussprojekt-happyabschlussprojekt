@@ -1,13 +1,11 @@
-//package com.propra.happybay.Service;
-//
-//import static org.junit.Assert.*;
-//
-//public class PictureServiceTest {
-//
-//
-//
-//
-//
-//
-//
-//}
+package com.propra.happybay.Service;
+
+public class PictureServiceTest {
+
+
+
+
+
+
+
+}
