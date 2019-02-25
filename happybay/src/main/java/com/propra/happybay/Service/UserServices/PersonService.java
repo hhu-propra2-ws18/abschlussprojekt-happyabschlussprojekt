@@ -51,17 +51,22 @@ public class PersonService {
     }
 
     public void intervalZerlegen(Geraet geraet, int index, RentEvent rentEvent) {
-        TimeInterval timeInterval1 = new TimeInterval(geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart(),
-                rentEvent.getTimeInterval().getStart());
-        TimeInterval timeInterval2 = new TimeInterval(rentEvent.getTimeInterval().getEnd(),
-                geraet.getVerfuegbareEvents().get(index).getTimeInterval().getEnd());
-        RentEvent rentEvent1 = new RentEvent();
-        rentEvent1.setTimeInterval(timeInterval1);
-
-        RentEvent rentEvent2 = new RentEvent();
-        rentEvent2.setTimeInterval(timeInterval2);
-        geraet.getVerfuegbareEvents().add(rentEvent1);
-        geraet.getVerfuegbareEvents().add(rentEvent2);
+        if (geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart().getTime()
+                != rentEvent.getTimeInterval().getStart().getTime()) {
+            TimeInterval timeInterval1 = new TimeInterval(geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart(),
+                    rentEvent.getTimeInterval().getStart());
+            RentEvent rentEvent1 = new RentEvent();
+            rentEvent1.setTimeInterval(timeInterval1);
+            geraet.getVerfuegbareEvents().add(rentEvent1);
+        }
+        if (rentEvent.getTimeInterval().getEnd().getTime()
+                != geraet.getVerfuegbareEvents().get(index).getTimeInterval().getEnd().getTime()) {
+            TimeInterval timeInterval2 = new TimeInterval(rentEvent.getTimeInterval().getEnd(),
+                    geraet.getVerfuegbareEvents().get(index).getTimeInterval().getEnd());
+            RentEvent rentEvent2 = new RentEvent();
+            rentEvent2.setTimeInterval(timeInterval2);
+            geraet.getVerfuegbareEvents().add(rentEvent2);
+        }
         geraet.getVerfuegbareEvents().remove(index);
         geraetRepository.save(geraet);
     }

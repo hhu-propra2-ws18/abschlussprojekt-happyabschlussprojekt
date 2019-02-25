@@ -139,20 +139,7 @@ public class UserController {
 
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
-
-        List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
-        for (Notification notification : notifications) {
-            if (geraetRepository
-                    .findById(notification.getGeraetId())
-                    .get()
-                    .getBilder()
-                    .get(0)
-                    .getBild()
-                    .length > 0) {
-                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
-            }
-        }
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications", notificationService.findAllByBesitzer(name));
 
         return "user/notifications";
     }
@@ -181,8 +168,8 @@ public class UserController {
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
-        newNotification.setMietezeitpunktStart(new Date(notification.getMietezeitpunktStart().getTime() + 60*60*1000));
-        newNotification.setMietezeitpunktEnd(new Date(notification.getMietezeitpunktEnd().getTime() + 60*60*1000));
+        newNotification.setMietezeitpunktStart(new Date(notification.getMietezeitpunktStart().getTime() + 60 * 60 * 6000));
+        newNotification.setMietezeitpunktEnd(new Date(notification.getMietezeitpunktEnd().getTime() + 60 * 60 * 6000));
         newNotification.setBesitzer(notification.getBesitzer());
 
         Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
@@ -381,7 +368,7 @@ public class UserController {
         Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
         personService.makeComment(geraet, person, grund);
-        geraetService.checkForTouchingIntervals(geraet, rentEvent);
+//        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
         proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());
