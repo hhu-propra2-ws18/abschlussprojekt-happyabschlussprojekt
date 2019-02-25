@@ -102,17 +102,17 @@
         var array = startTime.split("-");
         var startDate =new Date(array[0],parseInt(array[1])-1,array[2]);
 
-        var endTime = $("#mietezeitpunktStart").val();
+        var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if(startDate<nowDate && endTime == null){
+        if(startDate<nowDate && isnull(endTime)){
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
         }
-        else if(endTime != null){
+        else if(!isnull(endTime)){
             var arrayForEndTime = endTime.split("-");
-            var startDate =new Date(arrayForEndTime[0],parseInt(arrayForEndTime[1])-1,arrayForEndTime[2]);
+            var endDate =new Date(arrayForEndTime[0],parseInt(arrayForEndTime[1])-1,arrayForEndTime[2]);
             if(startDate > endDate){
                 alert("Das StartDatum muss vor dem EndDatum liegen.");
                 $("#mietezeitpunktStart").val("");
@@ -132,15 +132,15 @@
         var array = endTime.split("-");
         var endDate =new Date(array[0],parseInt(array[1])-1,array[2]);
 
-        var startTime = $("#mietezeitpunktStart").val();
+        var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if(endDate<nowDate && startTime == null){
+        if(endDate<nowDate && isnull(startTime)){
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;
         }
-        else if(startTime != null){
+        else if(!isnull(startTime)){
             var arrayForStartTime = startTime.split("-");
             var startDate =new Date(arrayForStartTime[0],parseInt(arrayForStartTime[1])-1,arrayForStartTime[2]);
             if(startDate > endDate){
@@ -155,7 +155,14 @@
         else{
             return true;
         }
+    }
+    function isnull(str) {
 
+        if (str == '' || str == undefined || str == null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 </script>
