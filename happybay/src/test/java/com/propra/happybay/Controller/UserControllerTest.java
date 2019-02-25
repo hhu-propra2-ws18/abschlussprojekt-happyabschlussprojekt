@@ -4,6 +4,7 @@ import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.MailService;
 import com.propra.happybay.Service.UserServices.NotificationService;
@@ -119,8 +120,8 @@ public class UserControllerTest {
     PersonService personService;
     @MockBean
     GeraetService geraetService;
-    @MockBean
-    RentEvent rentEvent;
+    @Autowired
+    RentEventRepository rentEventRepository;
     @Before
     public void setup() throws IOException {
         byte[] bytes = new byte[20];
@@ -145,6 +146,8 @@ public class UserControllerTest {
         geraet.setBesitzer(user.getUsername());
         geraet.setKosten(3);
         geraet.setKaution(10);
+        geraet.setMietezeitpunktEnd(end);
+        geraet.setMietezeitpunktStart(start);
         geraetRepository.save(geraet);
 
         //Account
@@ -161,6 +164,12 @@ public class UserControllerTest {
         //
         verfuerbar.setTimeInterval(geraetService.convertToCET(timeInterval));
         geraet.getVerfuegbareEvents().add(verfuerbar);
+
+//        RentEvent rentEvent = new RentEvent();
+//        rentEvent.setId(1L);
+//        rentEvent.setGeraetId(geraet.getId());
+//        rentEventRepository.save(rentEvent);
+
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
@@ -224,21 +233,18 @@ public class UserControllerTest {
         mvc.perform(get("/user/addGeraet").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-//    @WithMockUser(value = "test", roles = "USER")
-//    @Test
-//    public void addGeraetPost() throws Exception {
-//
-//        final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
-//        final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
-//
-//        MultipartFile[] multipartFiles = new MultipartFile[1];
-//        multipartFiles[0] = mockMultipartFile;
-//        when(geraetService.convertToCET(any())).thenReturn(timeInterval);
-//        doNothing().when(rentEvent).setTimeInterval(any());
-//        rentEvent.setTimeInterval(timeInterval);
-//        mvc.perform(post("/user/addGeraet").flashAttr("geraet", geraet).requestAttr("files",multipartFiles).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().is3xxRedirection());
-//    }
+    @WithMockUser(value = "test", roles = "USER")
+    @Test
+    public void addGeraetPost() throws Exception {
+
+        final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
+        final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
+
+        MultipartFile[] multipartFiles = new MultipartFile[1];
+        multipartFiles[0] = mockMultipartFile;
+        mvc.perform(post("/user/addGeraet").flashAttr("geraet", geraet).requestAttr("files",multipartFiles).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is3xxRedirection());
+    }
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proPay() throws Exception {
@@ -255,8 +261,14 @@ public class UserControllerTest {
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void besitzerInfo() throws Exception {
-        mvc.perform(post("/BesitzerInfo/{id}",1L).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/user/BesitzerInfo/{id}",1L).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+//    @WithMockUser(value = "test", roles = "USER")
+//    @Test
+//    public void geraetZurueck() throws Exception {
+//        mvc.perform(get("/user/geraet/zurueckgeben/{id}",1L).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
 
 }

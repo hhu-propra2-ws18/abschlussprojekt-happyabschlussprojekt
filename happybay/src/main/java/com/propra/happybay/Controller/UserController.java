@@ -178,7 +178,8 @@ public class UserController {
         List<Bild> bilds = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files, bilds);
         RentEvent verfuegbar = new RentEvent();
-        TimeInterval timeInterval = geraetService.convertToCET(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd()));
+        TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
+        TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
         verfuegbar.setTimeInterval(timeInterval);
         geraet.setBilder(bilds);
         geraet.setLikes(0);
@@ -410,21 +411,4 @@ public class UserController {
     }
 }
 
-
-// DAS IST OPTIONAL
-/*    @PostMapping("/propay")
-    public String propay(Principal principal, @ModelAttribute("transferRequest") TransferRequest transferRequest){
-        transferRequest.setUsername(principal.getName());
-        transferRequestRepository.save(transferRequest);
-        return "redirect:/";
-    }*/
-
-//@GetMapping("/bezahlen/{id}")
-//public String bezahlen(@ModelAttribute Geraet geraet, Principal person, @PathVariable Long id) {
-//    Geraet geraet1 = geraetRepository.findById(id).get();
-//    String mieterName = person.getName();
-//    geraet1.setMieter(mieterName);
-//    geraetRepository.save(geraet1);
-//    return "user/confirmBezahlen";
-//}
 
