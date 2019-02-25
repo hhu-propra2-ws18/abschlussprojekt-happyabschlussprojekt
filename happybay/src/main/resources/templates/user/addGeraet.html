@@ -26,19 +26,19 @@
                    placeholder="Eingabe Kaution." onchange="checkKaution()" required/>
 
                 <!--why for kaution?-->
-            <label for="kaution">Abholort:</label>
+            <label for="abholort">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
                    placeholder="Eingabe Abholort." required/>
 
             <label for="mietezeitpunktStart">Verfügbar ab:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte." required/>
+                   placeholder="Eingabe start Zeitpunkte." onchange="checkStartTime()" required/>
             <br/>
             <label for="mietezeitpunktEnd">Verfügbar bis:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
-                   placeholder="Eingabe ende Zeitpunkte." required/>
+                   placeholder="Eingabe ende Zeitpunkte." onchange="checkEndTime()" required/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
             <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
@@ -94,6 +94,74 @@
                 }
             }
             return true;
+        }
+    }
+
+    function checkStartTime(){
+        var startTime = $("#mietezeitpunktStart").val();
+        var array = startTime.split("-");
+        var startDate =new Date(array[0],parseInt(array[1])-1,array[2]);
+
+        var endTime = $("#mietezeitpunktEnd").val().toString();
+
+        var nowDate = Date.now();
+        if(startDate<nowDate && isnull(endTime)){
+            alert("Das Startdatum darf nicht vor heute liegen.");
+            $("#mietezeitpunktStart").val("");
+            return false;
+        }
+        else if(!isnull(endTime)){
+            var arrayForEndTime = endTime.split("-");
+            var endDate =new Date(arrayForEndTime[0],parseInt(arrayForEndTime[1])-1,arrayForEndTime[2]);
+            if(startDate > endDate){
+                alert("Das StartDatum muss vor dem EndDatum liegen.");
+                $("#mietezeitpunktStart").val("");
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        else{
+            return true;
+        }
+    }
+
+    function checkEndTime() {
+        var endTime = $("#mietezeitpunktEnd").val();
+        var array = endTime.split("-");
+        var endDate =new Date(array[0],parseInt(array[1])-1,array[2]);
+
+        var startTime = $("#mietezeitpunktStart").val().toString();
+
+        var nowDate = Date.now();
+        if(endDate<nowDate && isnull(startTime)){
+            alert("Das Enddatum darf nicht vor heute liegen.");
+            $("#mietezeitpunktEnd").val("");
+            return false;
+        }
+        else if(!isnull(startTime)){
+            var arrayForStartTime = startTime.split("-");
+            var startDate =new Date(arrayForStartTime[0],parseInt(arrayForStartTime[1])-1,arrayForStartTime[2]);
+            if(startDate > endDate){
+                alert("Das EndDatum muss nach dem StartDatum liegen.");
+                $("#mietezeitpunktEnd").val("");
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        else{
+            return true;
+        }
+    }
+    function isnull(str) {
+
+        if (str == '' || str == undefined || str == null) {
+            return true;
+        } else {
+            return false;
         }
     }
 
