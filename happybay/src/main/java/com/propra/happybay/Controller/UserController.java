@@ -140,7 +140,6 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         model.addAttribute("notifications", notificationService.findAllByBesitzer(name));
-
         return "user/notifications";
     }
 
@@ -333,7 +332,7 @@ public class UserController {
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
         personService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
-
+        rentEventRepository.save(rentEvent);
         notificationRepository.deleteById(id);
 
         Person person = personRepository.findByUsername(mieter).get();

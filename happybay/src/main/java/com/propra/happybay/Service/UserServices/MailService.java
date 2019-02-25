@@ -2,8 +2,10 @@ package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.RentEvent;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.ReturnStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,39 +25,34 @@ public class MailService {
     private GeraetRepository geraetRepository;
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    private RentEventRepository rentEventRepository;
 
 
-    //@Scheduled(fixedRate=86400000)
-    //public void sendScheduledMail() throws Exception{
-    //
-    //    List<Geraet> geraets = geraetRepository.findAll();
-    //    for(int i=0;i<geraets.size();i++){
-    //        if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() <= 3 && geraets.get(i).getZeitraum() > 0
-    //                && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
-    //            Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
-    //            MimeMessage message1 = sender.createMimeMessage();
-    //            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-    //            helper1.setTo(person.getKontakt());
-    //            helper1.setSubject("Rückkehrzeit");
-    //            helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel()+ ") ist fast abgelaufen." );
-    //            sender.send(message1);
-    //            geraets.get(i).setZeitraum(geraets.get(i).getZeitraum()-1);
-    //            geraetRepository.save(geraets.get(i));
-    //        } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() == 0
-    //                && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
-    //            Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
-    //            MimeMessage message1 = sender.createMimeMessage();
-    //            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-    //            helper1.setTo(person.getKontakt());
-    //            helper1.setSubject("Rückkehrzeit");
-    //            helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel() + ") ist abgelaufen.");
-    //            sender.send(message1);
-    //        } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() > 3) {
-    //            geraets.get(i).setZeitraum(geraets.get(i).getZeitraum() - 1);
-    //            geraetRepository.save(geraets.get(i));
-    //        }
-    //    }
-    //}
+    @Scheduled(fixedRate = 86400000)
+    public void sendScheduledMail() throws Exception {
+        List<RentEvent> rentEvents = rentEventRepository.findAll();
+        for (RentEvent rentEvent : rentEvents) {
+            if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_CLOSE) {
+                Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
+                MimeMessage message1 = sender.createMimeMessage();
+                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+                helper1.setTo(person.getKontakt());
+                helper1.setSubject("Rückkehrzeit");
+                helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist fast abgelaufen.");
+                sender.send(message1);
+                rentEventRepository.save(rentEvent);
+            } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER) {
+                Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
+                MimeMessage message1 = sender.createMimeMessage();
+                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+                helper1.setTo(person.getKontakt());
+                helper1.setSubject("Rückkehrzeit");
+                helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist abgelaufen.");
+                sender.send(message1);
+            }
+        }
+    }
 
     public void sendAnfragMail(Person person, Geraet geraet, Principal principal) throws Exception{
         MimeMessage message = sender.createMimeMessage();

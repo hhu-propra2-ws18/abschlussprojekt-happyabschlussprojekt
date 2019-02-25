@@ -63,7 +63,7 @@ public class DefaultController {
         notificationService.updateAnzahl(name);
         model.addAttribute("person", personRepository.findByUsername(name).get());
 
-        geraetService.checkRentEventStatus(name);
+        geraetService.checkRentEventStatus();
 
         List<RentEvent> rentEventsDedlineisClose = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_CLOSE);
         List<GeraetWithRentEvent> remindRentThings = geraetService.returnGeraeteWithRentEvents(rentEventsDedlineisClose);

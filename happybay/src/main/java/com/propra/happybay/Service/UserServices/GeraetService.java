@@ -9,6 +9,7 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.ReturnStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -92,8 +93,9 @@ public class GeraetService {
         geraetRepository.save(geraet);
     }
 
-    public void checkRentEventStatus(String mieter) {
-        List<RentEvent> rentEvents = rentEventRepository.findAllByMieter(mieter);
+    @Scheduled(fixedRate = 86400000)
+    public void checkRentEventStatus() {
+        List<RentEvent> rentEvents = rentEventRepository.findAll();
         for (RentEvent rentEvent : rentEvents) {
             TimeInterval timeInterval = rentEvent.getTimeInterval();
             Long start = timeInterval.getStart().getTime();
