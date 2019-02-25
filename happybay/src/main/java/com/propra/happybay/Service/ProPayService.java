@@ -27,6 +27,8 @@ public class ProPayService {
     @Autowired
     TransactionRepository transactionRepository;
 
+    static String propayAdress = "propay";
+
     public void saveAccount(String username) {
         Account account = getEntity(username, Account.class);
         accountRepository.save(account);
@@ -36,7 +38,7 @@ public class ProPayService {
         final Mono<T> mono = WebClient
                 .create()
                 .get()
-                .uri("http://localhost:8888/account/" + username)
+                .uri("http://" + propayAdress + ":8888/account/" + username)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
                 .bodyToMono(type);
@@ -44,21 +46,21 @@ public class ProPayService {
     }
 
     public void erhoeheAmount(String username, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/account/" + username);
+        URL url = new URL("http://" + propayAdress + ":8888/account/" + username);
         makeQuery(amount, "amount", url);
         saveAccount(username);
         saveTransaction(amount, username, username);
     }
 
     public void ueberweisen(String username, String besizer, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
+        URL url = new URL("http://" + propayAdress + ":8888/account/"  + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
         saveAccount(username);
         saveTransaction(amount, besizer, username);
     }
 
     public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/reserve/"  + mieter + "/" + besitzer);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/reserve/"  + mieter + "/" + besitzer);
         Reader reader = makeQuery(amount, "amount", url);
 
         String response = ((BufferedReader) reader).readLine();
@@ -68,13 +70,13 @@ public class ProPayService {
     }
 
     public void releaseReservation(String mieter, int reservationId) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/release/"  + mieter);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/release/"  + mieter);
         makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
     }
 
     public void punishReservation(String mieter, String besitzer, int reservationId, int kaution) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/punish/"  + mieter);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/punish/"  + mieter);
         makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
         saveTransaction(kaution, besitzer, mieter);

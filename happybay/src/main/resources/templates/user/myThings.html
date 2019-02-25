@@ -17,8 +17,8 @@
     <div class="container">
         <div class="row justify-content-around">
             <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
-    <div th:replace="fragments.html :: oneGeraetWithoutDelete"></div>
                 <div class="card-body">
+                    <div th:replace="fragments.html :: geraetContainer"></div>
                     <a th:href="@{/user/geraet/edit/{id}(id=${geraet.getId()})}">Edit</a>
                     <form th:action="@{/user/geraet/delete/{id}(id=${geraet.getId()})}" method="post">
                         <button class="btn btn-danger" type="submit">Delete</button>

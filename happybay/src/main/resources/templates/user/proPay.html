@@ -27,7 +27,7 @@
         </ul>
         <ul>
         <li>
-    <form th:action="@{/admin/propay}"  method="post" >
+    <form th:action="@{/user/propayErhoehung}"  method="post" >
         <label for="amount">Betrag:</label>
         <input style="margin-bottom: 10px" type="number" class="form-control" name="amount" id="amount"/>
         <input type="hidden" name="account" th:value="${account.account}">

@@ -96,8 +96,13 @@ public class GeraetService {
         List<RentEvent> rentEvents = rentEventRepository.findAllByMieter(mieter);
         for (RentEvent rentEvent : rentEvents) {
             TimeInterval timeInterval = rentEvent.getTimeInterval();
+            Long start = timeInterval.getStart().getTime();
             Long end = timeInterval.getEnd().getTime();
             Long now = System.currentTimeMillis();
+            if (now > start) {
+                rentEvent.setReturnStatus(ReturnStatus.ACTIVE);
+                rentEventRepository.save(rentEvent);
+            }
             if (now + (1000*60*60*24) - end > 0) {
                 rentEvent.setReturnStatus(ReturnStatus.DEADLINE_CLOSE);
                 rentEventRepository.save(rentEvent);
@@ -118,5 +123,12 @@ public class GeraetService {
             overTimeThings.add(geraetWithRentEvent);
         }
         return overTimeThings;
+    }
+
+    public TimeInterval convertToCET(TimeInterval timeInterval) {
+        Date start = new Date(timeInterval.getStart().getTime() + 60*60*1000);
+        Date end = new Date(timeInterval.getEnd().getTime() + 60*60*1000);
+        TimeInterval newTimeInterval = new TimeInterval(start, end);
+        return newTimeInterval;
     }
 }

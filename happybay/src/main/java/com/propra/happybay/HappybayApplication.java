@@ -63,4 +63,5 @@ public class HappybayApplication {
         props.put("mail.debug", "true");
         return mailSender;
     }
+
 }

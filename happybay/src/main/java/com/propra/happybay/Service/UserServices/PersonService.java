@@ -43,7 +43,7 @@ public class PersonService {
         TimeInterval anfrageInterval = anfrageRentEvent.getTimeInterval();
         for (int i = 0; i < geraet.getVerfuegbareEvents().size(); i++) {
             TimeInterval verfuegbar = geraet.getVerfuegbareEvents().get(i).getTimeInterval();
-            if ((verfuegbar.getStart().getTime() < anfrageInterval.getStart().getTime()) && (verfuegbar.getEnd().getTime() > anfrageInterval.getEnd().getTime())) {
+            if ((verfuegbar.getStart().getTime() <= anfrageInterval.getStart().getTime()) && (verfuegbar.getEnd().getTime() >= anfrageInterval.getEnd().getTime())) {
                 return i;
             }
         }

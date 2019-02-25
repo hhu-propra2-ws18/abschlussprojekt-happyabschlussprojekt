@@ -4,6 +4,7 @@ import com.propra.happybay.ReturnStatus;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Data
 @Entity
@@ -17,6 +18,5 @@ public class RentEvent {
     @Embedded
     TimeInterval timeInterval;
     String mieter; //username
-    ReturnStatus returnStatus = ReturnStatus.DEFAULT;
-
+    ReturnStatus returnStatus = ReturnStatus.OK;
 }

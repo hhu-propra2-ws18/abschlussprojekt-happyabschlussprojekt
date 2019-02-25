@@ -37,10 +37,16 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/profile").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
-        http.logout().permitAll();
+        http.logout()
+                .permitAll()
+                .logoutSuccessUrl("http://localhost:8080");
         http.userDetailsService(userDetailsService);
         http.csrf().disable();
-        http.formLogin().loginPage("/login").permitAll();
+        http.formLogin()
+                .loginPage("http://localhost:8080/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("http://localhost:8080", true)
+                .permitAll();
     }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -21,7 +21,7 @@
                     <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li sec:authorize="isAnonymous()" class="nav-item">
-                    <a class="nav-link" th:href="@{/user/profile}"> Anmelden</a>
+                    <a class="nav-link" th:href="@{/login}"> Anmelden</a>
                 </li>
                 <li sec:authorize="isAnonymous()" class="nav-item">
                     <a class="nav-link" th:href="@{/register}"> Registrieren</a>
@@ -45,19 +45,18 @@
                     </a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item ml-auto">
-                    <a class="nav-link" th:href="@{/logout}"> Abmelden</a>
+                    <a class="nav-link" th:href="@{http://localhost:8080/logout}"> Abmelden</a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="key">
-                <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+                <input stype="margin-right: 0px" class="form-control mr-sm-2" type="search" placeholder="Suchen" aria-label="Search" name="key">
+                <button style="background-color: white; margin-left: 0px; border: none" class="btn btn-outline-dark my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
             </form>
         </div>
 </nav>
-
-<div th:fragment="geraetContainer" class="container">
     <div class="row justify-content-around">
         <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
+            <div th:fragment="geraetContainer" class="container">
             <div th:fragment="oneGeraetWithoutDelete">
             <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
                  src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
@@ -70,14 +69,17 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
-                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + ' €/Tag'}">KOST : </li>
+                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST : </li>
                 <li class="list-group-item" th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:</li>
+                <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
                 <br/>
                 <span class="badge badge-success">Verfügbar</span>
                 <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
                     font-weight: bold; margin-left: 20px">
-                    <tr>
-                        <td th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                    <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
+                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}" th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
+                            ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().after(#dates.createNow())}" th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                             ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
                     </tr>
                 </li>
@@ -93,7 +95,7 @@
                 </li>
             </ul>
                 <div class="card-body">
-                    <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" >Details</a>
+                    <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" > Mehr</a>
                 </div>
             </div>
         </div>

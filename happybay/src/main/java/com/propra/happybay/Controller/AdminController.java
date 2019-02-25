@@ -43,7 +43,7 @@ public class AdminController {
         if (adminService.isAdminHasDefaultPassword()) {
             return "admin/changePassword";
         }
-        return "redirect:/admin/allUsers";
+        return "redirect:http://localhost:8080/admin/allUsers";
     }
 
     @GetMapping("/allUsers")
@@ -74,7 +74,7 @@ public class AdminController {
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
-        return "redirect:/admin/conflicts";
+        return "redirect://localhost:8080/admin/conflicts";
     }
 
 
@@ -90,32 +90,20 @@ public class AdminController {
         return "redirect:/admin/conflicts";
     }
 
-    @PostMapping("/propay")
-    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account) throws IOException {
-        proPayService.erhoeheAmount(account, amount);
-        return "redirect:/";
-    }
-
     @PostMapping("/changePassword")
     public String changePassword(@ModelAttribute("newPassword") String newPassword) {
         adminService.changeAdminPassword(newPassword);
-        return "redirect:/admin";
+        return "redirect://localhost:8080/admin";
     }
 
-    // DAS IST OPTIONAL
-    //@GetMapping("/notifications")
-    //public String adminNotifications(Model model){
-    //    List<TransferRequest> transferRequests = transferRequestRepository.findAll();
-    //    InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
-    //
-    //    model.addAttribute("transferRequests", transferRequests);
-    //    model.addAttribute("informationForMenuBadges", informationForMenuBadges);
-    //    return "admin/adminNotifications";
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
 
-    //}
-    //@PostMapping("/erhoeheAmount")
-    //public String erhoeheAmount(@ModelAttribute("username") String username) throws IOException {
-    //    proPayService.erhoeheAmount(username, 10);
-    //    return "redirect:/admin/allUsers";
-    //}
+        if (logout != null)
+            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
+        model.addAttribute("person", new Person());
+        return "default/login";
+    }
 }
