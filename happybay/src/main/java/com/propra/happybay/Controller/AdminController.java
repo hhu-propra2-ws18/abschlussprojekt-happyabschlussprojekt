@@ -95,15 +95,4 @@ public class AdminController {
         adminService.changeAdminPassword(newPassword);
         return "redirect://localhost:8080/admin";
     }
-
-    @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
-        if (error != null)
-            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
-
-        if (logout != null)
-            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
-        model.addAttribute("person", new Person());
-        return "default/login";
-    }
 }

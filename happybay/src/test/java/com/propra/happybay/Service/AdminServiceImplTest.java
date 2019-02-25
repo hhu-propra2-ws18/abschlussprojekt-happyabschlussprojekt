@@ -1,11 +1,13 @@
 //package com.propra.happybay.Service;
 //
-//import com.propra.happybay.Model.*;
+//import com.propra.happybay.Model.Account;
+//import com.propra.happybay.Model.Geraet;
+//import com.propra.happybay.Model.Person;
 //import com.propra.happybay.Repository.AccountRepository;
 //import com.propra.happybay.Repository.GeraetRepository;
 //import com.propra.happybay.Repository.PersonRepository;
 //import com.propra.happybay.Repository.TransferRequestRepository;
-//import com.propra.happybay.Service.AdminServices.AdminService;
+//import com.propra.happybay.Service.AdminServices.AdminServiceImpl;
 //import org.assertj.core.api.Assertions;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -20,17 +22,16 @@
 //import org.springframework.test.context.web.WebAppConfiguration;
 //import org.springframework.web.context.WebApplicationContext;
 //
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.verify;
-//
 //import java.util.ArrayList;
 //import java.util.List;
+//
+//import static org.mockito.ArgumentMatchers.any;
 //
 //@RunWith(MockitoJUnitRunner.class)
 //@SpringBootTest
 //@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
 //@WebAppConfiguration
-//public class AdminServiceTest {
+//public class AdminServiceImplTest {
 //    @Mock
 //    PersonRepository personRepository;
 //    @Mock
@@ -43,7 +44,7 @@
 //    PasswordEncoder encoder;
 //
 //    @InjectMocks
-//    AdminService adminService;
+//    AdminServiceImpl adminServiceImpl;
 //
 //
 //    @Test
@@ -83,7 +84,7 @@
 //        info.setNumberOfPersons(3);
 //        info.setNumberOfNotifications(5);
 //
-//        Assertions.assertThat(adminService.returnInformationForMenuBadges()).isEqualTo(info);
+//        Assertions.assertThat(adminServiceImpl.returnInformationForMenuBadges()).isEqualTo(info);
 //    }
 //
 ////    @Test

@@ -52,17 +52,6 @@ public class UserController {
         this.personRepository = personRepository;
     }
 
-    @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
-        if (error != null)
-            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
-
-        if (logout != null)
-            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
-        model.addAttribute("person", new Person());
-        return "default/login";
-    }
-
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
@@ -73,7 +62,7 @@ public class UserController {
         }
 
         model.addAttribute("person", person);
-        if (name.equals("admin")) {
+        if (person.getRole().equals("ROLE_ADMIN")) {
             return "redirect://localhost:8080/admin";
         } else {
             return "user/profile";
@@ -96,7 +85,6 @@ public class UserController {
         notificationService.updateAnzahl(mieterName);
 
         Person person = personRepository.findByUsername(mieterName).get();
-        model.addAttribute("person", person);
 
         List<RentEvent> activeRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.ACTIVE);
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_CLOSE));
@@ -113,6 +101,7 @@ public class UserController {
                 geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
             }
         }
+        personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
@@ -127,6 +116,8 @@ public class UserController {
         }
 
 
+        personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
+        model.addAttribute("person", person);
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
         return "user/rentThings";
@@ -147,6 +138,9 @@ public class UserController {
     public String anfragen(@PathVariable Long id, Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
+        Geraet geraet = geraetRepository.findById(id).get();
+        Account account = accountRepository.findByAccount(name).get();
+        model.addAttribute("account",account);
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
 
@@ -154,12 +148,13 @@ public class UserController {
         model.addAttribute("account", account);
 
         model.addAttribute("geraet", geraet1);
+        model.addAttribute("geraet", geraet);
         model.addAttribute("notification", new Notification());
         return "user/anfragen";
     }
 
     @PostMapping("/anfragen/{id}")
-    public String anfragen(@PathVariable Long id, @ModelAttribute Notification notification,
+    public String anfragen(@PathVariable Long id, @ModelAttribute(name = "notification") Notification notification,
                            Principal principal) throws Exception {
 
         Notification newNotification = new Notification();
@@ -193,19 +188,17 @@ public class UserController {
 
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
-                                @RequestParam("files") MultipartFile[] files, Principal principal) throws IOException {
+                                @RequestParam(name = "files",value = "files",required = false) MultipartFile[] files, Principal principal) throws IOException {
         List<Bild> bilds = new ArrayList<>();
-        for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilds.add(bild);
-        }
+        personService.umwechsleMutifileZumBild(files, bilds);
         RentEvent verfuegbar = new RentEvent();
-        verfuegbar.setTimeInterval(geraetService.convertToCET(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd())));
+        TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
+        TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
+        verfuegbar.setTimeInterval(timeInterval);
         geraet.setBilder(bilds);
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
-        System.out.println("***********************************\n" + geraet);
+
         Person person = personRepository.findByUsername(principal.getName()).get();
         int aktionPunkte = person.getAktionPunkte();
         person.setAktionPunkte(aktionPunkte + 10);
@@ -417,18 +410,14 @@ public class UserController {
                              @RequestParam("files") MultipartFile[] files) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
         List<Bild> bilds = new ArrayList<>();
-        for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilds.add(bild);
-        }
+        personService.umwechsleMutifileZumBild(files, bilds);
         geraet1.setBilder(bilds);
         geraet1.setKosten(geraet.getKosten());
         geraet1.setTitel(geraet.getTitel());
         geraet1.setBeschreibung(geraet.getBeschreibung());
         geraet1.setKaution(geraet.getKaution());
         geraet1.setAbholort(geraet.getAbholort());
-        System.out.println("***********************************\n" + geraet1);
+
         geraetRepository.save(geraet1);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);

@@ -1,6 +1,7 @@
 package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.*;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
@@ -8,6 +9,7 @@ import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -88,5 +90,20 @@ public class PersonService {
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
         proPayService.saveAccount(person.getUsername());
+    }
+    public void checksActiveOrInActiveRentEvent(List<RentEvent> RentEvents, List<GeraetWithRentEvent> geraete) {
+        for (RentEvent rentEvent : RentEvents) {
+            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setRentEvent(rentEvent);
+            geraete.add(geraetWithRentEvent);
+        }
+    }
+    public void umwechsleMutifileZumBild(@RequestParam("files") MultipartFile[] files, List<Bild> bilds) throws IOException {
+        for (MultipartFile file : files) {
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            bilds.add(bild);
+        }
     }
 }
