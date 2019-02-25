@@ -1,7 +1,5 @@
 package com.propra.happybay.Controller;
 
-import com.propra.happybay.Model.Bild;
-import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
@@ -10,10 +8,9 @@ import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.ReturnStatus;
+import com.propra.happybay.Service.DefaultServices.UserValidator;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.NotificationService;
-import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.DefaultServices.UserValidator;
 import com.propra.happybay.Service.UserServices.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +78,7 @@ public class DefaultController {
     }
 
     @PostMapping("/addNewUser")
-    public String addToDatabase(@RequestParam("file") MultipartFile file,
+    public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) throws IOException {
         userValidator.validate(person, bindingResult);

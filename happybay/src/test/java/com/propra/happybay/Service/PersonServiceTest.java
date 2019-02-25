@@ -42,7 +42,7 @@ public class PersonServiceTest {
 
     }
 
-
+//
     @Test
     public void increase_aktion_punkt(){
         Person fakePerson = new Person();

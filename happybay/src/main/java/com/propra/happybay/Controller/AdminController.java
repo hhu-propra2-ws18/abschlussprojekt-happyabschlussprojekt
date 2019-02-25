@@ -82,8 +82,7 @@ public class AdminController {
     public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
         proPayService.releaseReservation(mieter, reservationId);
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
-        Long geraetId=rentEvent.getGeraetId();
-        Geraet geraet = geraetRepository.findById(geraetId).get();
+        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
         geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
