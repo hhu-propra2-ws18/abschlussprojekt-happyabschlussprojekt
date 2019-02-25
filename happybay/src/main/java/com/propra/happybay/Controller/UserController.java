@@ -101,12 +101,17 @@ public class UserController {
         List<RentEvent> activeRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.ACTIVE);
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_CLOSE));
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_OVER));
+        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.KAPUTT));
+
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
         for (RentEvent rentEvent : activeRentEvents) {
             GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
             geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
             geraetWithRentEvent.setRentEvent(rentEvent);
             activeGeraete.add(geraetWithRentEvent);
+            if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {
+                geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
+            }
         }
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
@@ -116,7 +121,12 @@ public class UserController {
             geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
             geraetWithRentEvent.setRentEvent(rentEvent);
             bookedGeraete.add(geraetWithRentEvent);
+            if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {
+                geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
+            }
         }
+
+
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
         return "user/rentThings";
@@ -131,17 +141,17 @@ public class UserController {
         model.addAttribute("person", person);
 
         List<Notification> notifications = notificationRepository.findAllByBesitzer(name);
-        //for (Notification notification : notifications) {
-        //    if (geraetRepository.
-        //            findById(notification.getGeraetId())
-        //            .get()
-        //            .getBilder()
-        //            .get(0)
-        //            .getBild()
-        //            .length > 0) {
-        //        notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
-        //    }
-        //}
+        for (Notification notification : notifications) {
+            if (geraetRepository
+                    .findById(notification.getGeraetId())
+                    .get()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
+                notification.setEncode(geraetRepository.findById(notification.getGeraetId()).get().getBilder().get(0).encodeBild());
+            }
+        }
         model.addAttribute("notifications", notifications);
 
         return "user/notifications";
@@ -153,6 +163,9 @@ public class UserController {
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
+
+        Account account = accountRepository.findByAccount(name).get();
+        model.addAttribute("account", account);
 
         model.addAttribute("geraet", geraet1);
         model.addAttribute("notification", new Notification());
@@ -206,7 +219,7 @@ public class UserController {
         geraet.setBilder(bilds);
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
-
+        System.out.println("***********************************\n" + geraet);
         Person person = personRepository.findByUsername(principal.getName()).get();
         int aktionPunkte = person.getAktionPunkte();
         person.setAktionPunkte(aktionPunkte + 10);
@@ -429,7 +442,7 @@ public class UserController {
         geraet1.setBeschreibung(geraet.getBeschreibung());
         geraet1.setKaution(geraet.getKaution());
         geraet1.setAbholort(geraet.getAbholort());
-
+        System.out.println("***********************************\n" + geraet1);
         geraetRepository.save(geraet1);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);

@@ -82,7 +82,7 @@ public class DefaultController {
     }
 
     @PostMapping("/addNewUser")
-    public String addToDatabase(@RequestParam("file") MultipartFile file,
+    public String addToDatabase(@RequestParam(value = "file") MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) throws IOException {
         userValidator.validate(person, bindingResult);

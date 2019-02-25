@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,5 +22,8 @@ public class Notification {
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
     String encode;
+
+//    @OneToMany
+//    List<Long> conflictIds = new ArrayList<>();
 }
 

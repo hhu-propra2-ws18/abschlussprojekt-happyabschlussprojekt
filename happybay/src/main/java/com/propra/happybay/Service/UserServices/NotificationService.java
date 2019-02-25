@@ -7,6 +7,7 @@ import com.propra.happybay.Repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,4 +48,49 @@ public class NotificationService {
         Person person = personService.getByUsername(name);
         person.setAnzahlNotifications(notifications.size());
     }
+
+
+//    private List<Notification> getAllNotification(){
+//        List<Notification> notifications = new ArrayList<>();
+//        notificationRepository.findAll().forEach(e -> notifications.add(e));
+//        return notifications;
+//    }
+//
+//    private boolean isConflictTime(Notification notification1, Notification notification2){
+//        if(((notification1.getMietezeitpunktStart().getTime() <= notification2.getMietezeitpunktStart().getTime()
+//                && notification1.getMietezeitpunktEnd().getTime() >= notification2.getMietezeitpunktStart().getTime())
+//                ||(notification1.getMietezeitpunktEnd().getTime() >= notification2.getMietezeitpunktEnd().getTime()
+//                && notification1.getMietezeitpunktStart().getTime() <= notification2.getMietezeitpunktEnd().getTime()))
+//        || ((notification2.getMietezeitpunktStart().getTime() <= notification1.getMietezeitpunktStart().getTime()
+//                && notification2.getMietezeitpunktEnd().getTime() >= notification1.getMietezeitpunktStart().getTime())
+//                ||(notification2.getMietezeitpunktEnd().getTime() >= notification1.getMietezeitpunktEnd().getTime()
+//                && notification2.getMietezeitpunktStart().getTime() <= notification1.getMietezeitpunktEnd().getTime()))){
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    private boolean hasConflict(List<Long> ids){
+//        if(ids.size() > 1){
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    private boolean isContained(List<Long> ids, Long Id){
+//        for(Long id: ids){
+//            if(id.longValue() == Id.longValue()){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    private void setConflictIds(){
+//        List<Notification> notifications = getAllNotification();
+//        for(){
+//
+//        }
+//    }
+
 }
