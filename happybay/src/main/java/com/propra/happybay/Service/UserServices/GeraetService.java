@@ -77,7 +77,7 @@ public class GeraetService {
             Date timeInterval1End = timeInterval1.getEnd();
             Date timeInterval2Start = timeInterval2.getStart();
 
-            if (timeInterval1End.compareTo(timeInterval2Start) == 0) {
+            if (timeInterval1End.equals(timeInterval2Start)) {
                 timeInterval2.setStart(timeInterval1Start);
                 timeInterval1.setStart(null);
             }
@@ -126,8 +126,8 @@ public class GeraetService {
     }
 
     public TimeInterval convertToCET(TimeInterval timeInterval) {
-        Date start = new Date(timeInterval.getStart().getTime() + 60*60*1000);
-        Date end = new Date(timeInterval.getEnd().getTime() + 60*60*1000);
+        Date start = new Date(timeInterval.getStart().getTime() + 60*60*6000);
+        Date end = new Date(timeInterval.getEnd().getTime() + 60*60*6000);
         TimeInterval newTimeInterval = new TimeInterval(start, end);
         return newTimeInterval;
     }

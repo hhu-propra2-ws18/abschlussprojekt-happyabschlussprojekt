@@ -1,11 +1,11 @@
 package com.propra.happybay.Service;
 
-
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.RentEvent;
 import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.PictureService;
 import org.assertj.core.api.Assertions;
@@ -20,10 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
-import reactor.test.StepVerifier;
 
-import java.io.File;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +41,8 @@ public class GeraetServiceTest {
     GeraetRepository geraetRepository;
     @Mock
     PictureService pictureService;
+    @Mock
+    RentEventRepository rentEventRepository;
 
     @InjectMocks
     GeraetService geraetService;
@@ -114,32 +113,31 @@ public class GeraetServiceTest {
 
     @Test
     public void check_for_touching_intervals(){
-       // geraetService= mock(GeraetService.class);
         TimeInterval time = new TimeInterval();
-        time.setStart(new Date(2019-2-20));
-        time.setEnd(new Date(2019-3-10));
+        time.setStart(Date.valueOf("2019-2-20"));
+        time.setEnd(Date.valueOf("2019-3-10"));
         RentEvent fake = new RentEvent();
         fake.setTimeInterval(time);
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
         TimeInterval timeInterval1 = new TimeInterval();
-        timeInterval1.setStart(new Date(2019-1-10));
-        timeInterval1.setEnd(new Date(2019-3-10));
+        timeInterval1.setStart(Date.valueOf("2019-1-10"));
+        timeInterval1.setEnd(Date.valueOf("2019-3-10"));
         rentEvent1.setTimeInterval(timeInterval1);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
         TimeInterval timeInterval2 = new TimeInterval();
-        timeInterval2.setStart(new Date(2019-3-10));
-        timeInterval2.setEnd(new Date(2019-4-24));
+        timeInterval2.setStart(Date.valueOf("2019-3-10"));
+        timeInterval2.setEnd(Date.valueOf("2019-4-24"));
         rentEvent2.setTimeInterval(timeInterval2);
         rentEventList.add(rentEvent2);
 
         RentEvent rentEvent3 = new RentEvent();
         TimeInterval timeInterval3 = new TimeInterval();
-        timeInterval3.setStart(new Date(2019-5-28));
-        timeInterval3.setEnd(new Date(2019-6-24));
+        timeInterval3.setStart(Date.valueOf("2019-5-28"));
+        timeInterval3.setEnd(Date.valueOf("2019-6-24"));
         rentEvent3.setTimeInterval(timeInterval3);
         rentEventList.add(rentEvent3);
 
@@ -150,8 +148,45 @@ public class GeraetServiceTest {
         verify(geraetRepository,times(1)).save(any());
     }
 
+    @Test
+    public void check_Rent_EventStatus(){
+
+        List<RentEvent> rentEventList = new ArrayList<>();
+        RentEvent rentEvent1 = new RentEvent();
+
+        TimeInterval timeInterval1 = new TimeInterval();
+        timeInterval1.setStart(Date.valueOf("2019-1-10"));
+        timeInterval1.setEnd(Date.valueOf("2019-2-10"));
+        rentEvent1.setTimeInterval(timeInterval1);
+        rentEventList.add(rentEvent1);
+
+        RentEvent rentEvent2 = new RentEvent();
+        TimeInterval timeInterval2 = new TimeInterval();
+        timeInterval2.setStart(Date.valueOf("2019-2-23"));
+        timeInterval2.setEnd(Date.valueOf("2019-4-24"));
+        rentEvent2.setTimeInterval(timeInterval2);
+        rentEventList.add(rentEvent2);
+
+        RentEvent rentEvent3 = new RentEvent();
+        TimeInterval timeInterval3 = new TimeInterval();
+        timeInterval3.setStart(Date.valueOf("2019-5-28"));
+        timeInterval3.setEnd(Date.valueOf("2019-6-24"));
+        rentEvent3.setTimeInterval(timeInterval3);
+        rentEventList.add(rentEvent3);
+        Mockito.when(rentEventRepository.findAllByMieter(anyString())).thenReturn(rentEventList);
+
+        geraetService.checkRentEventStatus("fake");
+        verify(rentEventRepository,times(4)).save(any());
+    }
 
 
+    @Test
+    public void convert_to_GET(){
+        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
+        TimeInterval newfake = geraetService.convertToCET(fake);
+        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
+        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
 
+    }
 
 }

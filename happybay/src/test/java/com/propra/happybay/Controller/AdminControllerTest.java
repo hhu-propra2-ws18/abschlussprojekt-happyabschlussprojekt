@@ -11,6 +11,7 @@ import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.GeraetService;
+import lombok.Data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Data
 public class AdminControllerTest {
     private Person person = new Person();
     private Account account = new Account();
