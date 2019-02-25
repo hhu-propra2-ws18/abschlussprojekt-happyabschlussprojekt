@@ -20,7 +20,6 @@ public class Notification {
     String anfragePerson;
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
-    int zeitraum;
     String encode;
 }
 

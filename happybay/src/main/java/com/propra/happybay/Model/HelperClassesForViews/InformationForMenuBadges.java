@@ -1,4 +1,4 @@
-package com.propra.happybay.Model;
+package com.propra.happybay.Model.HelperClassesForViews;
 
 import lombok.Data;
 

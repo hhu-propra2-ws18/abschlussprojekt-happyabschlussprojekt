@@ -22,20 +22,20 @@
                      th:src="@{'data:image/jpeg;base64,'+ ${notification.getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Message: </li>
+                        <li class="list-inline-item font-weight-bold">Anfragende Person: </li>
+                        <li class="list-inline-item" th:text="${notification.getAnfragePerson()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >Nachricht: </li>
                         <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(notification.getMessage(),100)}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktStart:</li>
-                        <li class="list-inline-item" th:text="${notification.getMietezeitpunktStart()}"></li>
+                        <li class="list-inline-item font-weight-bold">Gewünschter erster Tag:</li>
+                        <li class="list-inline-item" th:text="${#dates.format(notification.getMietezeitpunktStart(), 'dd.MM.yyyy')}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktEnd:</li>
-                        <li class="list-inline-item" th:text="${notification.getMietezeitpunktEnd()}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
-                        <li class="list-inline-item" th:text="${notification.getAnfragePerson()}"></li>
+                        <li class="list-inline-item font-weight-bold">Gewünschter letzter Tag:</li>
+                        <li class="list-inline-item" th:text="${#dates.format(notification.getMietezeitpunktEnd(), 'dd.MM.yyyy')}"></li>
                     </ul>
                     <div th:if="${notification.getType()=='request'}" >
                         <form th:action="@{/user/notification/refuseRequest/{id}(id=${notification.getId()})}" method="post">

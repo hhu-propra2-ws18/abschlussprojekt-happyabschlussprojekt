@@ -23,20 +23,51 @@
 
     <div style="margin: 15px">
         <ul class="list-inline card-text">
-            <li class="list-inline-item font-weight-bold">Kontostanderhöhung beantragen</li>
+            <li class="list-inline-item font-weight-bold">Konto aufladen</li>
         </ul>
         <ul>
         <li>
-    <form th:action="@{/admin/propay}"  method="post" >
-
+    <form th:action="@{/user/propayErhoehung}"  method="post" >
         <label for="amount">Betrag:</label>
         <input style="margin-bottom: 10px" type="number" class="form-control" name="amount" id="amount"/>
         <input type="hidden" name="account" th:value="${account.account}">
-        <button type="submit" class="btn btn-primary">Beantragen</button>
+        <button type="submit" class="btn btn-primary">Aufladen</button>
     </form>
         </li>
         </ul>
 </div>
+    <br/>
+    <div class="container" >
+        <div style="margin: 15px">
+            <ul class="list-inline card-text">
+                <li class="list-inline-item font-weight-bold">Vergangene Überweisungen: </li>
+            </ul>
+            <ul class="list-group list-group-flush" style="background-color: transparent">
+                <li class="list-group-item" th:if="${#lists.isEmpty(transactions)}">Keine</li>
+                <table class="table container">
+                    <thead>
+                    <tr>
+                        <th scope="col">Auftraggeber</th>
+                        <th scope="col">Empfänger</th>
+                        <th scope="col">Betrag</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="transaction : ${transactions}">
+                        <th scope="row" th:text="${transaction.giver}"></th>
+                        <td th:text="${transaction.receiver}"></td>
+                        <td th:text="${transaction.amount} + ' €'">Geld</td>
+                        <!--<td> <form action="/admin/erhoeheAmount" method="post">-->
+                        <!--<input type="hidden" name="username" th:value="${personMitAccount.person.username}">-->
+                        <!--<br>-->
+                        <!--<input type="submit" value="Erhöhe Kontostand">-->
+                        <!--</form> </td>-->
+                    </tr>
+                    </tbody>
+                </table>
+            </ul>
+        </div>
+    </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

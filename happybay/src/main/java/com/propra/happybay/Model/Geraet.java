@@ -20,21 +20,12 @@ public class Geraet {
     @Column(length = 1000)
     String beschreibung;
     String titel;
-    boolean verfuegbar;
-    String mieter;
-
-    int zeitraum;
-
     int kosten;
     int kaution;
     String abholort;
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
-
-    LocalDate endzeitpunkt;
     String encode;
-    ReturnStatus returnStatus = ReturnStatus.DEFAULT;
-    String grundReturn = "Das Gerät ist beschädigt";
     int likes = 0;
 
     @OneToMany(cascade = CascadeType.ALL)

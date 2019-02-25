@@ -1,12 +1,14 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.GeraetService;
-import com.propra.happybay.Service.UserDetailsServiceImpl;
+import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.MailService;
+import com.propra.happybay.Service.UserServices.NotificationService;
+import com.propra.happybay.Service.UserServices.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,11 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping(value = {"/user"})
@@ -32,45 +32,58 @@ public class UserController {
     @Autowired
     public PasswordEncoder encoder;
     @Autowired
-    private TransferRequestRepository transferRequestRepository;
-    @Autowired
     private ProPayService proPayService;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
     private NotificationRepository notificationRepository;
     @Autowired
-    private GeraetMitReservationIDRepository geraetMitReservationIDRepository;
-    @Autowired
     private MailService mailService;
-    @Autowired
-    private UserDetailsServiceImpl userService;
     @Autowired
     private GeraetService geraetService;
     @Autowired
-    RentEventRepository rentEventRepository;
+    private RentEventRepository rentEventRepository;
+    @Autowired
+    PersonService personService;
+    @Autowired
+    NotificationService notificationService;
 
     public UserController(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("error", "Ihr Benutzername oder Kennwort sind nicht gültig.");
+
+        if (logout != null)
+            model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
+        model.addAttribute("person", new Person());
+        return "default/login";
+    }
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
         Person person = personRepository.findByUsername(name).get();
-        if(person.getFoto().getBild().length>0){
+        if (person.getFoto().getBild().length > 0) {
             person.setEncode(person.getFoto().encodeBild());
         }
 
         model.addAttribute("person", person);
-        if (name.equals("admin")) { return "redirect:/admin/"; }
-        else { return "user/profile"; }
+        if (name.equals("admin")) {
+            return "redirect://localhost:8080/admin";
+        } else {
+            return "user/profile";
+        }
     }
 
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         model.addAttribute("geraete", geraetService.getAllByBesitzerWithBilder(name));
@@ -80,24 +93,40 @@ public class UserController {
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
         String mieterName = principal.getName();
+        notificationService.updateAnzahl(mieterName);
+
         Person person = personRepository.findByUsername(mieterName).get();
         model.addAttribute("person", person);
 
-        List<RentEvent> rentEvents = rentEventRepository.findAllByMieter(mieterName);
-        List<GeraetMitRentEvent> geraete = new ArrayList<>();
-        for (RentEvent rentEvent : rentEvents) {
-            GeraetMitRentEvent geraetMitRentEvent = new GeraetMitRentEvent();
-            geraetMitRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-            geraetMitRentEvent.setRentEvent(rentEvent);
-            geraete.add(geraetMitRentEvent);
+        List<RentEvent> activeRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.ACTIVE);
+        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_CLOSE));
+        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.DEADLINE_OVER));
+        List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
+        for (RentEvent rentEvent : activeRentEvents) {
+            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setRentEvent(rentEvent);
+            activeGeraete.add(geraetWithRentEvent);
         }
-        model.addAttribute("geraete", geraete);
+
+        List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
+        List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
+        for (RentEvent rentEvent : bookedRentEvents) {
+            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setRentEvent(rentEvent);
+            bookedGeraete.add(geraetWithRentEvent);
+        }
+        model.addAttribute("activeGeraete", activeGeraete);
+        model.addAttribute("bookedGeraete", bookedGeraete);
         return "user/rentThings";
     }
 
     @GetMapping("/notifications")
     public String makeNotifications(Model model, Principal principal) {
         String name = principal.getName();
+        notificationService.updateAnzahl(name);
+
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
 
@@ -119,52 +148,50 @@ public class UserController {
     }
 
     @GetMapping("/anfragen/{id}")
-    public String anfragen(@PathVariable Long id,Model model, Principal principal) {
+    public String anfragen(@PathVariable Long id, Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
-        Account account = accountRepository.findByAccount(name).get();
 
-        model.addAttribute("account",account);
-        model.addAttribute("geraet",geraet1);
+        model.addAttribute("geraet", geraet1);
         model.addAttribute("notification", new Notification());
         return "user/anfragen";
     }
+
     @PostMapping("/anfragen/{id}")
-    public String anfragen(Model model, @PathVariable Long id, @ModelAttribute Notification notification, Principal principal) throws Exception {
+    public String anfragen(@PathVariable Long id, @ModelAttribute Notification notification,
+                           Principal principal) throws Exception {
 
         Notification newNotification = new Notification();
         newNotification.setType("request");
         newNotification.setAnfragePerson(principal.getName());
         newNotification.setGeraetId(id);
         newNotification.setMessage(notification.getMessage());
-        newNotification.setZeitraum(notification.getZeitraum());
-        newNotification.setMietezeitpunktStart(notification.getMietezeitpunktStart());
-        newNotification.setMietezeitpunktEnd(notification.getMietezeitpunktEnd());
+        newNotification.setMietezeitpunktStart(new Date(notification.getMietezeitpunktStart().getTime() + 60*60*1000));
+        newNotification.setMietezeitpunktEnd(new Date(notification.getMietezeitpunktEnd().getTime() + 60*60*1000));
         newNotification.setBesitzer(notification.getBesitzer());
-
 
         Geraet geraet = geraetRepository.findById(newNotification.getGeraetId()).get();
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
-        geraet.setZeitraum(notification.getZeitraum());
 
         newNotification.setEncode(geraet.getEncode());
         notificationRepository.save(newNotification);
 
         mailService.sendAnfragMail(person, geraet, principal);
 
-        return "redirect:/";
+        return "redirect://localhost:8080";
     }
+
     @GetMapping("/addGeraet")
     public String addGeraet(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
 
         model.addAttribute("person", person);
-
         return "user/addGeraet";
     }
+
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
                                 @RequestParam("files") MultipartFile[] files, Principal principal) throws IOException {
@@ -175,21 +202,21 @@ public class UserController {
             bilds.add(bild);
         }
         RentEvent verfuegbar = new RentEvent();
-        verfuegbar.setTimeInterval(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd()));
+        verfuegbar.setTimeInterval(geraetService.convertToCET(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd())));
         geraet.setBilder(bilds);
-        geraet.setVerfuegbar(true);
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
 
-        Person person=personRepository.findByUsername(principal.getName()).get();
-        int aktionPunkte=person.getAktionPunkte();
-        person.setAktionPunkte(aktionPunkte+10);
+        Person person = personRepository.findByUsername(principal.getName()).get();
+        int aktionPunkte = person.getAktionPunkte();
+        person.setAktionPunkte(aktionPunkte + 10);
+
         geraetRepository.save(geraet);
 
         geraet.getVerfuegbareEvents().add(verfuegbar);
         geraetRepository.save(geraet);
 
-        return "redirect:/user/myThings";
+        return "redirect://localhost:8080/user/myThings";
     }
 
     @GetMapping("/proPay")
@@ -199,40 +226,40 @@ public class UserController {
         proPayService.saveAccount(person.getUsername());
         model.addAttribute("person", person);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
+        List<Transaction> transactions = proPayService.getAllTransactionForPerson(name);
+        model.addAttribute("transactions", transactions);
         model.addAttribute("account", account);
-        model.addAttribute("transferRequest",new TransferRequest());
         return "user/proPay";
     }
-    @PostMapping("/propay")
-    public String propay(Principal principal, @ModelAttribute("transferRequest") TransferRequest transferRequest){
-        transferRequest.setUsername(principal.getName());
-        transferRequestRepository.save(transferRequest);
-        return "redirect:/";
+
+    @PostMapping("/propayErhoehung")
+    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account) throws IOException {
+        proPayService.erhoeheAmount(account, amount);
+        return "redirect://localhost:8080";
     }
+
     @GetMapping("/geraet/{id}")
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         String person = principal.getName();
         Geraet geraet = geraetRepository.findById(id).get();
-
         Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
-        model.addAttribute("personForComment",personForComment);
+        model.addAttribute("personForComment", personForComment);
         return "user/geraet";
     }
 
-    //This is comment block
     @GetMapping("/BesitzerInfo/{id}")
-    public String besitzerInfo(@PathVariable Long id, Model model){
-        Person besitzer=personRepository.findById(id).get();
-        if(besitzer.getFoto().getBild().length>0){
+    public String besitzerInfo(@PathVariable Long id, Model model) {
+        Person besitzer = personRepository.findById(id).get();
+        if (besitzer.getFoto().getBild().length > 0) {
             besitzer.setEncode(besitzer.getFoto().encodeBild());
         }
 
-        model.addAttribute("comments",besitzer.getComments());
-        model.addAttribute("person",besitzer);
+        model.addAttribute("comments", besitzer.getComments());
+        model.addAttribute("person", besitzer);
         return "user/besitzerInfo";
     }
 
@@ -249,7 +276,7 @@ public class UserController {
     @GetMapping("/geraet/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id, Principal principal) throws Exception {
         RentEvent rentEvent = rentEventRepository.findById(id).get();
-        rentEvent.setReturnStatus(ReturnStatus.WAITING);
+        rentEvent.setReturnStatus(ReturnStatus.WAITING_FOR_CONFIRMATION);
         rentEventRepository.save(rentEvent);
 
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
@@ -260,20 +287,20 @@ public class UserController {
         newNotification.setGeraetId(id);
         newNotification.setRentEventId(id);
         newNotification.setBesitzer(geraet.getBesitzer());
-        newNotification.setZeitraum(geraet.getZeitraum());
         notificationRepository.save(newNotification);
 
         Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
         mailService.sendReturnMail(person, geraet);
 
-        return "redirect:/user/rentThings";
+        return "redirect://localhost:8080/user/rentThings";
     }
 
     @PostMapping("/geraet/delete/{id}")
     public String geraetDelete(@PathVariable Long id) {
         geraetRepository.deleteById(id);
-        return "redirect:/user/myThings";
+        return "redirect://localhost:8080/user/myThings";
     }
+
     @PostMapping("/notification/refuseRequest/{id}")
     public String notificationRefuseRequest(@PathVariable Long id) throws Exception {
         Notification notification = notificationRepository.findById(id).get();
@@ -284,8 +311,9 @@ public class UserController {
 
         mailService.sendRefuseRequestMail(person, geraet);
         notificationRepository.deleteById(id);
-        return "redirect:/user/notifications";
+        return "redirect://localhost:8080/user/notifications";
     }
+
     @PostMapping("/notification/acceptRequest/{id}")
     public String notificationAcceptRequest(@PathVariable Long id) throws Exception {
 
@@ -300,38 +328,34 @@ public class UserController {
         rentEvent.setTimeInterval(timeInterval);
         rentEvent.setGeraetId(geraet.getId());
         rentEvent.setReservationId(reservationId);
+        rentEvent.setReturnStatus(ReturnStatus.BOOKED);
         geraet.getRentEvents().add(rentEvent);
-        int index = userService.positionOfFreeBlock(geraet, rentEvent);
-        userService.intervalZerlegen(geraet, index, rentEvent);
+        int index = personService.positionOfFreeBlock(geraet, rentEvent);
+        personService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
 
         notificationRepository.deleteById(id);
 
-
         Person person = personRepository.findByUsername(mieter).get();
         mailService.sendAcceptRequestMail(person, geraet);
-        GeraetMitReservationID geraetMitReservationID = new GeraetMitReservationID();
-        geraetMitReservationID.setGeraetID(geraet.getId());
-        geraetMitReservationID.setReservationID(new Long(reservationId));
-        geraetMitReservationIDRepository.save(geraetMitReservationID);
 
-        return "redirect:/user/notifications";
+        return "redirect://localhost:8080/user/notifications";
     }
 
     @PostMapping("/notification/refuseReturn/{id}")
     public String notificationRefuseReturn(@PathVariable Long id, @ModelAttribute("grund") String grund) throws Exception {
-        Notification notification=notificationRepository.findById(id).get();
-        Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        geraet.setGrundReturn(grund);
-        geraet.setReturnStatus(ReturnStatus.KAPUTT);
-        geraetRepository.save(geraet);
-        Person person = personRepository.findByUsername(geraet.getMieter()).get();
+        Notification notification = notificationRepository.findById(id).get();
+        RentEvent rentEvent = rentEventRepository.findById(notification.getRentEventId()).get();
+        rentEvent.setReturnStatus(ReturnStatus.KAPUTT);
+        rentEventRepository.save(rentEvent);
+
+        Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
+        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
         mailService.sendRefuseReturnMail(person, geraet);
-
-        userService.makeComment(geraet, person, grund);
-
+        personService.makeComment(geraet, person, grund);
         notificationRepository.deleteById(id);
-        return "redirect:/user/notifications";
+
+        return "redirect://localhost:8080/user/notifications";
     }
 
     @PostMapping("/notification/acceptReturn/{id}")
@@ -343,27 +367,27 @@ public class UserController {
 
         Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
-        userService.makeComment(geraet, person, grund);
-
+        personService.makeComment(geraet, person, grund);
+        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
         proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
-        proPayService.releaseReservation(notification.getAnfragePerson(), rentEvent.getReservationId());
+        proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.deleteById(notification.getRentEventId());
 
-
         notificationRepository.deleteById(id);
-        //geraetMitReservationIDRepository.deleteByReservationID(geraetMitReservationID.getReservationID());
-        return "redirect:/user/notifications";
+        return "redirect://localhost:8080/user/notifications";
     }
+
     @GetMapping("/PersonInfo/Profile/ChangeProfile")
-    public String changeImg(Model model, Principal principal){
+    public String changeImg(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         model.addAttribute("person", person);
         return "user/changeProfile";
     }
+
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
     public String chageProfile(Model model, @RequestParam("file") MultipartFile file,
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
@@ -381,6 +405,13 @@ public class UserController {
         return "default/confirmationOfRegistration";
     }
 
+    @GetMapping("/geraet/addLikes/{id}")
+    public String like(@PathVariable Long id) {
+        Geraet geraet = geraetRepository.findById(id).get();
+        geraet.setLikes(geraet.getLikes() + 1);
+        geraetRepository.save(geraet);
+        return "redirect://localhost:8080";
+    }
 
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
@@ -400,42 +431,27 @@ public class UserController {
         geraet1.setAbholort(geraet.getAbholort());
 
         geraetRepository.save(geraet1);
-        List<Geraet> geraete = null;//personRepository.findByUsername(person.getName()).get().getMyThings();
+        List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);
-        return "redirect:/user/myThings";
+        return "redirect://localhost:8080/user/myThings";
     }
-
-    @GetMapping("/bezahlen/{id}")
-    public String bezahlen(Model model,@ModelAttribute Geraet geraet, Principal person, @PathVariable Long id) {
-        Geraet geraet1 = geraetRepository.findById(id).get();
-        String mieterName= person.getName();
-        geraet1.setMieter(mieterName);
-        geraetRepository.save(geraet1);
-        return "user/confirmBezahlen";
-    }
-
-    @GetMapping("/aboutUs")
-    public String about(Model model, Principal principal){
-        if(principal != null){
-            String name = principal.getName();
-            if(personRepository.findByUsername(name).isPresent()) {
-                model.addAttribute("person", personRepository.findByUsername(name).get());
-            }
-        }
-        return "default/aboutUs";
-    }
-
-    @GetMapping("/geraet/addLikes/{id}")
-    public String like(@PathVariable Long id) {
-        Geraet geraet = geraetRepository.findById(id).get();
-        geraet.setLikes(geraet.getLikes() + 1);
-        geraetRepository.save(geraet);
-        return "redirect:/";
-    }
-
-//    @ExceptionHandler(Exception.class)
-//    public @ResponseBody String exception(){
-//        return "Please pay attention to the prompt statement and reload the page！";
-//    }
-
 }
+
+
+// DAS IST OPTIONAL
+/*    @PostMapping("/propay")
+    public String propay(Principal principal, @ModelAttribute("transferRequest") TransferRequest transferRequest){
+        transferRequest.setUsername(principal.getName());
+        transferRequestRepository.save(transferRequest);
+        return "redirect:/";
+    }*/
+
+//@GetMapping("/bezahlen/{id}")
+//public String bezahlen(@ModelAttribute Geraet geraet, Principal person, @PathVariable Long id) {
+//    Geraet geraet1 = geraetRepository.findById(id).get();
+//    String mieterName = person.getName();
+//    geraet1.setMieter(mieterName);
+//    geraetRepository.save(geraet1);
+//    return "user/confirmBezahlen";
+//}
+

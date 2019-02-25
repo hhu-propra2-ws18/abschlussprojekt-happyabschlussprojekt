@@ -8,9 +8,8 @@
     <thead>
     <tr>
         <th scope="col">Id</th>
-        <th scope="col">UserName</th>
-        <th scope="col">Guthaben</th>
-        <th scope="col">Funktion</th>
+        <th scope="col">Benutzername</th>
+        <th scope="col">Kontostand</th>
     </tr>
     </thead>
     <tbody>
@@ -18,11 +17,11 @@
         <th scope="row" th:text="${personMitAccount.person.id}"></th>
         <td th:text="${personMitAccount.person.username}">Username</td>
         <td th:text="${personMitAccount.account.amount}">Geld</td>
-        <td> <form action="/admin/erhoeheAmount" method="post">
-            <input type="hidden" name="username" th:value="${personMitAccount.person.username}">
-            <br>
-            <input type="submit" value="Erhöhe Kontostand">
-        </form> </td>
+        <!--<td> <form action="/admin/erhoeheAmount" method="post">-->
+            <!--<input type="hidden" name="username" th:value="${personMitAccount.person.username}">-->
+            <!--<br>-->
+            <!--<input type="submit" value="Erhöhe Kontostand">-->
+        <!--</form> </td>-->
     </tr>
     </tbody>
 </table>

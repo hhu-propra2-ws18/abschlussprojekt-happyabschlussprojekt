@@ -16,21 +16,22 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="geraetMitRentEventsWithConflict : ${geraetMitRentEventsWithConflicts}">
-        <td th:text="${geraetMitRentEventsWithConflict.geraet.besitzer}">Besitzer</td>
-        <td th:text="${geraetMitRentEventsWithConflict.rentEvent.mieter}">Mieter</td>
-        <!--<td th:text="${geraetMitKonflikt.grundReturn}"></td><br/>-->
+    <tr th:each="geraetWithRentEventsWithConflict : ${geraetWithRentEventsWithConflicts}">
+        <td th:text="${geraetWithRentEventsWithConflict.geraet.besitzer}">Besitzer</td>
+        <td th:text="${geraetWithRentEventsWithConflict.rentEvent.mieter}">Mieter</td>
+        <td></td>
+        <!--<td th:text="${geraetWithKonflikt.grundReturn}"></td><br/>-->
         <td>
             <form action="/admin/punishAccount" method="post">
-            <input type="hidden" name="mieter" th:value="${geraetMitRentEventsWithConflict.rentEvent.mieter}">
-            <input type="hidden" name="geraetId" th:value="${geraetMitRentEventsWithConflict.rentEvent.reservationId}">
+            <input type="hidden" name="mieter" th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter}">
+            <input type="hidden" name="reservationId" th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
             <br>
             <input style="background-color: white; color: red" type="submit" value="Punish">
             </form>
         </td>
         <td><form action="/admin/releaseAccount" method="post">
-            <input type="hidden" name="mieter" th:value="${geraetMitRentEventsWithConflict.rentEvent.mieter}">
-            <input type="hidden" name="geraetId" th:value="${geraetMitRentEventsWithConflict.rentEvent.reservationId}">
+            <input type="hidden" name="mieter" th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter}">
+            <input type="hidden" name="reservationId" th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
             <br>
             <input style="background-color: white; color: green" type="submit" value="Release">
         </form></td>

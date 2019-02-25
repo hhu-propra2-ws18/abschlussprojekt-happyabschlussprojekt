@@ -1,5 +1,7 @@
-package com.propra.happybay.Model;
+package com.propra.happybay.Model.HelperClassesForViews;
 
+import com.propra.happybay.Model.Account;
+import com.propra.happybay.Model.Person;
 import lombok.Data;
 
 @Data

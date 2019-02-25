@@ -1,9 +1,11 @@
 package com.propra.happybay.Service.AdminServices;
 
 import com.propra.happybay.Model.*;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
+import com.propra.happybay.Model.HelperClassesForViews.InformationForMenuBadges;
+import com.propra.happybay.Model.HelperClassesForViews.PersonMitAccount;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
-import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,12 @@ public class AdminService {
     @Autowired
     GeraetRepository geraetRepository;
     @Autowired
-    private TransferRequestRepository transferRequestRepository;
-    @Autowired
     public PasswordEncoder encoder;
+    @Autowired
+    RentEventRepository rentEventRepository;
 
     public static int numberOfConflicts = 0;
     public static int numberOfPersons = 0;
-    public static int numberOfNotifications = 0;
-
 
     public List<PersonMitAccount> returnAllPersonsWithAccounts() {
         List<PersonMitAccount> personenMitAccounts = new ArrayList<>();
@@ -47,17 +47,14 @@ public class AdminService {
         InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
         informationForMenuBadges.setNumberOfConflicts(numberOfConflicts);
         informationForMenuBadges.setNumberOfPersons(numberOfPersons);
-        informationForMenuBadges.setNumberOfNotifications(numberOfNotifications);
         return informationForMenuBadges;
     }
 
     private void uodateInformationForMenuBadges() {
         List<PersonMitAccount> personenMitAccounts = returnAllPersonsWithAccounts();
         numberOfPersons = personenMitAccounts.size();
-        List<Geraet> geraeteMitKonflikten = geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
-        numberOfConflicts = geraeteMitKonflikten.size();
-        List<TransferRequest> transferRequests = transferRequestRepository.findAll();
-        numberOfNotifications = transferRequests.size();
+        List<RentEvent> rentEventsWithConflict = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
+        numberOfConflicts = rentEventsWithConflict.size();
     }
 
     public boolean isAdminHasDefaultPassword() {
@@ -74,18 +71,19 @@ public class AdminService {
         personRepository.save(admin);
     }
 
-    //public void setGeraetToNew(Long geraetId, boolean setDefault) {
-    //    Geraet geraet = geraetRepository.findById(geraetId).get();
-    //    if (setDefault) {
-    //        geraet.setReturnStatus(ReturnStatus.DEFAULT);
-    //    }
-    //    geraet.setVerfuegbar(true);
-    //    geraet.setMieter(null);
-    //    geraetRepository.save(geraet);
-    //    proPayService.saveAccount(geraet.getBesitzer());
-    //    proPayService.saveAccount(geraet.getMieter());
-    //}
-    //
+    public List<GeraetWithRentEvent> getGeraetWithRentEventsWithConflicts() {
+        List<RentEvent> rentEventsWithConflicts = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
+        List<GeraetWithRentEvent> geraetWithRentEventsWithConflicts = new ArrayList<>();
+        for (RentEvent rentEventWithConflict : rentEventsWithConflicts) {
+            Geraet geraet = geraetRepository.findById(rentEventWithConflict.getGeraetId()).get();
+            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
+            geraetWithRentEvent.setGeraet(geraet);
+            geraetWithRentEvent.setRentEvent(rentEventWithConflict);
+            geraetWithRentEventsWithConflicts.add(geraetWithRentEvent);
+        }
+        return geraetWithRentEventsWithConflicts;
+    }
+
     //public String isInitPassword() {
     //    Person admin = personRepository.findByUsername("admin").get();
     //    if (encoder.matches("admin", admin.getPassword())) {

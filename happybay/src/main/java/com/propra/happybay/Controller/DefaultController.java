@@ -2,15 +2,19 @@ package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.Bild;
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.RentEvent;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Service.GeraetService;
-import com.propra.happybay.Service.DefaultServices.DefaultService;
-import com.propra.happybay.Service.NotificationService;
+import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.ReturnStatus;
+import com.propra.happybay.Service.UserServices.GeraetService;
+import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserValidator;
+import com.propra.happybay.Service.DefaultServices.UserValidator;
+import com.propra.happybay.Service.UserServices.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -23,7 +27,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -40,42 +43,36 @@ public class DefaultController {
     @Autowired
     public PasswordEncoder encoder;
     @Autowired
-    private ProPayService proPayService;
-    @Autowired
     private GeraetService geraetService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private RentEventRepository rentEventRepository;
+    @Autowired
+    private PersonService personService;
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        if (principal != null) {
-            String name = principal.getName();
-            if (personRepository.findByUsername(name).isPresent()) {
-                notificationService.updateAnzahl(name);
-                model.addAttribute("person", personRepository.findByUsername(name).get());
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
 
-                List<Geraet> rentThings = geraetRepository.findAllByMieter(name);
-                List<Geraet> remindRentThings = new ArrayList<>();
-                List<Geraet> overTimeThings = new ArrayList<>();
-                LocalDate deadLine = LocalDate.now().plusDays(4);
-//                for (Geraet geraet : rentThings) {
-//                    if (geraet.getEndzeitpunkt().isBefore(deadLine) || geraet.getEndzeitpunkt().isEqual(deadLine)) {
-//                        if (LocalDate.now().isAfter(geraet.getEndzeitpunkt())) {
-//                            overTimeThings.add(geraet);
-//                        } else {
-//                            remindRentThings.add(geraet);
-//                        }
-//                    }
-//                }
-//                model.addAttribute("remindRentThings", remindRentThings);
-//                model.addAttribute("overTimeThings", overTimeThings);
-            }
-            else {
-                model.addAttribute("person", new Person());
-            }
+        if (principal == null) {
+            return "default/index";
         }
 
-        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        String name = principal.getName();
+        notificationService.updateAnzahl(name);
+        model.addAttribute("person", personRepository.findByUsername(name).get());
+
+        geraetService.checkRentEventStatus(name);
+
+        List<RentEvent> rentEventsDedlineisClose = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_CLOSE);
+        List<GeraetWithRentEvent> remindRentThings = geraetService.returnGeraeteWithRentEvents(rentEventsDedlineisClose);
+        model.addAttribute("remindRentThings", remindRentThings);
+
+        List<RentEvent> rentEventsDeadlineOver = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_OVER);
+        List<GeraetWithRentEvent> overTimeThings = geraetService.returnGeraeteWithRentEvents(rentEventsDeadlineOver);
+        model.addAttribute("overTimeThings", overTimeThings);
+
         return "default/index";
     }
 
@@ -94,19 +91,11 @@ public class DefaultController {
             for (int i=0; i< bindingResult.getAllErrors().size(); i++){
                 errorList.add(bindingResult.getAllErrors().get(i).getCode());
             }
-            System.out.println(errorList);
             model.addAttribute("errorList", errorList);
             return "default/register";
         }
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
-        person.setRole("ROLE_USER");
-        person.setPassword(encoder.encode(person.getPassword()));
-
-        personRepository.save(person);
-        proPayService.saveAccount(person.getUsername());
-        person.setPassword("");
+        personService.makeAndSaveNewPerson(file, person);
+        person.setPassword(""); // to not send real password to view
         model.addAttribute("person", person);
         return "default/confirmationOfRegistration";
     }
@@ -121,6 +110,4 @@ public class DefaultController {
         model.addAttribute("person", new Person());
         return "default/login";
     }
-
-
 }

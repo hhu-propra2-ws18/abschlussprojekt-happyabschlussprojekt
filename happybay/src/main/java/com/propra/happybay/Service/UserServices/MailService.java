@@ -25,37 +25,37 @@ public class MailService {
     private PersonRepository personRepository;
 
 
-    @Scheduled(fixedRate=86400000)
-    public void sendScheduledMail() throws Exception{
-
-        List<Geraet> geraets = geraetRepository.findAll();
-        for(int i=0;i<geraets.size();i++){
-            if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() <= 3 && geraets.get(i).getZeitraum() > 0
-                    && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
-                Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
-                MimeMessage message1 = sender.createMimeMessage();
-                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-                helper1.setTo(person.getKontakt());
-                helper1.setSubject("Rückkehrzeit");
-                helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel()+ ") ist fast abgelaufen." );
-                sender.send(message1);
-                geraets.get(i).setZeitraum(geraets.get(i).getZeitraum()-1);
-                geraetRepository.save(geraets.get(i));
-            } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() == 0
-                    && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
-                Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
-                MimeMessage message1 = sender.createMimeMessage();
-                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-                helper1.setTo(person.getKontakt());
-                helper1.setSubject("Rückkehrzeit");
-                helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel() + ") ist abgelaufen.");
-                sender.send(message1);
-            } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() > 3) {
-                geraets.get(i).setZeitraum(geraets.get(i).getZeitraum() - 1);
-                geraetRepository.save(geraets.get(i));
-            }
-        }
-    }
+    //@Scheduled(fixedRate=86400000)
+    //public void sendScheduledMail() throws Exception{
+    //
+    //    List<Geraet> geraets = geraetRepository.findAll();
+    //    for(int i=0;i<geraets.size();i++){
+    //        if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() <= 3 && geraets.get(i).getZeitraum() > 0
+    //                && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
+    //            Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
+    //            MimeMessage message1 = sender.createMimeMessage();
+    //            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+    //            helper1.setTo(person.getKontakt());
+    //            helper1.setSubject("Rückkehrzeit");
+    //            helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel()+ ") ist fast abgelaufen." );
+    //            sender.send(message1);
+    //            geraets.get(i).setZeitraum(geraets.get(i).getZeitraum()-1);
+    //            geraetRepository.save(geraets.get(i));
+    //        } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() == 0
+    //                && geraets.get(i).getReturnStatus() == ReturnStatus.DEFAULT) {
+    //            Person person = personRepository.findByUsername(geraets.get(i).getBesitzer()).get();
+    //            MimeMessage message1 = sender.createMimeMessage();
+    //            MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+    //            helper1.setTo(person.getKontakt());
+    //            helper1.setSubject("Rückkehrzeit");
+    //            helper1.setText("Ihre Vermietung(" + geraets.get(i).getTitel() + ") ist abgelaufen.");
+    //            sender.send(message1);
+    //        } else if (geraets.get(i).isVerfuegbar() == false && geraets.get(i).getZeitraum() > 3) {
+    //            geraets.get(i).setZeitraum(geraets.get(i).getZeitraum() - 1);
+    //            geraetRepository.save(geraets.get(i));
+    //        }
+    //    }
+    //}
 
     public void sendAnfragMail(Person person, Geraet geraet, Principal principal) throws Exception{
         MimeMessage message = sender.createMimeMessage();
