@@ -174,15 +174,12 @@ public class UserController {
 
     @PostMapping("/addGeraet")
     public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet,
-                                @RequestParam("files") MultipartFile[] files, Principal principal) throws IOException {
+                                @RequestParam(name = "files",value = "files",required = false) MultipartFile[] files, Principal principal) throws IOException {
         List<Bild> bilds = new ArrayList<>();
-        for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilds.add(bild);
-        }
+        personService.umwechsleMutifileZumBild(files, bilds);
         RentEvent verfuegbar = new RentEvent();
-        verfuegbar.setTimeInterval(geraetService.convertToCET(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd())));
+        TimeInterval timeInterval = geraetService.convertToCET(new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd()));
+        verfuegbar.setTimeInterval(timeInterval);
         geraet.setBilder(bilds);
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
@@ -398,11 +395,7 @@ public class UserController {
                              @RequestParam("files") MultipartFile[] files) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
         List<Bild> bilds = new ArrayList<>();
-        for (MultipartFile file : files) {
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            bilds.add(bild);
-        }
+        personService.umwechsleMutifileZumBild(files, bilds);
         geraet1.setBilder(bilds);
         geraet1.setKosten(geraet.getKosten());
         geraet1.setTitel(geraet.getTitel());

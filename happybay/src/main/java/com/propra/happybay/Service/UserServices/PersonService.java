@@ -9,6 +9,7 @@ import com.propra.happybay.Service.ProPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -93,6 +94,13 @@ public class PersonService {
             geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
             geraetWithRentEvent.setRentEvent(rentEvent);
             geraete.add(geraetWithRentEvent);
+        }
+    }
+    public void umwechsleMutifileZumBild(@RequestParam("files") MultipartFile[] files, List<Bild> bilds) throws IOException {
+        for (MultipartFile file : files) {
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            bilds.add(bild);
         }
     }
 }
