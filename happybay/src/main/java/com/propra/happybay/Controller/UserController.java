@@ -161,6 +161,17 @@ public class UserController {
         return "redirect://localhost:8080";
     }
 
+    @PostMapping("/sale/{id}")
+    public String anfragen(@PathVariable Long id, Principal principal) throws Exception {
+        Geraet geraet = geraetRepository.findById(id).get();
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        proPayService.ueberweisen(principal.getName(), person.getUsername(), geraet.getKosten());
+        geraet.setBesitzer(principal.getName());
+        geraetRepository.save(geraet);
+        mailService.sendAnfragMail(person, geraet, principal);
+        return "redirect://localhost:8080";
+    }
+
     @GetMapping("/addGeraet")
     public String addGeraet(Model model, Principal principal) {
         String name = principal.getName();
@@ -309,7 +320,6 @@ public class UserController {
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
         personService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
-//        rentEventRepository.save(rentEvent);
         notificationRepository.deleteById(id);
 
         Person person = personRepository.findByUsername(mieter).get();

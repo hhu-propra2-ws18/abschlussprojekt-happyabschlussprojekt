@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,7 +34,7 @@ public class MailService {
     public void sendScheduledMail() throws Exception {
         List<RentEvent> rentEvents = rentEventRepository.findAll();
         for (RentEvent rentEvent : rentEvents) {
-            if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_CLOSE) {
+            if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_CLOSE && rentEvent.getMieter() != null) {
                 Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
                 MimeMessage message1 = sender.createMimeMessage();
                 MimeMessageHelper helper1 = new MimeMessageHelper(message1);
@@ -41,7 +42,7 @@ public class MailService {
                 helper1.setSubject("Rückkehrzeit");
                 helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist fast abgelaufen.");
                 sender.send(message1);
-            } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER) {
+            } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER && rentEvent.getMieter() != null) {
                 Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
                 MimeMessage message1 = sender.createMimeMessage();
                 MimeMessageHelper helper1 = new MimeMessageHelper(message1);

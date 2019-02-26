@@ -14,7 +14,7 @@
             <label for="titel">Bilder Hochladen(Max. 15MB)</label>
             <label>(Hinweis:Sie können mehrere Bilder hochladen. Das erste wird zum Cover Ihres Artikels und ersetzt alle Ihre alten Bilder.)</label>
             <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
-
+            <br>
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" th:value="${geraet.titel}" />
 
@@ -24,8 +24,9 @@
             <label for="kosten">kosten Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"/>
 
-            <label for="kaution">Kaution:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution" th:value="${geraet.kaution}"/>
+            <label th:if="${!geraet.isForsale()}" for="kaution">Kaution:</label>
+            <input th:if="${!geraet.isForsale()}" style="margin-bottom: 10px" type="text" class="form-control"
+                   name="kaution" id="kaution" th:value="${geraet.kaution}"/>
 
             <label for="kaution">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"/>

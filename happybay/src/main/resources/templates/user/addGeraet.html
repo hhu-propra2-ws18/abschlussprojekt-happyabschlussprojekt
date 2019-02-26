@@ -6,9 +6,25 @@
 
 <div class="container"><br/>
     <h3 class="text-justify text-center font-weight-normal">Hinzufügen eines Gerätes: </h3>
+    <input type="radio" name="option" id="rent" onclick="document.getElementById('kaution').style.display = '';
+    document.getElementById('mietezeitpunktStart').style.display = '';
+    document.getElementById('mietezeitpunktEnd').style.display = '';
+    document.getElementById('kautionLabel').style.display = '';
+    document.getElementById('mietezeitpunktStartLabel').style.display = '';
+    document.getElementById('mietezeitpunktEndLabel').style.display = '' " checked/>
+    <label for="rent">Ich möchte verleihen</label>
+    <input type="radio" name="option" id="sale" onclick="document.getElementById('kaution').style.display = 'none';
+    document.getElementById('mietezeitpunktStart').style.display = 'none';
+    document.getElementById('mietezeitpunktEnd').style.display = 'none';
+    document.getElementById('kautionLabel').style.display = 'none';
+    document.getElementById('mietezeitpunktStartLabel').style.display = 'none';
+    document.getElementById('mietezeitpunktEndLabel').style.display = 'none';
+    checkForsale()"/>
+    <label for="sale">Ich möchte verkaufen</label>
 
     <div class="row justify-content-md-center">
         <form th:action="@{/user/addGeraet}"  method="post" enctype="multipart/form-data"><br/>
+
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
                    placeholder="Eingabe Titel." onchange="check()"required/>
@@ -21,24 +37,26 @@
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
                    placeholder="Eingabe Miete Pro Tag." onchange="checkKosten()" required/>
 
-            <label for="kaution">Kaution:</label>
+            <label id="kautionLabel">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
-                   placeholder="Eingabe Kaution." onchange="checkKaution()" required/>
+                   placeholder="Eingabe Kaution." onchange="checkKaution()" value="0"/>
 
                 <!--why for kaution?-->
             <label for="abholort">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
                    placeholder="Eingabe Abholort." required/>
 
-            <label for="mietezeitpunktStart">Verfügbar ab:</label>
+            <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte." onchange="checkStartTime()" required/>
-            <br/>
-            <label for="mietezeitpunktEnd">Verfügbar bis:</label>
+                   placeholder="Eingabe start Zeitpunkte." onchange="checkStartTime()"/>
+
+            <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
-                   placeholder="Eingabe ende Zeitpunkte." onchange="checkEndTime()" required/>
+                   placeholder="Eingabe ende Zeitpunkte." onchange="checkEndTime()"/>
+
+            <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
             <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
@@ -53,6 +71,21 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        var time = new Date();
+        var day = ("0" + time.getDate()).slice(-2);
+        var month = ("0" + (time.getMonth() + 1)).slice(-2);
+        var today = time.getFullYear() + "-" + (month) + "-" + (day);
+        $('#mietezeitpunktStart').val(today);
+        $('#mietezeitpunktEnd').val(today);
+    })
+
+    function checkForsale() {
+        var a = true;
+        $('#forsale').val(a);
+    }
+
     function checkKosten() {
         var kosten = $("#kosten").val();
         if(kosten==""){
@@ -81,7 +114,7 @@
             alert("Bitte eingabe Kaution!");
             $("#kaution").val("");
             return false;
-        }else if(kaution<="0"){
+        } else if (kaution < "0") {
             alert("The nummber must be bigger than 0");
             $("#kaution").val("");
             return false;
@@ -164,6 +197,7 @@
             return false;
         }
     }
+
 
 </script>
 </body>

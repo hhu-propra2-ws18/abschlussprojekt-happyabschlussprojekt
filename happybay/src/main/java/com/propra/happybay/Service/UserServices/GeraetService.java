@@ -47,7 +47,7 @@ public class GeraetService {
         return encodes;
     }
 
-    public List<Geraet> setEncode(List<Geraet> geraets) {
+    private List<Geraet> setEncode(List<Geraet> geraets) {
         for (Geraet geraet: geraets){
             if (geraet.getBilder().get(0).getBild().length > 0) {
                 geraet.setEncode(geraet.getBilder().get(0).encodeBild());
@@ -92,7 +92,6 @@ public class GeraetService {
         rentEvents.removeAll(toRemove);
         geraetRepository.save(geraet);
     }
-
     @Scheduled(fixedRate = 86400000)
     public void checkRentEventStatus() {
         List<RentEvent> rentEvents = rentEventRepository.findAll();
@@ -128,8 +127,8 @@ public class GeraetService {
     }
 
     public TimeInterval convertToCET(TimeInterval timeInterval) {
-        Date start = new Date(timeInterval.getStart().getTime() + 60 * 60 * 6000);
-        Date end = new Date(timeInterval.getEnd().getTime() + 60 * 60 * 6000);
+        Date start = new Date(timeInterval.getStart().getTime() + 60 * 60 * 1000);
+        Date end = new Date(timeInterval.getEnd().getTime() + 60 * 60 * 1000);
         TimeInterval newTimeInterval = new TimeInterval(start, end);
         return newTimeInterval;
     }
