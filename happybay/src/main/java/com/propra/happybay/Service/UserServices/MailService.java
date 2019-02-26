@@ -41,7 +41,6 @@ public class MailService {
                 helper1.setSubject("Rückkehrzeit");
                 helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist fast abgelaufen.");
                 sender.send(message1);
-                rentEventRepository.save(rentEvent);
             } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER) {
                 Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
                 MimeMessage message1 = sender.createMimeMessage();

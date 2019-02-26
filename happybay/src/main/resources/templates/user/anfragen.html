@@ -110,7 +110,7 @@
             return false;
         }
         else{
-            if(account<sumKosten){
+            if (parseInt(account) < sumKosten) {
                 $("#mietezeitpunktStart").val("");
                 $("#mietezeitpunktEnd").val("");
                 alert("Ihr Kontostand reicht nicht aus. Bitte gehen Sie auf Propay, um sich aufzuladen！");

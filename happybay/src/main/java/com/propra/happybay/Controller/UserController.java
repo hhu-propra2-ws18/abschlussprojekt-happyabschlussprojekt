@@ -97,8 +97,11 @@ public class UserController {
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
 
-        personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
+        List<RentEvent> jjj = rentEventRepository.findAllByMieter(mieterName);
+        System.out.println("********************* before \n" + jjj.size());
 
+        personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
+        System.out.println("********************* after \n" + bookedGeraete.size());
         model.addAttribute("person", person);
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
@@ -257,7 +260,7 @@ public class UserController {
         Notification newNotification = new Notification();
         newNotification.setType("return");
         newNotification.setAnfragePerson(principal.getName());
-        newNotification.setGeraetId(id);
+        newNotification.setGeraetId(rentEventRepository.findById(id).get().getGeraetId());
         newNotification.setRentEventId(id);
         newNotification.setBesitzer(geraet.getBesitzer());
         notificationRepository.save(newNotification);
@@ -347,7 +350,7 @@ public class UserController {
         proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
-        rentEventRepository.deleteById(notification.getRentEventId());
+        rentEventRepository.delete(rentEvent);
 
         notificationRepository.deleteById(id);
         return "redirect://localhost:8080/user/notifications";
