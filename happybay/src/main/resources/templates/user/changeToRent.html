@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: header"></head>
+<body>
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
+
+<div class="container"><br/>
+    <h3 class="text-justify text-center font-weight-normal">Change to Rent </h3>
+
+    <div class="row justify-content-md-center">
+        <form th:action="@{/user/geraet/changeToRent/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post"
+              enctype="multipart/form-data"><br/>
+
+            <label for="titel">Titel:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
+                   placeholder="Eingabe Titel." onchange="check()" th:value="${geraet.getTitel()}" required/>
+
+            <label for="beschreibung">Beschreibung:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
+                   placeholder="Eingabe Beschreibung." th:value="${geraet.getBeschreibung()}" required/>
+
+            <label for="kosten">Miete Pro Tag:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
+                   placeholder="Eingabe Miete Pro Tag." th:value="${geraet.getKosten()}" onchange="checkKosten()"
+                   required/>
+
+            <label id="kautionLabel">Kaution:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
+                   placeholder="Eingabe Kaution." th:value="${geraet.getKaution()}" onchange="checkKaution()"
+                   value="0"/>
+
+            <!--why for kaution?-->
+            <label for="abholort">Abholort:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" th:value="${geraet.getAbholort()}"
+                   name="abholort" id="abholort"
+                   placeholder="Eingabe Abholort." required/>
+
+            <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+                   id="mietezeitpunktStart"
+                   placeholder="Eingabe start Zeitpunkte." th:value="${geraet.getMietezeitpunktStart()}"
+                   onchange="checkStartTime()"/>
+
+            <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+                   id="mietezeitpunktEnd"
+                   placeholder="Eingabe ende Zeitpunkte." th:value="${geraet.getMietezeitpunktEnd()}"
+                   onchange="checkEndTime()"/>
+
+            <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
+            <input style="padding-top: 10px" type="file" name="files" multiple
+                   accept="image/png, image/jpeg, image/gif, image/jpg"/>
+            <br/><br/>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var time = new Date();
+        var day = ("0" + time.getDate()).slice(-2);
+        var month = ("0" + (time.getMonth() + 1)).slice(-2);
+        var today = time.getFullYear() + "-" + (month) + "-" + (day);
+        $('#mietezeitpunktStart').val(today);
+        $('#mietezeitpunktEnd').val(today);
+    })
+
+    function checkKosten() {
+        var kosten = $("#kosten").val();
+        if (kosten == "") {
+            alert("Bitte eingabe Kosten pro Tag!");
+            $("#kosten").val("");
+            return false;
+        } else if (kosten <= "0") {
+            alert("The nummber must be bigger than 0");
+            $("#kosten").val("");
+            return false;
+        } else {
+            for (i = 0; i < kosten.length; i++) {
+                if ((kosten.charAt(i) < '0') || (kosten.charAt(i) > '9')) {
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kosten").val("");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    function checkKaution() {
+        var kaution = $("#kaution").val();
+        if (kaution == "") {
+            alert("Bitte eingabe Kaution!");
+            $("#kaution").val("");
+            return false;
+        } else if (kaution < "0") {
+            alert("The nummber must be bigger than 0");
+            $("#kaution").val("");
+            return false;
+        } else {
+            for (i = 0; i < kaution.length; i++) {
+                if ((kaution.charAt(i) < '0') || (kaution.charAt(i) > '9')) {
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kaution").val("");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    function checkStartTime() {
+        var startTime = $("#mietezeitpunktStart").val();
+        var array = startTime.split("-");
+        var startDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
+
+        var endTime = $("#mietezeitpunktEnd").val().toString();
+
+        var nowDate = Date.now();
+        if (startDate < nowDate && isnull(endTime)) {
+            alert("Das Startdatum darf nicht vor heute liegen.");
+            $("#mietezeitpunktStart").val("");
+            return false;
+        } else if (!isnull(endTime)) {
+            var arrayForEndTime = endTime.split("-");
+            var endDate = new Date(arrayForEndTime[0], parseInt(arrayForEndTime[1]) - 1, arrayForEndTime[2]);
+            if (startDate > endDate) {
+                alert("Das StartDatum muss vor dem EndDatum liegen.");
+                $("#mietezeitpunktStart").val("");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function checkEndTime() {
+        var endTime = $("#mietezeitpunktEnd").val();
+        var array = endTime.split("-");
+        var endDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
+
+        var startTime = $("#mietezeitpunktStart").val().toString();
+
+        var nowDate = Date.now();
+        if (endDate < nowDate && isnull(startTime)) {
+            alert("Das Enddatum darf nicht vor heute liegen.");
+            $("#mietezeitpunktEnd").val("");
+            return false;
+        } else if (!isnull(startTime)) {
+            var arrayForStartTime = startTime.split("-");
+            var startDate = new Date(arrayForStartTime[0], parseInt(arrayForStartTime[1]) - 1, arrayForStartTime[2]);
+            if (startDate > endDate) {
+                alert("Das EndDatum muss nach dem StartDatum liegen.");
+                $("#mietezeitpunktEnd").val("");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function isnull(str) {
+
+        if (str == '' || str == undefined || str == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+</script>
+</body>
+</html>

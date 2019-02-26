@@ -24,8 +24,8 @@
             <label for="kosten">kosten Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"/>
 
-            <label th:if="${!geraet.isForsale()}" for="kaution">Kaution:</label>
-            <input th:if="${!geraet.isForsale()}" style="margin-bottom: 10px" type="text" class="form-control"
+            <label for="kaution">Kaution:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control"
                    name="kaution" id="kaution" th:value="${geraet.kaution}"/>
 
             <label for="kaution">Abholort:</label>
