@@ -140,7 +140,7 @@ public class DefaultControllerTest {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         doNothing().when(notificationService).updateAnzahl(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        doNothing().when(geraetService).checkRentEventStatus(any());
+        doNothing().when(geraetService).checkRentEventStatus();
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }
@@ -150,7 +150,7 @@ public class DefaultControllerTest {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         doNothing().when(notificationService).updateAnzahl(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        doNothing().when(geraetService).checkRentEventStatus(any());
+        doNothing().when(geraetService).checkRentEventStatus();
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }

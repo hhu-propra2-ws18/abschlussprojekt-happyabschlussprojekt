@@ -84,13 +84,17 @@ public class PersonService {
     }
 
     public void makeAndSaveNewPerson(MultipartFile file, Person person) throws IOException {
+        try {
+            proPayService.saveAccount(person.getUsername());
+        }catch (Exception e){
+            throw e;
+        }
         Bild bild = new Bild();
         bild.setBild(file.getBytes());
         person.setFoto(bild);
         person.setRole("ROLE_USER");
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
-        proPayService.saveAccount(person.getUsername());
     }
     public void checksActiveOrInActiveRentEvent(List<RentEvent> RentEvents, List<GeraetWithRentEvent> geraete) {
         for (RentEvent rentEvent : RentEvents) {

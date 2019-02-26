@@ -66,10 +66,14 @@ public class AdminController {
     }
 
     @PostMapping("/punishAccount")
-    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
+    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) {
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
-        proPayService.punishReservation(mieter, geraet.getBesitzer(), reservationId, geraet.getKaution());
+        try {
+            proPayService.punishReservation(mieter, geraet.getBesitzer(), reservationId, geraet.getKaution());
+        } catch (IOException e) {
+            return"/admin/propayAdminNotAvailable";
+        }
         geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
@@ -79,8 +83,12 @@ public class AdminController {
 
 
     @PostMapping("/releaseAccount")
-    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) throws IOException {
-        proPayService.releaseReservation(mieter, reservationId);
+    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) {
+        try {
+            proPayService.releaseReservation(mieter, reservationId);
+        } catch (IOException e) {
+            return"/admin/propayAdminNotAvailable";
+        }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
         geraetService.checkForTouchingIntervals(geraet, rentEvent);

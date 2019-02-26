@@ -199,18 +199,26 @@ public class UserController {
     public String proPay(Model model, Principal principal) {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        proPayService.saveAccount(person.getUsername());
         model.addAttribute("person", person);
-        Account account = accountRepository.findByAccount(person.getUsername()).get();
-        List<Transaction> transactions = proPayService.getAllTransactionForPerson(name);
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("account", account);
+        try {
+            proPayService.saveAccount(person.getUsername());
+            Account account = accountRepository.findByAccount(person.getUsername()).get();
+            List<Transaction> transactions = proPayService.getAllTransactionForPerson(name);
+            model.addAttribute("transactions", transactions);
+            model.addAttribute("account", account);
+        }catch (Exception e){
+            return"/user/propayNotAvailable";
+        }
         return "user/proPay";
     }
 
     @PostMapping("/propayErhoehung")
-    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account) throws IOException {
-        proPayService.erhoeheAmount(account, amount);
+    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account){
+        try {
+            proPayService.erhoeheAmount(account, amount);
+        } catch (IOException e) {
+            return"/user/propayNotAvailable";
+        }
         return "redirect://localhost:8080";
     }
 
@@ -296,7 +304,12 @@ public class UserController {
         Notification notification = notificationRepository.findById(id).get();
         String mieter = notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
+        int reservationId = 0;
+        try {
+            reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
+        } catch (IOException e) {
+            return "/user/propayNotAvailable";
+        }
 
         TimeInterval timeInterval = new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd());
         RentEvent rentEvent = new RentEvent();
@@ -346,8 +359,12 @@ public class UserController {
         personService.makeComment(geraet, person, grund);
 //        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
-        proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
-        proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());
+        try {
+            proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);
+            proPayService.releaseReservation(rentEvent.getMieter(), rentEvent.getReservationId());
+        }catch (IOException e){
+            return"/user/propayNotAvailable";
+        }
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);

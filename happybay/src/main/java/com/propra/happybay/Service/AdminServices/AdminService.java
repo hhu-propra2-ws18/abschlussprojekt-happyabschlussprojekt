@@ -43,14 +43,14 @@ public class AdminService {
     }
 
     public InformationForMenuBadges returnInformationForMenuBadges() {
-        uodateInformationForMenuBadges();
+        updateInformationForMenuBadges();
         InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
         informationForMenuBadges.setNumberOfConflicts(numberOfConflicts);
         informationForMenuBadges.setNumberOfPersons(numberOfPersons);
         return informationForMenuBadges;
     }
 
-    private void uodateInformationForMenuBadges() {
+    private void updateInformationForMenuBadges() {
         List<PersonMitAccount> personenMitAccounts = returnAllPersonsWithAccounts();
         numberOfPersons = personenMitAccounts.size();
         List<RentEvent> rentEventsWithConflict = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);

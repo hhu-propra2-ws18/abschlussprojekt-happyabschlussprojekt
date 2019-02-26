@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class ProPayService {
                 .uri("http://" + propayAdress + ":8888/account/" + username)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
-                .bodyToMono(type);
+                .bodyToMono(type).timeout(Duration.ofSeconds(5));
         return mono.block();
     }
 
@@ -96,6 +97,8 @@ public class ProPayService {
         connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
         connection.setDoOutput(true);
         connection.getOutputStream().write(queryBytes);
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
 
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
         return reader;

@@ -78,8 +78,9 @@ public class DefaultController {
     @PostMapping("/addNewUser")
     public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) throws IOException {
+                                Model model)  {
         userValidator.validate(person, bindingResult);
+        model.addAttribute("person", person);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
             for (int i=0; i< bindingResult.getAllErrors().size(); i++){
@@ -88,9 +89,12 @@ public class DefaultController {
             model.addAttribute("errorList", errorList);
             return "default/register";
         }
-        personService.makeAndSaveNewPerson(file, person);
+        try {
+            personService.makeAndSaveNewPerson(file, person);
+        } catch (Exception e) {
+            return "/user/propayNotAvailable";
+        }
         person.setPassword(""); // to not send real password to view
-        model.addAttribute("person", person);
         return "default/confirmationOfRegistration";
     }
 
