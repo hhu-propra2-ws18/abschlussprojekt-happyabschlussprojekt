@@ -9,12 +9,11 @@ import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.MailService;
 import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.UserServices.PersonService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.stubbing.answers.DoesNothing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,8 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("deprecation")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest {
@@ -51,6 +52,8 @@ public class UserControllerTest {
     private Person admin = new Person();
     private Geraet geraet = new Geraet();
     private Account account = new Account();
+    private RentEvent rentEvent=new RentEvent();
+    private List<RentEvent> verfuegbareEvents=new ArrayList<>();
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
@@ -104,7 +107,8 @@ public class UserControllerTest {
     public PasswordEncoder encoder;
 
     private MockMvc mvc;
-
+    @MockBean
+    RentEvent rentEventService;
     @Autowired
     PersonRepository personRepository;
     @MockBean
@@ -133,13 +137,20 @@ public class UserControllerTest {
         user.setFoto(bild);
         user.setRole("ROLE_USER");
         user.setAdresse("test dusseldorf");
+        user.setAnzahlNotifications(0);
         personRepository.save(user);
         //Admin
         admin.setUsername("admin");
         admin.setId(2L);
         admin.setFoto(bild);
         admin.setRole("ROLE_ADMIN");
+
         personRepository.save(admin);
+        //VerfügbarEvent
+        rentEvent.setGeraetId(2L);
+        rentEvent.setMieter(user.getUsername());
+        rentEvent.setTimeInterval(new TimeInterval(new Date(2000,2,2),new Date(2000,3,3)));
+        verfuegbareEvents.add(rentEvent);
         //Geraet
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
@@ -148,6 +159,7 @@ public class UserControllerTest {
         geraet.setKaution(10);
         geraet.setMietezeitpunktEnd(end);
         geraet.setMietezeitpunktStart(start);
+        geraet.setVerfuegbareEvents(verfuegbareEvents);
         geraetRepository.save(geraet);
 
         //Account
@@ -177,7 +189,13 @@ public class UserControllerTest {
                 .apply(springSecurity())
                 .build();
     }
-
+    @After
+    public void clearRepo(){
+        geraetRepository.delete(geraet);
+        personRepository.delete(user);
+        personRepository.delete(admin);
+        accountRepository.delete(account);
+    }
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proflieWithUser() throws Exception {
@@ -208,14 +226,16 @@ public class UserControllerTest {
 //        mvc.perform(get("/user/notifications").contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk());
 //    }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void anfragenGet() throws Exception {
-       when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
-       when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
-        mvc.perform(get("/user/anfragen/{id}",2L).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+//    @WithMockUser(value = "test", roles = "USER")
+//    @Test
+//    public void anfragenGet() throws Exception {
+//
+//       when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
+//       when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
+//
+//        mvc.perform(get("/user/anfragen/{id}",2L).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void anfragenPost() throws Exception {
@@ -251,12 +271,6 @@ public class UserControllerTest {
         when(accountRepository.findByAccount(any())).thenReturn(Optional.ofNullable(account));
         mvc.perform(get("/user/proPay").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void aufladenAntrag() throws Exception {
-        mvc.perform(post("/user/propayErhoehung").flashAttr("amount",30).flashAttr("account","test").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
     }
     @WithMockUser(value = "test", roles = "USER")
     @Test
