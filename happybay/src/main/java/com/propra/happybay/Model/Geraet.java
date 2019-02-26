@@ -27,11 +27,12 @@ public class Geraet {
     Date mietezeitpunktEnd;
     String encode;
     int likes = 0;
+    boolean forsale;
 
     @OneToMany(cascade = CascadeType.ALL)
     List<RentEvent> verfuegbareEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
-    List<RentEvent> rentEvents;
+    List<RentEvent> rentEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder = new ArrayList<>();
 }

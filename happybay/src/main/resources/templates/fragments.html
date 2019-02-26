@@ -69,12 +69,22 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
-                <li class="list-group-item" th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST : </li>
-                <li class="list-group-item" th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:</li>
+                <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                    th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST :
+                </li>
+                <li th:if="${geraet.isForsale()}" class="list-group-item"
+                    th:text="'Kosten : ' + ${geraet.getKosten() + '€'}">KOST :
+                </li>
+                <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                    th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
+                </li>
                 <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
-                <br/>
-                <span class="badge badge-success">Verfügbar</span>
-                <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+                <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Rent</span>
+                </li>
+                <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Sale</span>
+                </li>
+                <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar</span>
+                <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
                     font-weight: bold; margin-left: 20px">
                     <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
                         <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}" th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
@@ -84,8 +94,8 @@
                     </tr>
                 </li>
                 <br/>
-                <span class="badge badge-danger">Schon verliehen</span>
-                <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen</span>
+                <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
                     font-weight: bold; margin-left: 20px; opacity: 0.6">
                     <tr>
                         <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +

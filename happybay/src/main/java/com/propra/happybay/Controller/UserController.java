@@ -139,6 +139,38 @@ public class UserController {
         return "user/anfragen";
     }
 
+    @GetMapping("/geraet/changeToRent/{id}")
+    public String changeToRent(@PathVariable Long id, Model model) {
+        Geraet geraet = geraetRepository.findById(id).get();
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        model.addAttribute("person", person);
+        model.addAttribute("geraet", geraet);
+        return "user/changeToRent";
+    }
+
+    @PostMapping("/geraet/changeToRent/{id}")
+    public String chaneToRent(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet, @RequestParam("files") MultipartFile[] files) throws IOException {
+        RentEvent verfuegbar = new RentEvent();
+        TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
+        TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
+        verfuegbar.setTimeInterval(timeInterval);
+
+        Geraet geraet1 = geraetRepository.findById(id).get();
+        List<Bild> bilds = new ArrayList<>();
+        personService.umwechsleMutifileZumBild(files, bilds);
+        geraet1.setBilder(bilds);
+        geraet1.setKosten(geraet.getKosten());
+        geraet1.setTitel(geraet.getTitel());
+        geraet1.setBeschreibung(geraet.getBeschreibung());
+        geraet1.setKaution(geraet.getKaution());
+        geraet1.setForsale(false);
+        geraet1.setAbholort(geraet.getAbholort());
+        geraetRepository.save(geraet1);
+        geraet1.getVerfuegbareEvents().add(verfuegbar);
+        geraetRepository.save(geraet1);
+        return "redirect://localhost:8080/user/myThings";
+    }
+
     @PostMapping("/anfragen/{id}")
     public String anfragen(@PathVariable Long id, @ModelAttribute(name = "notification") Notification notification,
                            Principal principal) throws Exception {
@@ -160,6 +192,17 @@ public class UserController {
 
         mailService.sendAnfragMail(person, geraet, principal);
 
+        return "redirect://localhost:8080";
+    }
+
+    @PostMapping("/sale/{id}")
+    public String anfragen(@PathVariable Long id, Principal principal) throws Exception {
+        Geraet geraet = geraetRepository.findById(id).get();
+        Person person = personRepository.findByUsername(geraet.getBesitzer()).get();
+        proPayService.ueberweisen(principal.getName(), person.getUsername(), geraet.getKosten());
+        geraet.setBesitzer(principal.getName());
+        geraetRepository.save(geraet);
+        mailService.sendAnfragMail(person, geraet, principal);
         return "redirect://localhost:8080";
     }
 
@@ -324,7 +367,6 @@ public class UserController {
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
         personService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
-//        rentEventRepository.save(rentEvent);
         notificationRepository.deleteById(id);
 
         Person person = personRepository.findByUsername(mieter).get();
