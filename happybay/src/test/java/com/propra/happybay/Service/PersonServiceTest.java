@@ -1,10 +1,7 @@
 package com.propra.happybay.Service;
 
-import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
-import com.propra.happybay.Model.Person;
-import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
@@ -34,8 +31,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
-@WebAppConfiguration
 public class PersonServiceTest {
 
     @Mock
@@ -199,9 +194,25 @@ public class PersonServiceTest {
 
         List<GeraetWithRentEvent> geraetWithRentEvents = new ArrayList<>();
 
-        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(new Geraet()));
+        Geraet fakeGeraet = new Geraet();
+        Bild fakebild = new Bild();
+        fakebild.setBild("fake bild".getBytes());
+        List<Bild> bildList = new ArrayList<>();
+        bildList.add(fakebild);
+        fakeGeraet.setBilder(bildList);
+        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(fakeGeraet));
         personService.checksActiveOrInActiveRentEvent(rentEventList,geraetWithRentEvents);
         verify(geraetRepository,times(3)).findById(anyLong());
+    }
+
+    @Test
+    public void umwechsel_multiparfile_zum_bild() throws IOException {
+        MultipartFile file = mock(MultipartFile.class);
+        MultipartFile[] files = {file,file,file};
+        when(file.getBytes()).thenReturn("fake".getBytes());
+        List<Bild> bildList = new ArrayList<>();
+        personService.umwechsleMutifileZumBild(files,bildList);
+        Assertions.assertThat(bildList.size()).isEqualTo(3);
     }
 
 

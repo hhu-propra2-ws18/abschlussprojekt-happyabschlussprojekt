@@ -20,8 +20,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
-@WebAppConfiguration
 public class UserDetailsServiceImplTest {
 
     @Mock

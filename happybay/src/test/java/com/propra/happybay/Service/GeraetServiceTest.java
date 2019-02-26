@@ -7,7 +7,6 @@ import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
-import com.propra.happybay.Service.UserServices.PictureService;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,22 +24,17 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
-@WebAppConfiguration
 public class GeraetServiceTest {
     @Mock
     GeraetRepository geraetRepository;
-    @Mock
-    PictureService pictureService;
     @Mock
     RentEventRepository rentEventRepository;
 
@@ -173,12 +167,44 @@ public class GeraetServiceTest {
         timeInterval3.setEnd(Date.valueOf("2019-6-24"));
         rentEvent3.setTimeInterval(timeInterval3);
         rentEventList.add(rentEvent3);
-        Mockito.when(rentEventRepository.findAllByMieter(anyString())).thenReturn(rentEventList);
+        Mockito.when(rentEventRepository.findAll()).thenReturn(rentEventList);
 
-        geraetService.checkRentEventStatus("fake");
+        geraetService.checkRentEventStatus();
         verify(rentEventRepository,times(4)).save(any());
     }
 
+    @Test
+    public void return_geraet_with_rentEvents(){
+
+        List<RentEvent> rentEventList = new ArrayList<>();
+        RentEvent rentEvent1 = new RentEvent();
+        TimeInterval timeInterval1 = new TimeInterval();
+        timeInterval1.setStart(Date.valueOf("2019-1-10"));
+        timeInterval1.setEnd(Date.valueOf("2019-3-10"));
+        rentEvent1.setTimeInterval(timeInterval1);
+        rentEvent1.setGeraetId(1L);
+        rentEventList.add(rentEvent1);
+
+        RentEvent rentEvent2 = new RentEvent();
+        TimeInterval timeInterval2 = new TimeInterval();
+        timeInterval2.setStart(Date.valueOf("2019-3-10"));
+        timeInterval2.setEnd(Date.valueOf("2019-4-24"));
+        rentEvent2.setTimeInterval(timeInterval2);
+        rentEvent2.setGeraetId(2L);
+        rentEventList.add(rentEvent2);
+
+        RentEvent rentEvent3 = new RentEvent();
+        TimeInterval timeInterval3 = new TimeInterval();
+        timeInterval3.setStart(Date.valueOf("2019-5-28"));
+        timeInterval3.setEnd(Date.valueOf("2019-6-24"));
+        rentEvent3.setTimeInterval(timeInterval3);
+        rentEvent3.setGeraetId(3L);
+        rentEventList.add(rentEvent3);
+
+        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(new Geraet()));
+        Assertions.assertThat(geraetService.returnGeraeteWithRentEvents(rentEventList).size()).isEqualTo(3);
+
+    }
 
     @Test
     public void convert_to_GET(){

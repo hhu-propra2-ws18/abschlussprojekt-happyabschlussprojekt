@@ -35,8 +35,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
-@WebAppConfiguration
 public class AdminServiceTest {
 
     @Mock
