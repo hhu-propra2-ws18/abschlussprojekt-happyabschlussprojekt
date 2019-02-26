@@ -44,7 +44,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings("deprecation")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest {
@@ -189,13 +188,7 @@ public class UserControllerTest {
                 .apply(springSecurity())
                 .build();
     }
-    @After
-    public void clearRepo(){
-        geraetRepository.delete(geraet);
-        personRepository.delete(user);
-        personRepository.delete(admin);
-        accountRepository.delete(account);
-    }
+
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proflieWithUser() throws Exception {
