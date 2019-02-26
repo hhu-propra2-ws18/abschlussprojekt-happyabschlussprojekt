@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = {"/"})
+@ControllerAdvice
 public class DefaultController {
     @Autowired
     PersonRepository personRepository;
@@ -107,5 +109,17 @@ public class DefaultController {
             model.addAttribute("message", "Sie wurden erfolgreich abgemeldet.");
         model.addAttribute("person", new Person());
         return "default/login";
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    @ResponseBody
+    String permittedSizeException (Exception e){
+        e.printStackTrace();
+        return "<h3>The file exceeds its maximum permitted size of 15 MB. Please reload your page.</h3>" +
+                "    <div>\n" +
+                "            <span>\n" +
+                "                <a href=\"/\">Or if you want to back to home</a>\n" +
+                "            </span>\n" +
+                "    </div>";
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@ControllerAdvice
 @RequestMapping(value = {"/user"})
 public class UserController {
     @Autowired
@@ -424,7 +426,22 @@ public class UserController {
         model.addAttribute("geraete", geraete);
         return "redirect://localhost:8080/user/myThings";
     }
+
+
+    @ExceptionHandler(MultipartException.class)
+    @ResponseBody
+    String permittedSizeException (Exception e){
+        e.printStackTrace();
+        return "<h3>The file exceeds its maximum permitted size of 15 MB. Please reload your page.</h3>" +
+                "    <div>\n" +
+                "            <span>\n" +
+                "                <a href=\"/\">Or if you want to back to home</a>\n" +
+                "            </span>\n" +
+                "    </div>";
+    }
 }
+
+
 
 
 // DAS IST OPTIONAL
