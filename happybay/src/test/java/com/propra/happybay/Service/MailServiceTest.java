@@ -77,7 +77,6 @@ public class MailServiceTest {
         Mockito.when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(fakeGeraet));
 
         mailService.sendScheduledMail();
-        verify(rentEventRepository,times(1)).save(any());
         verify(sender,times(2)).createMimeMessage();
         verify(sender,times(2)).send((MimeMessage) any());
     }
