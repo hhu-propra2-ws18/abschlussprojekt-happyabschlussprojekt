@@ -3,7 +3,6 @@ package com.propra.happybay.Service;
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
@@ -18,14 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.mail.internet.MimeMessage;
 import java.security.Principal;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 

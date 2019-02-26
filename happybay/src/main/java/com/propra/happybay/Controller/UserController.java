@@ -50,13 +50,22 @@ public class UserController {
     @Autowired
     NotificationService notificationService;
 
-    public UserController(PersonRepository personRepository) {
+    public UserController(AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
         this.personRepository = personRepository;
+        this.geraetRepository=geraetRepository;
+        this.notificationService=notificationService;
+        this.rentEventRepository=rentEventRepository;
+        this.personService=personService;
+        this.notificationRepository=notificationRepository;
+        this.mailService=mailService;
+        this.geraetService=geraetService;
+        this.accountRepository=accountRepository;
     }
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String name = principal.getName();
+
         notificationService.updateAnzahl(name);
         Person person = personRepository.findByUsername(name).get();
         if (person.getFoto().getBild().length > 0) {
