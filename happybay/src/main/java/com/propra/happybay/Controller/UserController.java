@@ -92,31 +92,13 @@ public class UserController {
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.KAPUTT));
 
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
-        for (RentEvent rentEvent : activeRentEvents) {
-            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-            geraetWithRentEvent.setRentEvent(rentEvent);
-            activeGeraete.add(geraetWithRentEvent);
-            if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {
-                geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
-            }
-        }
         personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
-        for (RentEvent rentEvent : bookedRentEvents) {
-            GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
-            geraetWithRentEvent.setRentEvent(rentEvent);
-            bookedGeraete.add(geraetWithRentEvent);
-            if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {
-                geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
-            }
-        }
-
 
         personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
+
         model.addAttribute("person", person);
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
@@ -144,7 +126,6 @@ public class UserController {
         model.addAttribute("person", person);
         Geraet geraet1 = geraetRepository.findById(id).get();
 
-        Account account = accountRepository.findByAccount(name).get();
         model.addAttribute("account", account);
 
         model.addAttribute("geraet", geraet1);
@@ -312,7 +293,7 @@ public class UserController {
         Notification notification = notificationRepository.findById(id).get();
         String mieter = notification.getAnfragePerson();
         Geraet geraet = geraetRepository.findById(notification.getGeraetId()).get();
-        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), (int) geraet.getKaution());
+        int reservationId = proPayService.erzeugeReservation(mieter, geraet.getBesitzer(), geraet.getKaution());
 
         TimeInterval timeInterval = new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd());
         RentEvent rentEvent = new RentEvent();
@@ -325,7 +306,7 @@ public class UserController {
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
         personService.intervalZerlegen(geraet, index, rentEvent);
         geraetRepository.save(geraet);
-        rentEventRepository.save(rentEvent);
+//        rentEventRepository.save(rentEvent);
         notificationRepository.deleteById(id);
 
         Person person = personRepository.findByUsername(mieter).get();

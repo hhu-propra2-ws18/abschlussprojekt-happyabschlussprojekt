@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PersonService {
@@ -97,6 +98,9 @@ public class PersonService {
             geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
             geraetWithRentEvent.setRentEvent(rentEvent);
             geraete.add(geraetWithRentEvent);
+            if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {
+                geraetWithRentEvent.getGeraet().setEncode(geraetWithRentEvent.getGeraet().getBilder().get(0).encodeBild());
+            }
         }
     }
     public void umwechsleMutifileZumBild(@RequestParam("files") MultipartFile[] files, List<Bild> bilds) throws IOException {

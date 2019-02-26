@@ -105,7 +105,7 @@ public class GeraetService {
                 rentEvent.setReturnStatus(ReturnStatus.ACTIVE);
                 rentEventRepository.save(rentEvent);
             }
-            if (now + (1000*60*60*24) - end > 0) {
+            if (now + (1000 * 60 * 60 * 72) - end > 0) {
                 rentEvent.setReturnStatus(ReturnStatus.DEADLINE_CLOSE);
                 rentEventRepository.save(rentEvent);
             }

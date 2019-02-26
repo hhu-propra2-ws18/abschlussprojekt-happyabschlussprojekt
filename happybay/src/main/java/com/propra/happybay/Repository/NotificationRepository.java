@@ -1,6 +1,5 @@
 package com.propra.happybay.Repository;
 
-import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Notification;
 import org.springframework.data.repository.CrudRepository;
 
