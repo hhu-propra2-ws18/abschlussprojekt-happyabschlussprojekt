@@ -12,18 +12,31 @@ import java.util.List;
 public class Notification {
     @Id
     @GeneratedValue
-    Long id;
-    Long geraetId;
-    Long rentEventId;
-    String type;
-    String message;
-    String besitzer;
-    String anfragePerson;
-    Date mietezeitpunktStart;
-    Date mietezeitpunktEnd;
-    String encode;
+    private Long id;
+    private String type;
+    private String message;
+    private Date mietezeitpunktStart;
+    private Date mietezeitpunktEnd;
+    private String encode;
 
-//    @OneToMany
-//    List<Long> conflictIds = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    private Geraet geraet;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private RentEvent rentEvent;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person besitzer;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person anfragePerson;
+
+    public String getAnfragePersonUsername() {
+        return anfragePerson.getUsername();
+    }
+
+    public String getBesitzerUsername() {
+        return besitzer.getUsername();
+    }
 }
 

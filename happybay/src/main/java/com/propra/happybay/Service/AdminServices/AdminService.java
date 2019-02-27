@@ -75,7 +75,7 @@ public class AdminService {
         List<RentEvent> rentEventsWithConflicts = rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
         List<GeraetWithRentEvent> geraetWithRentEventsWithConflicts = new ArrayList<>();
         for (RentEvent rentEventWithConflict : rentEventsWithConflicts) {
-            Geraet geraet = geraetRepository.findById(rentEventWithConflict.getGeraetId()).get();
+            Geraet geraet = rentEventWithConflict.getGeraet();
             GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
             geraetWithRentEvent.setGeraet(geraet);
             geraetWithRentEvent.setRentEvent(rentEventWithConflict);
@@ -83,55 +83,4 @@ public class AdminService {
         }
         return geraetWithRentEventsWithConflicts;
     }
-
-    //public String isInitPassword() {
-    //    Person admin = personRepository.findByUsername("admin").get();
-    //    if (encoder.matches("admin", admin.getPassword())) {
-    //        return "admin/changePassword";
-    //    }
-    //    return "admin/allUsers";
-    //}
-    //
-    //public Account getAccountByUsername(String username) {
-    //    return accountRepository.findByAccount(username).get();
-    //}
-    //
-    //public List<Geraet> getGeraeteMitKonflikten() {
-    //    return geraetRepository.findAllByReturnStatus(ReturnStatus.KAPUTT);
-    //}
-    //
-    //public GeraetMitReservationID getGeraeteMitReservationID(Long GeraetId) {
-    //    return geraetMitReservationIDRepository.findByGeraetID(GeraetId);
-    //}
-    //
-    //public void saveTransfer(int amount, String account) {
-    //    TransferRequest transferRequest = new TransferRequest();
-    //    transferRequest.setAmount(amount);
-    //    transferRequest.setUsername(account);
-    //    transferRequestRepository.save(transferRequest);
-    //}
-    //
-    //public void setAdminNewPassword(String password) {
-    //    Person admin = personRepository.findByUsername("admin").get();
-    //    admin.setPassword(encoder.encode(password));
-    //    personRepository.save(admin);
-    //}
-    //
-    //public List<TransferRequest> getAllTransferRequest() {
-    //    return transferRequestRepository.findAll();
-    //}
-    //
-    //public void setAnzahlKonflikte() {
-    //    numberOfConflicts = getGeraeteMitKonflikten().size();
-    //}
-    //
-    //private void setAnzahlPersonen() {
-    //    numberOfPersons = createPersonAccont().size();
-    //}
-    //
-    //public void setAnzahlNotifications() {
-    //    numberOfNotifications = getAllTransferRequest().size();
-    //}
-
-
 }

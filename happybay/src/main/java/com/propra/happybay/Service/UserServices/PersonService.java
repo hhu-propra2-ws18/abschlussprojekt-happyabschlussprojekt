@@ -71,8 +71,8 @@ public class PersonService {
         comment.setDate(LocalDate.now());
         comment.setGeraetTitel(geraet.getTitel());
         comment.setMessage(grund);
-        comment.setSenderFrom(personRepository.findByUsername(geraet.getBesitzer()).get().getUsername());
-        comment.setPersonId(personRepository.findByUsername(geraet.getBesitzer()).get().getId());
+        comment.setSenderFrom(geraet.getBesitzerUsername());
+        comment.setPersonId(geraet.getBesitzerId());
         person.getComments().add(comment);
         personRepository.save(person);
     }
@@ -93,7 +93,7 @@ public class PersonService {
     public void checksActiveOrInActiveRentEvent(List<RentEvent> RentEvents, List<GeraetWithRentEvent> geraete) {
         for (RentEvent rentEvent : RentEvents) {
             GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setGeraet(rentEvent.getGeraet());
             geraetWithRentEvent.setRentEvent(rentEvent);
             geraete.add(geraetWithRentEvent);
             if (geraetWithRentEvent.getGeraet().getBilder().get(0).getBild().length > 0) {

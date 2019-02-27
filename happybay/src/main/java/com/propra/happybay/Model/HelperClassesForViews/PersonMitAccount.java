@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class PersonMitAccount {
-    Person person;
-    Account account;
+    private Person person;
+    private Account account;
 
     public PersonMitAccount(Person person, Account account) {
         this.person = person;

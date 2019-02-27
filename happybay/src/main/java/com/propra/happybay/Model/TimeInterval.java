@@ -11,11 +11,11 @@ import java.sql.Date;
 @Data
 @Embeddable
 public class TimeInterval {
-    Date start;
+    private Date start;
 
-    Date end;
+    private Date end;
 
-    int duration;
+    private int duration;
 
 
     public TimeInterval(Date start, Date end) {

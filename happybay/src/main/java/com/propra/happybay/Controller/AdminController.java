@@ -34,15 +34,7 @@ public class AdminController {
     @Autowired
     private RentEventRepository rentEventRepository;
     @Autowired
-    private GeraetService geraetService;
-
-    public AdminController(ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
-        this.proPayService=proPayService;
-        this.adminService=adminService;
-        this.geraetRepository=geraetRepository;
-        this.rentEventRepository=rentEventRepository;
-        this.geraetService=geraetService;
-    }
+    GeraetService geraetService;
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
@@ -76,9 +68,9 @@ public class AdminController {
     @PostMapping("/punishAccount")
     public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) {
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
-        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+        Geraet geraet = rentEvent.getGeraet();
         try {
-            proPayService.punishReservation(mieter, geraet.getBesitzer(), reservationId, geraet.getKaution());
+            proPayService.punishReservation(mieter, geraet.getBesitzerUsername(), reservationId, geraet.getKaution());
         } catch (IOException e) {
             return"/admin/propayAdminNotAvailable";
         }
@@ -97,8 +89,7 @@ public class AdminController {
             return"/admin/propayAdminNotAvailable";
         }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
-        Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
-        geraetService.checkForTouchingIntervals(geraet, rentEvent);
+        Geraet geraet = rentEvent.getGeraet();
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
@@ -109,5 +100,13 @@ public class AdminController {
     public String changePassword(@ModelAttribute("newPassword") String newPassword) {
         adminService.changeAdminPassword(newPassword);
         return "redirect://localhost:8080/admin";
+    }
+
+    public AdminController(ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
+        this.proPayService=proPayService;
+        this.adminService=adminService;
+        this.geraetRepository=geraetRepository;
+        this.rentEventRepository=rentEventRepository;
+        this.geraetService=geraetService;
     }
 }

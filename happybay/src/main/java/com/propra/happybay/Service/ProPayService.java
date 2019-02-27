@@ -1,6 +1,7 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
+import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.Transaction;
 import com.propra.happybay.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,13 +105,15 @@ public class ProPayService {
         return reader;
     }
 
-    public List<Transaction> getAllTransactionForPerson(String username) {
-        List<Transaction> transactions = transactionRepository.findAllByReceiverOrGiver(username, username);
+    public List<Transaction> getAllPastTransactionsForPerson(Person person) {
+        List<Transaction> transactions = transactionRepository.findAllByReceiverOrGiver(person, person);
         return transactions;
     }
 
-    private void saveTransaction(int amount, String receiver, String giver) {
+    private void saveTransaction(int amount, String receiverUsername, String giverUsername) {
         Transaction transaction = new Transaction();
+        Person receiver = personRepository.findByUsername(receiverUsername).get();
+        Person giver = personRepository.findByUsername(giverUsername).get();
         transaction.setReceiver(receiver);
         transaction.setAmount(amount);
         transaction.setGiver(giver);

@@ -11,12 +11,16 @@ import java.sql.Date;
 public class RentEvent {
     @Id
     @GeneratedValue
-    Long Id;
-    int reservationId;
-    Long geraetId;
-    String grundForReturn = "";
+    private Long Id;
+    private Long reservationId;
+    private String grundForReturn = "";
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Geraet geraet;
     @Embedded
-    TimeInterval timeInterval;
-    String mieter; //username
+    private TimeInterval timeInterval;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person mieter;
     ReturnStatus returnStatus = ReturnStatus.OK;
+
 }
