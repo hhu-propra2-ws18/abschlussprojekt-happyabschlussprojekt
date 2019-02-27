@@ -27,6 +27,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -105,5 +106,12 @@ public class NotificationServiceTest {
         verify(notificationRepository,times(1)).findAllByBesitzer("fakeName");
         verify(personService,times(1)).getByUsername("fakeName");
 
+    }
+
+    @Test
+    public void get_notification_by_id(){
+        Notification fake = new Notification();
+        when(notificationRepository.findById(1L)).thenReturn(java.util.Optional.of(fake));
+        Assertions.assertThat(notificationService.getNotificationById(1L)).isEqualTo(fake);
     }
 }
