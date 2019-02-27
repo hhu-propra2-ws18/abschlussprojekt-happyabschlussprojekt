@@ -79,9 +79,9 @@
                     th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
                 </li>
                 <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
-                <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Rent</span>
+                <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Zum Ausleihen</span>
                 </li>
-                <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Sale</span>
+                <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Zum Kaufen</span>
                 </li>
                 <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
                 <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;

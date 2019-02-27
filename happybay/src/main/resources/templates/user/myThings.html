@@ -20,8 +20,7 @@
                 <div class="card-body">
                     <div th:replace="fragments.html :: geraetContainer"></div>
                     <a th:if="${!geraet.isForsale()}" th:href="@{/user/geraet/edit/{id}(id=${geraet.getId()})}">Edit</a>
-                    <a th:if="${geraet.isForsale()}" th:href="@{/user/geraet/changeToRent/{id}(id=${geraet.getId()})}">Change
-                        to Rent</a>
+                    <a th:if="${geraet.isForsale()}" th:href="@{/user/geraet/changeToRent/{id}(id=${geraet.getId()})}">Möchten Sie lieber vermieten? Dann hier klicken.</a>
                     <form th:action="@{/user/geraet/delete/{id}(id=${geraet.getId()})}" method="post">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>

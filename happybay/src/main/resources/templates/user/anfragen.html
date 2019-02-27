@@ -15,7 +15,7 @@
 
                     <input type="radio" name="pickTime[]" onclick="document.getElementById('mietezeitpunktStart').style.display='';document.getElementById('label').style.display='';
                                                                  document.getElementById('mietezeitpunktEnd').style.display='';document.getElementById('label2').style.display=''"
-                           th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                           th:text=" ' ' + ${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                            ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"
                            th:value="${verfugbarEvent.getTimeInterval().getStart()} +' '+ ${verfugbarEvent.getTimeInterval().getEnd()}">
                     </input>
@@ -31,13 +31,14 @@
                     </tr>
                 </li>
             </ul>
+            <br>
 
-            <label id="label" style="display:none" for="mietezeitpunktStart">Miete Start Datum:</label>
+            <label id="label" style="display:none" for="mietezeitpunktStart">Mieten ab:</label>
             <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
                    placeholder="Eingabe start Zeitpunkte."  required/>
 
-            <label id="label2" style="display:none" for="mietezeitpunktEnd">Miete End Datum:</label>
+            <label id="label2" style="display:none" for="mietezeitpunktEnd">Mieten bis:</label>
             <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
                    placeholder="Eingabe ende Zeitpunkte." required/>

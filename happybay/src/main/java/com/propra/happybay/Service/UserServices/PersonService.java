@@ -34,13 +34,6 @@ public class PersonService {
         return personRepository.findByUsername(username).get();
     }
 
-    public void increaseAktionPunkte(String signedInPersonUsername) {
-        Person person = getByUsername(signedInPersonUsername);
-        int aktionPunkte = person.getAktionPunkte();
-        person.setAktionPunkte(aktionPunkte + 10);
-        personRepository.save(person);
-    }
-
     public int positionOfFreeBlock(Geraet geraet, RentEvent anfrageRentEvent) {
         TimeInterval anfrageInterval = anfrageRentEvent.getTimeInterval();
         for (int i = 0; i < geraet.getVerfuegbareEvents().size(); i++) {
