@@ -106,7 +106,7 @@ public class UserControllerTest {
         user.setRole("ROLE_USER");
         user.setAdresse("test dusseldorf");
         user.setAnzahlNotifications(0);
-        //personRepository.save(user);
+
         //Admin
         admin.setUsername("admin");
         admin.setId(2L);
@@ -189,7 +189,7 @@ public class UserControllerTest {
         verify(rentEventRepository, Mockito.times(5)).findAllByMieterAndReturnStatus(any(),any());
 
     }
-    @WithMockUser(value = "test", roles = "USER")
+
     @Test
     public void makeNotifications() throws Exception {
         mvc2.perform(get("/user/notifications").principal(principal))
@@ -202,6 +202,22 @@ public class UserControllerTest {
 //       when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
 //       when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
 //
+//        mvc.perform(get("/user/anfragen/{id}",2L).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
+
+
+//    @WithMockUser(value = "test", roles = "USER")
+//    @Test
+//    public void makeNotifications() throws Exception {
+//        mvc.perform(get("/user/notifications").contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
+//    @WithMockUser(value = "test", roles = "USER")
+//    @Test
+//    public void anfragenGet() throws Exception {
+//       when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
+//       when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
 //        mvc.perform(get("/user/anfragen/{id}",2L).contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk());
 //    }
@@ -241,7 +257,7 @@ public class UserControllerTest {
         mvc2.perform(get("/user/proPay").principal(principal))
                 .andExpect(status().isOk());
     }
-    @WithMockUser(value = "test", roles = "USER")
+
     @Test
     public void besitzerInfo() throws Exception {
         mvc2.perform(get("/user/BesitzerInfo/{id}",1L).principal(principal))

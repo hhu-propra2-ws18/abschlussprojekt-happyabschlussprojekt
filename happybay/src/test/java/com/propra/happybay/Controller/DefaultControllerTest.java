@@ -180,7 +180,6 @@ public class DefaultControllerTest {
     @Test
     public void addToDatabase_noErrorPassWord() throws Exception {
         doNothing().when(userValidator).validate(any(),any());
-        when(result.hasErrors()).thenReturn(false);
         mvc.perform(post("/addNewUser").principal(principal).flashAttr("person",person).requestAttr("file", file))
                 .andExpect(status().isOk());
         verify(userValidator, Mockito.times(1)).validate(any(),any());

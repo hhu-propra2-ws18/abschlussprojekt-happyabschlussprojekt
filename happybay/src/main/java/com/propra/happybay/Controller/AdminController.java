@@ -36,6 +36,14 @@ public class AdminController {
     @Autowired
     private GeraetService geraetService;
 
+    public AdminController(ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
+        this.proPayService=proPayService;
+        this.adminService=adminService;
+        this.geraetRepository=geraetRepository;
+        this.rentEventRepository=rentEventRepository;
+        this.geraetService=geraetService;
+    }
+
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();

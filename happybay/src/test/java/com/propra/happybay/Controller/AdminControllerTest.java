@@ -14,16 +14,19 @@ import com.propra.happybay.Service.UserServices.GeraetService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,14 +36,14 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
+@WebAppConfiguration
 public class AdminControllerTest {
     private Person person = new Person();
     private Account account = new Account();
@@ -50,23 +53,23 @@ public class AdminControllerTest {
     private List<Geraet> geraetList=new ArrayList<>();
     private List<PersonMitAccount> personMitAccountList = new ArrayList<>();
     private InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
-    @MockBean
+    @Mock
     private PersonRepository personRepository;
-    @MockBean
+    @Mock
     private AccountRepository accountRepository;
-    @MockBean
+    @Mock
     AdminService adminService;
-    @MockBean
+    @Mock
     RentEvent rentEvent;
-    @MockBean
+    @Mock
     GeraetRepository geraetRepository;
-    @MockBean
+    @Mock
     GeraetService geraetService;
-    @MockBean
+    @Mock
     RentEventRepository rentEventRepository;
-    @MockBean
+    @Mock
     ProPayService proPayService;
-    @MockBean
+    @Mock
     GeraetWithRentEvent geraetWithRentEvent;
     @Autowired
     public PasswordEncoder encoder;
@@ -78,7 +81,6 @@ public class AdminControllerTest {
         person.setUsername("testAdmin");
         person.setId(1L);
         person.setAdresse("test dusseldorf");
-        person.setPassword(encoder.encode("test"));
         personRepository.save(person);
         informationForMenuBadges.setNumberOfConflicts(1);
         informationForMenuBadges.setNumberOfNotifications(1);
@@ -101,44 +103,40 @@ public class AdminControllerTest {
         geraetList.add(geraet);
         personMitAccountList.add(personMitAccount);
         when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
-        mvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/jsp/view/");
+        viewResolver.setSuffix(".jsp");
+        mvc = MockMvcBuilders.standaloneSetup(new AdminController(proPayService,adminService,geraetRepository,rentEventRepository,geraetService))
+                .setViewResolvers(viewResolver)
                 .build();
     }
-    @WithMockUser(value = "testAdmin",password = "test",roles = "ADMIN")
     @Test
     public void adminFunktion() throws Exception {
         when(adminService.isAdminHasDefaultPassword()).thenReturn(false);
         mvc.perform(get("/admin/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection());
     }
-    @WithMockUser(value = "testAdmin",password = "test",roles = "ADMIN")
     @Test
     public void adminFunktionReturnChangePassword() throws Exception {
         when(adminService.isAdminHasDefaultPassword()).thenReturn(true);
         mvc.perform(get("/admin/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-    @WithMockUser(value = "testAdmin",password = "test",roles = "ADMIN")
     @Test
     public void allUsers() throws Exception {
         when(adminService.returnAllPersonsWithAccounts()).thenReturn(personMitAccountList);
         mvc.perform(get("/admin/allUsers").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-    @WithMockUser(value = "testAdmin", roles = "ADMIN")
     @Test
     public void one_conflicts_test() throws Exception {
         when(adminService.getGeraetWithRentEventsWithConflicts()).thenReturn(new ArrayList<>());
         when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
-        when(adminService.returnAllPersonsWithAccounts()).thenReturn(personMitAccountList);
         mvc.perform(get("/admin/conflicts"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "testAdmin",roles = "ADMIN")
     @Test
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
@@ -149,7 +147,6 @@ public class AdminControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }
-    @WithMockUser(value = "testAdmin",password = "test",roles = "ADMIN")
     @Test
     public void punishAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
@@ -159,7 +156,6 @@ public class AdminControllerTest {
                 .andExpect(status().is3xxRedirection());
     }
 
-    @WithMockUser(value = "testAdmin",password = "test",roles = "ADMIN")
     @Test
     public void changePassword() throws Exception {
         mvc.perform(post("/admin/changePassword").flashAttr("newPassword","testAdmin").contentType(MediaType.APPLICATION_JSON))
