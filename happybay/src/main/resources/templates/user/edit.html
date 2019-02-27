@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="row" style="margin-left: 5px">
-        <h1>Verleihen Iher Gerät</h1>
+        <h1>Gerät bearbeiten</h1>
     </div>
 
     <div class="card" style="padding: 10px; margin-bottom: 10px">
@@ -26,7 +26,7 @@
 
             <label for="kaution">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control"
-                   name="kaution" id="kaution" th:value="${geraet.kaution}"/>
+                   name="kaution" id="kaution" th:if="${!geraet.isForsale()}" th:value="${geraet.kaution}"/>
 
             <label for="kaution">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"/>
