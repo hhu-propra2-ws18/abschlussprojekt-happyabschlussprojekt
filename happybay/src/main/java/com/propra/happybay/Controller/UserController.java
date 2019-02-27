@@ -247,11 +247,6 @@ public class UserController {
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
 
-        Person person = personRepository.findByUsername(principal.getName()).get();
-
-        geraetRepository.save(geraet);
-
-        geraet.getVerfuegbareEvents().add(verfuegbar);
         geraetRepository.save(geraet);
 
         return "redirect://localhost:8080/user/myThings";

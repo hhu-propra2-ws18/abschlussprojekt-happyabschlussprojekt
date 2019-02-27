@@ -11,14 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -53,18 +48,6 @@ public class PersonServiceTest {
         fakePerson.setUsername("fake");
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(fakePerson));
         Assertions.assertThat(personService.getByUsername("fake")).isEqualTo(fakePerson);
-
-    }
-
-
-    @Test
-    public void increase_aktion_punkt(){
-        Person fakePerson = new Person();
-        fakePerson.setUsername("fake");
-        when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(fakePerson));
-
-        personService.increaseAktionPunkte("");
-        verify(personRepository,times(1)).save(any());
 
     }
 
