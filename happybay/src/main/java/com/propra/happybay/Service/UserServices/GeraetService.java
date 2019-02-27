@@ -131,8 +131,8 @@ public class GeraetService {
     }
 
     public TimeInterval convertToCET(TimeInterval timeInterval) {
-        Date start = new Date(timeInterval.getStart().getTime() + 60 * 60 * 1000);
-        Date end = new Date(timeInterval.getEnd().getTime() + 60 * 60 * 1000);
+        Date start = new Date(timeInterval.getStart().getTime() + 60 * 60 * 6000);
+        Date end = new Date(timeInterval.getEnd().getTime() + 60 * 60 * 6000);
         TimeInterval newTimeInterval = new TimeInterval(start, end);
         return newTimeInterval;
     }

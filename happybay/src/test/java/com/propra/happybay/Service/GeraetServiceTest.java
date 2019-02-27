@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -200,13 +201,21 @@ public class GeraetServiceTest {
 
     }
 
-//    @Test
-//    public void convert_to_GET(){
-//        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
-//        TimeInterval newfake = geraetService.convertToCET(fake);
-//        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
-//        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
-//
-//    }
+    @Test
+    public void convert_to_CET(){
+        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
+        TimeInterval newfake = geraetService.convertToCET(fake);
+        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
+        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
+
+    }
+
+    @Test
+    public void save_geraet(){
+        MultipartFile fakefile = mock(MultipartFile.class);
+        MultipartFile[] files = {fakefile,fakefile};
+
+    }
+
 
 }
