@@ -15,10 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -26,9 +22,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -206,13 +200,13 @@ public class GeraetServiceTest {
 
     }
 
-    @Test
-    public void convert_to_GET(){
-        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
-        TimeInterval newfake = geraetService.convertToCET(fake);
-        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
-        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
-
-    }
+//    @Test
+//    public void convert_to_GET(){
+//        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
+//        TimeInterval newfake = geraetService.convertToCET(fake);
+//        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
+//        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
+//
+//    }
 
 }

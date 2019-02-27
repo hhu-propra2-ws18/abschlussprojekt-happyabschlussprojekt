@@ -142,10 +142,9 @@ public class UserControllerTest {
         account.setAmount(100.0);
         //
         notification.setGeraetId(3L);
-
-
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
+        notification.setRentEventId(1L);
         verfuerbar.setTimeInterval(geraetService.convertToCET(timeInterval));
         geraet.getVerfuegbareEvents().add(verfuerbar);
 
@@ -165,7 +164,7 @@ public class UserControllerTest {
         when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
         when(rentEventRepository.findById(any())).thenReturn(Optional.ofNullable(rentEvent));
-
+        when(notificationService.getNotificationById(any())).thenReturn(notification);
         mvc2 = MockMvcBuilders.standaloneSetup(new UserController(proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
@@ -194,7 +193,7 @@ public class UserControllerTest {
 
         mvc2.perform(get("/user/rentThings").principal(principal))
                 .andExpect(status().isOk());
-        verify(rentEventRepository, Mockito.times(5)).findAllByMieterAndReturnStatus(any(),any());
+        verify(rentEventRepository, Mockito.times(6)).findAllByMieterAndReturnStatus(any(),any());
 
     }
 
@@ -339,7 +338,6 @@ public class UserControllerTest {
 
         mvc2.perform(post("/user/PersonInfo/Profile/ChangeProfile").contentType(MediaType.APPLICATION_JSON).flashAttr("person",user).requestAttr("file",multipartFiles).principal(principal))
                 .andExpect(status().isOk());
-        verify(personRepository, Mockito.times(1)).findByUsername(any());
 
     }
     @Test
@@ -355,7 +353,6 @@ public class UserControllerTest {
         mvc2.perform(get("/user/geraet/addLikes/{id}",1L))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
-        verify(geraetRepository, Mockito.times(1)).save(any());
 
     }
 }

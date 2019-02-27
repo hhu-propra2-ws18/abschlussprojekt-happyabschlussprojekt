@@ -444,7 +444,7 @@ public class UserController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(Model model, @RequestParam("file") MultipartFile file,
+    public String changeProfile(Model model, @RequestParam(value = "file",required = false) MultipartFile file,
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         model.addAttribute("person", personService.savePerson(principal, file, p));
         return "default/confirmationOfRegistration";
@@ -458,7 +458,7 @@ public class UserController {
 
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
-                             @RequestParam("files") MultipartFile[] files) throws IOException {
+                             @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         geraetService.saveGeraet(files, geraet, id);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);

@@ -151,7 +151,6 @@ public class AdminControllerTest {
     public void punishAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        doNothing().when(geraetService).checkForTouchingIntervals(any(),any());
         mvc.perform(post("/admin/punishAccount").flashAttr("mieter","test").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection());
     }
