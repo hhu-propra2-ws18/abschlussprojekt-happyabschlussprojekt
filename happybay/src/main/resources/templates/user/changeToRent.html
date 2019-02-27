@@ -36,16 +36,16 @@
                    placeholder="Eingabe Abholort." required/>
 
             <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
-            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte." th:value="${geraet.getMietezeitpunktStart()}"
-                   onchange="checkStartTime()"/>
+                   placeholder="Eingabe start Zeitpunkte als JJJJ-MM-DD." th:value="${geraet.getMietezeitpunktStart()}"
+                   onblur="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
-            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
-                   placeholder="Eingabe ende Zeitpunkte." th:value="${geraet.getMietezeitpunktEnd()}"
-                   onchange="checkEndTime()"/>
+                   placeholder="Eingabe ende Zeitpunkte als JJJJ-MM-DD." th:value="${geraet.getMietezeitpunktEnd()}"
+                   onblur="checkEndTime()"required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
             <input style="padding-top: 10px" type="file" name="files" multiple
@@ -129,11 +129,11 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < nowDate && isnull(endTime)) {
+        if (startDate < nowDate) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
-        } else if (!isnull(endTime)) {
+        } else {
             var arrayForEndTime = endTime.split("-");
             var endDate = new Date(arrayForEndTime[0], parseInt(arrayForEndTime[1]) - 1, arrayForEndTime[2]);
             if (startDate > endDate) {
@@ -143,46 +143,34 @@
             } else {
                 return true;
             }
-        } else {
-            return true;
         }
     }
 
-    function checkEndTime() {
-        var endTime = $("#mietezeitpunktEnd").val();
-        var array = endTime.split("-");
-        var endDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
+        function checkEndTime() {
+            var endTime = $("#mietezeitpunktEnd").val();
+            var array = endTime.split("-");
+            var endDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
 
-        var startTime = $("#mietezeitpunktStart").val().toString();
+            var startTime = $("#mietezeitpunktStart").val().toString();
 
-        var nowDate = Date.now();
-        if (endDate < nowDate && isnull(startTime)) {
-            alert("Das Enddatum darf nicht vor heute liegen.");
-            $("#mietezeitpunktEnd").val("");
-            return false;
-        } else if (!isnull(startTime)) {
-            var arrayForStartTime = startTime.split("-");
-            var startDate = new Date(arrayForStartTime[0], parseInt(arrayForStartTime[1]) - 1, arrayForStartTime[2]);
-            if (startDate > endDate) {
-                alert("Das EndDatum muss nach dem StartDatum liegen.");
+            var nowDate = Date.now();
+            if (endDate < nowDate) {
+                alert("Das Enddatum darf nicht vor heute liegen.");
                 $("#mietezeitpunktEnd").val("");
                 return false;
             } else {
-                return true;
+                var arrayForStartTime = startTime.split("-");
+                var startDate = new Date(arrayForStartTime[0], parseInt(arrayForStartTime[1]) - 1, arrayForStartTime[2]);
+                if (startDate > endDate) {
+                    alert("Das EndDatum muss nach dem StartDatum liegen.");
+                    $("#mietezeitpunktEnd").val("");
+                    return false;
+                } else {
+                    return true;
+                }
             }
-        } else {
-            return true;
         }
-    }
 
-    function isnull(str) {
-
-        if (str == '' || str == undefined || str == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 
 </script>

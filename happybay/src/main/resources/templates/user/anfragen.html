@@ -33,12 +33,12 @@
             </ul>
 
             <label id="label" style="display:none" for="mietezeitpunktStart">Miete Start Datum:</label>
-            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+            <input style="display:none;margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
                    placeholder="Eingabe start Zeitpunkte."  required/>
 
             <label id="label2" style="display:none" for="mietezeitpunktEnd">Miete End Datum:</label>
-            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+            <input style="display:none;margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
                    placeholder="Eingabe ende Zeitpunkte." required/>
 
@@ -97,13 +97,14 @@
 
         var nowDate = Date.now();
 
+
         if(startDate<startDateMax || startDate>=endDateMax || endDate<=startDateMax || endDate>endDateMax ||startDate>endDate){
             alert("Bitte notieren Sie sich die verfügbare Zeit und vergewissern Sie sich, dass das Datum korrekt ist！");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");
             return false;
         }
-        else if(startDate<nowDate){
+        else if(startDate<(nowDate-(18*60*60*1000))){
             alert("Start Datum muss nach heute sein!");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");
