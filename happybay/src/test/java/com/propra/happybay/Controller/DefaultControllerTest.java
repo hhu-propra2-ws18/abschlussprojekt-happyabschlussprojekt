@@ -1,7 +1,6 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
@@ -18,10 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.web.WebAppConfiguration;
