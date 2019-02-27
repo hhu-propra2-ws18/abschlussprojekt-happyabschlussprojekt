@@ -61,7 +61,6 @@ public class GeraetService {
     public void checkForTouchingIntervals(Geraet geraet, RentEvent rentEvent) {
         List<RentEvent> rentEvents = geraet.getVerfuegbareEvents();
         rentEvents.add(rentEvent);
-
         for (int j = 0; j < rentEvents.size(); j++) {
             int smallest = j;
             for (int i = j + 1; i < rentEvents.size(); i++) {

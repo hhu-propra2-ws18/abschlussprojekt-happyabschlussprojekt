@@ -7,6 +7,8 @@ import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
+import com.propra.happybay.Service.UserServices.PersonService;
+import com.propra.happybay.Service.UserServices.PictureService;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,10 @@ public class GeraetServiceTest {
     GeraetRepository geraetRepository;
     @Mock
     RentEventRepository rentEventRepository;
+    @Mock
+    PersonService personService;
+    @Mock
+    PictureService pictureService;
 
     @InjectMocks
     GeraetService geraetService;
@@ -211,11 +218,19 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void save_geraet(){
+    public void save_geraet() throws IOException {
         MultipartFile fakefile = mock(MultipartFile.class);
         MultipartFile[] files = {fakefile,fakefile};
 
-    }
+        Geraet fakegeraet = new Geraet();
+        fakegeraet.setTitel("fake geraet");
+        fakegeraet.setKosten(1);
+        fakegeraet.setBeschreibung("fake Beschreibung");
+        fakegeraet.setKaution(1);
+        fakegeraet.setAbholort("fake Ort");
+        when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(fakegeraet));
+        geraetService.saveGeraet(files,fakegeraet,1L);
 
+    }
 
 }
