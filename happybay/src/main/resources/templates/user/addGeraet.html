@@ -53,9 +53,9 @@
                    placeholder="Eingabe Abholort." required/>
 
             <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
-            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte." onchange="checkStartTime()"/>
+                   placeholder="Eingabe start Zeitpunkte als JJJJ-MM-DD." onchange="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktEnd"
@@ -83,6 +83,7 @@
         var day = ("0" + time.getDate()).slice(-2);
         var month = ("0" + (time.getMonth() + 1)).slice(-2);
         var today = time.getFullYear() + "-" + (month) + "-" + (day);
+
         $('#mietezeitpunktStart').val(today);
         $('#mietezeitpunktEnd').val(today);
     })
@@ -149,7 +150,7 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if(startDate<nowDate){
+        if(startDate<(nowDate-(18*60*60*1000))){
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
@@ -176,7 +177,7 @@
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if(endDate<nowDate){
+        if(endDate<(nowDate-(18*60*60*1000))){
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;

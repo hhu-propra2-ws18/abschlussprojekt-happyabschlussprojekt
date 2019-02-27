@@ -129,7 +129,7 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < nowDate) {
+        if (startDate < (nowDate-(18*60*60*1000))) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
@@ -154,7 +154,7 @@
             var startTime = $("#mietezeitpunktStart").val().toString();
 
             var nowDate = Date.now();
-            if (endDate < nowDate) {
+            if (endDate < (nowDate-(18*60*60*1000))) {
                 alert("Das Enddatum darf nicht vor heute liegen.");
                 $("#mietezeitpunktEnd").val("");
                 return false;
