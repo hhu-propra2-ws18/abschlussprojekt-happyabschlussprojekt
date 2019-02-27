@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class InformationForMenuBadges {
-    int numberOfConflicts = 0;
-    int numberOfPersons = 0;
-    int numberOfNotifications = 0;
+    private int numberOfConflicts = 0;
+    private int numberOfPersons = 0;
+    private int numberOfNotifications = 0;
 }

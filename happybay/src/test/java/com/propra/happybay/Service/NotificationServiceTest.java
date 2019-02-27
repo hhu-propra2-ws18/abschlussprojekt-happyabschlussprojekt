@@ -102,7 +102,7 @@ public class NotificationServiceTest {
         Mockito.when(personService.getByUsername(anyString())).thenReturn(new Person());
 
 
-        notificationService.updateAnzahl("fakeName");
+        notificationService.updateAnzahlOfNotifications("fakeName");
         verify(notificationRepository,times(1)).findAllByBesitzer("fakeName");
         verify(personService,times(1)).getByUsername("fakeName");
 

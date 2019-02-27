@@ -54,14 +54,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="transaction : ${transactions}">
-                        <th scope="row" th:text="${transaction.giver}"></th>
-                        <td th:text="${transaction.receiver}"></td>
+                        <td th:text="${transaction.giver.username}"></td>
+                        <td th:text="${transaction.receiver.username}"></td>
                         <td th:text="${transaction.amount} + ' €'">Geld</td>
-                        <!--<td> <form action="/admin/erhoeheAmount" method="post">-->
-                        <!--<input type="hidden" name="username" th:value="${personMitAccount.person.username}">-->
-                        <!--<br>-->
-                        <!--<input type="submit" value="Erhöhe Kontostand">-->
-                        <!--</form> </td>-->
                     </tr>
                     </tbody>
                 </table>

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,14 +64,15 @@ public class DefaultController {
         }
 
         String name = principal.getName();
-        notificationService.updateAnzahl(name);
-        model.addAttribute("person", personRepository.findByUsername(name).get());
+        Person person = personRepository.findByUsername(name).get();
+        notificationService.updateAnzahlOfNotifications(person);
+        model.addAttribute("person", person);
 
-        List<RentEvent> rentEventsDedlineisClose = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_CLOSE);
+        List<RentEvent> rentEventsDedlineisClose = rentEventRepository.findAllByMieterAndReturnStatus(person, ReturnStatus.DEADLINE_CLOSE);
         List<GeraetWithRentEvent> remindRentThings = geraetService.returnGeraeteWithRentEvents(rentEventsDedlineisClose);
         model.addAttribute("remindRentThings", remindRentThings);
 
-        List<RentEvent> rentEventsDeadlineOver = rentEventRepository.findAllByMieterAndReturnStatus(name, ReturnStatus.DEADLINE_OVER);
+        List<RentEvent> rentEventsDeadlineOver = rentEventRepository.findAllByMieterAndReturnStatus(person, ReturnStatus.DEADLINE_OVER);
         List<GeraetWithRentEvent> overTimeThings = geraetService.returnGeraeteWithRentEvents(rentEventsDeadlineOver);
         model.addAttribute("overTimeThings", overTimeThings);
 

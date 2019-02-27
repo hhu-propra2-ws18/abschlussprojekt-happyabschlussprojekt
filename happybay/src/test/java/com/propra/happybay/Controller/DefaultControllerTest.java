@@ -146,7 +146,7 @@ public class DefaultControllerTest {
         verfuegbareEvents.add(rentEvent);
 
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
-        doNothing().when(notificationService).updateAnzahl(any());
+        doNothing().when(notificationService).updateAnzahlOfNotifications(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);

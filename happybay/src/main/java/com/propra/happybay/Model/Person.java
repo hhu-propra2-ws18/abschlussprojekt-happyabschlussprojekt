@@ -22,6 +22,7 @@ public class Person {
     @Transient
     private String passwordConfirm;
     private String role;
+
     private int anzahlNotifications = 0;
     @OneToOne(cascade = {CascadeType.ALL})
     private Bild foto;
