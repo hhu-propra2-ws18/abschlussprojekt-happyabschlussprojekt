@@ -1,10 +1,9 @@
 package com.propra.happybay.Controller;
 
-import com.propra.happybay.Model.Account;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.DefaultServices.UserValidator;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.NotificationService;
@@ -13,65 +12,80 @@ import com.propra.happybay.Service.UserServices.PictureService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
+@WebAppConfiguration
 public class DefaultControllerTest {
     private Person person = new Person();
     private Account account = new Account();
     private Geraet geraet=new Geraet();
     private List<Geraet> geraetList=new ArrayList<>();
-
-    @MockBean
+    private RentEvent rentEvent=new RentEvent();
+    private List<RentEvent> verfuegbareEvents=new ArrayList<>();
+    Date start = new Date(2019,10,20);
+    Date end = new Date(2019,11,21);
+    private TimeInterval timeInterval = new TimeInterval(start,end);
+    @Mock
     private PersonRepository personRepository;
-    @MockBean
+    @Mock
     GeraetRepository geraetRepository;
-    @MockBean
+    @Mock
     GeraetService geraetService;
-    @MockBean
+    @Mock
     PersonService personService;
     @Autowired
     public PasswordEncoder encoder;
     @Autowired
     private WebApplicationContext context;
     private MockMvc mvc;
-    @MockBean
+    @Mock
     BindingResult result;
-    @MockBean
+    @Mock
+    RentEventRepository rentEventRepository;
+    @Mock
     NotificationService notificationService;
-    @MockBean
+    @Mock
     UserValidator userValidator;
-    @MockBean
+    @Mock
     PictureService pictureService;
-
-    MultipartFile file=new MultipartFile() {
+    Principal principal = new Principal() {
+        @Override
+        public String getName() {
+            return "test";
+        }
+    };
+    private MultipartFile file=new MultipartFile() {
         @Override
         public String getName() {
             return null;
@@ -112,15 +126,11 @@ public class DefaultControllerTest {
 
         }
     };
-
-
-
     @Before
     public void setup() throws IOException {
         person.setUsername("testAdmin");
         person.setId(1L);
         person.setAdresse("test dusseldorf");
-        person.setPassword(encoder.encode("test"));
 
         //file
         byte[] bytes=new byte[100];
@@ -129,67 +139,66 @@ public class DefaultControllerTest {
         //gerät
         geraet.setId(2L);
         geraetList.add(geraet);
-        mvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
-    }
-    @WithMockUser(value = "test",roles = "USER")
-    @Test
-    public void index_USER() throws Exception {
+
+        rentEvent.setGeraetId(2L);
+        rentEvent.setMieter(person.getUsername());
+        rentEvent.setTimeInterval(timeInterval);
+        verfuegbareEvents.add(rentEvent);
+
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         doNothing().when(notificationService).updateAnzahl(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        doNothing().when(geraetService).checkRentEventStatus();
-        mvc.perform(get("/"))
+        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
+
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/jsp/view/");
+        viewResolver.setSuffix(".jsp");
+        mvc = MockMvcBuilders.standaloneSetup(new DefaultController(userValidator,rentEventRepository,geraetService,personService, personRepository,geraetRepository,notificationService))
+                .setViewResolvers(viewResolver)
+                .build();
+    }
+
+    @Test
+    public void index_USER() throws Exception {
+
+        mvc.perform(get("/").param("key","").principal(principal))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void index_NO_USER() throws Exception {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
-        doNothing().when(notificationService).updateAnzahl(any());
-        when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        doNothing().when(geraetService).checkRentEventStatus();
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }
-    @WithMockUser(value = "test",roles = "USER")
+
     @Test
     public void addToDatabase_noErrorPassWord() throws Exception {
         doNothing().when(userValidator).validate(any(),any());
-        doNothing().when(personService).makeAndSaveNewPerson(any(),any());
-
-        mvc.perform(post("/addNewUser").flashAttr("person",person).requestAttr("file", file))
+        mvc.perform(post("/addNewUser").principal(principal).flashAttr("person",person).requestAttr("file", file))
                 .andExpect(status().isOk());
+        verify(userValidator, Mockito.times(1)).validate(any(),any());
+
     }
-//    @WithMockUser(value = "test",roles = "USER")
-//    @Test
-//    public void addToDatabase_errorPassword() throws Exception {
-//        doNothing().when(userValidator).validate(any(),any());
-//        doNothing().when(personService).makeAndSaveNewPerson(any(),any());
-//        when(bindingResult.hasErrors()).thenReturn(false);
-//        mvc.perform(post("/addNewUser").flashAttr("person",person).requestAttr("file", file))
-//                .andExpect(status().isOk());
-//    }
     @Test
     public void register() throws Exception {
-        mvc.perform(get("/register").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/register").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
     public void login() throws Exception {
-        mvc.perform(get("/login").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/login").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
     public void loginWithError() throws Exception {
-        mvc.perform(get("/login").param("error","").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/login").principal(principal).param("error",""))
                 .andExpect(status().isOk());
     }
     @Test
     public void loginWithLogOut() throws Exception {
-        mvc.perform(get("/login").param("logout","").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/login").principal(principal).param("logout",""))
                 .andExpect(status().isOk());
     }
 

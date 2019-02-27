@@ -50,7 +50,7 @@ public class UserController {
     @Autowired
     NotificationService notificationService;
 
-    public UserController(AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
+    public UserController(ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
         this.personRepository = personRepository;
         this.geraetRepository=geraetRepository;
         this.notificationService=notificationService;
@@ -60,6 +60,7 @@ public class UserController {
         this.mailService=mailService;
         this.geraetService=geraetService;
         this.accountRepository=accountRepository;
+        this.proPayService=proPayService;
     }
 
     @GetMapping("/profile")
@@ -158,7 +159,7 @@ public class UserController {
     }
 
     @PostMapping("/geraet/changeToRent/{id}")
-    public String chaneToRent(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet, @RequestParam("files") MultipartFile[] files) throws IOException {
+    public String changeToRent(@PathVariable Long id, @ModelAttribute("geraet") Geraet geraet, @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         RentEvent verfuegbar = new RentEvent();
         TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
         TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
@@ -304,7 +305,6 @@ public class UserController {
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
-
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
@@ -316,9 +316,7 @@ public class UserController {
         RentEvent rentEvent = rentEventRepository.findById(id).get();
         rentEvent.setReturnStatus(ReturnStatus.WAITING_FOR_CONFIRMATION);
         rentEventRepository.save(rentEvent);
-
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
-
         Notification newNotification = new Notification();
         newNotification.setType("return");
         newNotification.setAnfragePerson(principal.getName());
@@ -435,13 +433,15 @@ public class UserController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(Model model, @RequestParam("file") MultipartFile file,
+    public String chageProfile(Model model, @RequestParam(value = "file",required = false) MultipartFile file,
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
-        Bild bild = new Bild();
-        bild.setBild(file.getBytes());
-        person.setFoto(bild);
+        if(file!=null){
+            Bild bild = new Bild();
+            bild.setBild(file.getBytes());
+            person.setFoto(bild);
+        }
         person.setNachname(p.getNachname());
         person.setKontakt(p.getKontakt());
         person.setVorname(p.getVorname());
@@ -461,7 +461,7 @@ public class UserController {
 
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
-                             @RequestParam("files") MultipartFile[] files) throws IOException {
+                             @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
         List<Bild> bilds = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files, bilds);
