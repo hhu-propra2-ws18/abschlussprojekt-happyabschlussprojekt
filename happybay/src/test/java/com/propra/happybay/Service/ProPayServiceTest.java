@@ -31,14 +31,7 @@ public class ProPayServiceTest {
         proPayService.saveAccount("Anton");
        Mockito.verify(accountRepository,times(1)).save(any());
     }
-//
-//    @Test
-//    public void testUpdateAccount(){
-//
-//        proPayService.updateAccount("Anton");
-//        Mockito.verify(accountRepository,times(1)).save(any());
-//
-//    }
+
     @Test
     public void testGetAccountInfoWithCorrectUrl() {
         ProPayService propayservice = new ProPayService();
@@ -150,39 +143,39 @@ public class ProPayServiceTest {
 
     }
 
-//
-//    @Test
-//    public void testReleaseReservation_CorrectUrl() {
-//        ProPayService proPayInterface = new ProPayService();
-//
-//        stubFor(post(urlEqualTo("/reservation/release/Anton"))
-//                .willReturn(aResponse().withStatus(200)));
-//
-//
-//        try{
-//            proPayInterface.releaseReservation("Anton", 1l);
-//        }catch(Exception e){
-//
-//        }
-//
-//        verify(postRequestedFor(urlEqualTo("/reservation/release/Anton")));
-//    }
-//
-//
-//    @Test
-//    public void testPunishReservation_CorrectUrl() {
-//        ProPayService proPayInterface = new ProPayService();
-//
-//        stubFor(post(urlEqualTo("/reservation/punish/Anton"))
-//                .willReturn(aResponse().withStatus(200)));
-//        try{
-//            proPayInterface.punishReservation("Anton",1l);
-//        }catch(Exception e){
-//
-//        }
-//
-//        verify(postRequestedFor(urlEqualTo("/reservation/punish/Anton")));
-//    }
+
+    @Test
+    public void testReleaseReservation_CorrectUrl() {
+        ProPayService proPayInterface = new ProPayService();
+
+        stubFor(post(urlEqualTo("/reservation/release/Anton"))
+                .willReturn(aResponse().withStatus(200)));
+
+
+        try{
+            proPayInterface.releaseReservation("Anton", 2);
+        }catch(Exception e){
+
+        }
+
+        verify(postRequestedFor(urlEqualTo("/reservation/release/Anton")));
+    }
+
+
+    @Test
+    public void testPunishReservation_CorrectUrl() {
+        ProPayService proPayInterface = new ProPayService();
+
+        stubFor(post(urlEqualTo("/reservation/punish/Anton"))
+                .willReturn(aResponse().withStatus(200)));
+        try{
+            proPayInterface.punishReservation("Anton","besitzer",2,200);
+        }catch(Exception e){
+
+        }
+
+        verify(postRequestedFor(urlEqualTo("/reservation/punish/Anton")));
+    }
 
 
 }

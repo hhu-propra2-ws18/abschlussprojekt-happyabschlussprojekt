@@ -3,10 +3,7 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Repository.GeraetRepository;
-import com.propra.happybay.Repository.NotificationRepository;
-import com.propra.happybay.Repository.PersonRepository;
-import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.DefaultServices.UserValidator;
 import com.propra.happybay.Service.UserServices.GeraetService;
@@ -48,6 +45,16 @@ public class DefaultController {
     private RentEventRepository rentEventRepository;
     @Autowired
     private PersonService personService;
+
+    public DefaultController(UserValidator userValidator, RentEventRepository rentEventRepository, GeraetService geraetService, PersonService personService, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
+        this.personRepository=personRepository;
+        this.geraetRepository=geraetRepository;
+        this.personService=personService;
+        this.notificationService=notificationService;
+        this.geraetService=geraetService;
+        this.rentEventRepository=rentEventRepository;
+        this.userValidator=userValidator;
+    }
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
