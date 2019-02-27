@@ -103,7 +103,7 @@
             $("#mietezeitpunktEnd").val("");
             return false;
         }
-        else if(startDate<nowDate){
+        else if(startDate<(nowDate-(18*60*60*1000))){
             alert("Start Datum muss nach heute sein!");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");

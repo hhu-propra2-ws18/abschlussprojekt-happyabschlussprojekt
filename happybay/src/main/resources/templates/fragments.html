@@ -83,7 +83,7 @@
                 </li>
                 <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Sale</span>
                 </li>
-                <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar</span>
+                <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
                 <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
                     font-weight: bold; margin-left: 20px">
                     <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
@@ -94,7 +94,7 @@
                     </tr>
                 </li>
                 <br/>
-                <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen</span>
+                <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen im Zeitraum: </span>
                 <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
                     font-weight: bold; margin-left: 20px; opacity: 0.6">
                     <tr>
