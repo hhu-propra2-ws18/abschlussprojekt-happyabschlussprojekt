@@ -421,7 +421,6 @@ public class UserController {
         Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
         personService.makeComment(geraet, person, grund);
-//        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
         try {
             proPayService.ueberweisen(notification.getAnfragePerson(), notification.getBesitzer(), (int) amount);

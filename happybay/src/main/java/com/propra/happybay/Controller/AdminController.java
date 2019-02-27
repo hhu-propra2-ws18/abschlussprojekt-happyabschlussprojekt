@@ -82,7 +82,6 @@ public class AdminController {
         } catch (IOException e) {
             return"/admin/propayAdminNotAvailable";
         }
-        geraetService.checkForTouchingIntervals(geraet, rentEvent);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
@@ -103,7 +102,7 @@ public class AdminController {
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
-        return "redirect:/admin/conflicts";
+        return "redirect://localhost:8080/admin/conflicts";
     }
 
     @PostMapping("/changePassword")
