@@ -31,15 +31,31 @@
                     <input type="password" name="password" class="form-control" placeholder="Password"><br>
                     <label>Bitte bestätigen Sie ihr Password:</label>
                     <input type="password" name="passwordConfirm" class="form-control" placeholder="Bitte wiederholen Sie ihr Password"><br>
-                    <label>Profilbild hochladen (Max. 15 MB) : </label><br/>
-                    <input style="padding-top: 10px" type = "file" name = "file" accept="image/png, image/jpeg, image/gif, image/jpg" />
+                    <label>Profilbild hochladen (Max. 15 MB, nur png, jpg, jpeg und gif.) : </label><br/>
+                    <input style="padding-top: 10px" type = "file" name = "file" accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFoto(this)" />
                     <br><br/>
                     <button class="btn btn-primary" type="submit" style="position: relative">Submit</button>
                 </div>
             </form>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+
+        function checkFoto(fnUpload) {
+            var filename = fnUpload.value;
+            var mime = filename.toLowerCase().substr(filename.lastIndexOf("."));
+
+            if(mime!=".jpg" && mime!=".jpeg" && mime!=".gif" && mime!=".png")
+                alert("Bitte jpg oder jpeg oder png oder gif Bild.");
+                fnUpload.outerHTML = fnUpload.outerHTML;
+        }
+
+
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>

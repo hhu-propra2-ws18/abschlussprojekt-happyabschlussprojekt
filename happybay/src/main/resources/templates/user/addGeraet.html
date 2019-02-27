@@ -59,7 +59,7 @@
             <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
-            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkBilder(this)"/>
             <br/><br/>
 
             <button type="submit" class="btn btn-primary">Save</button>
@@ -198,7 +198,17 @@
         }
     }
 
-
+    function checkBilder(fnUpload) {
+            var filename = fnUpload.value;
+            while (true) {
+                var mime = filename.toLowerCase().substr(filename.lastIndexOf("."));
+                if (mime == "") break;
+                if (mime != ".jpg" || mime != ".jpeg" || mime != ".gif" || mime != ".png"){
+                    alert("Bitte jpg oder jpeg oder png oder gif Bild.");
+                    fnUpload.outerHTML = fnUpload.outerHTML;
+                }
+            }
+    }
 </script>
 </body>
 </html>
