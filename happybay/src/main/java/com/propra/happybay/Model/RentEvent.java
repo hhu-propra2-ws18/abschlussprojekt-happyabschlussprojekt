@@ -14,7 +14,7 @@ public class RentEvent {
     Long Id;
     int reservationId;
     Long geraetId;
-
+    String grundForReturn = "";
     @Embedded
     TimeInterval timeInterval;
     String mieter; //username
