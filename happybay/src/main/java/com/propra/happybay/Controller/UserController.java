@@ -451,8 +451,10 @@ public class UserController {
     }
 
     @GetMapping("/geraet/addLikes/{id}")
-    public String like(@PathVariable Long id) {
-        geraetService.addLike(id);
+    public String like(@PathVariable Long id, Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        geraetService.addLike(id, person);
         return "redirect://localhost:8080";
     }
 

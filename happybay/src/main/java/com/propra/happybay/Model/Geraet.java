@@ -7,7 +7,9 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -28,7 +30,8 @@ public class Geraet {
     String encode;
     int likes = 0;
     boolean forsale;
-
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Person> likedPerson = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     List<RentEvent> verfuegbareEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)

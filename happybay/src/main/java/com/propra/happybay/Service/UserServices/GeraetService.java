@@ -1,10 +1,7 @@
 package com.propra.happybay.Service.UserServices;
 
-import com.propra.happybay.Model.Bild;
-import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
-import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.ReturnStatus;
@@ -17,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -151,9 +149,19 @@ public class GeraetService {
         geraetRepository.save(geraet1);
     }
 
-    public void addLike(Long id) {
+    public void addLike(Long id,Person person) {
         Geraet geraet = geraetRepository.findById(id).get();
-        geraet.setLikes(geraet.getLikes() + 1);
+        List<Person> likedPerson = geraet.getLikedPerson();
+        boolean hasAlreadyLiked = false;
+        for(int i = 0; i < likedPerson.size(); i++) {
+            if (likedPerson.get(i).getUsername().equals(person.getUsername())) {
+                hasAlreadyLiked = true;
+            }
+        }
+        if (!hasAlreadyLiked) {
+            geraet.getLikedPerson().add(person);
+            geraet.setLikes(geraet.getLikes() + 1);
+        }
         geraetRepository.save(geraet);
     }
 }

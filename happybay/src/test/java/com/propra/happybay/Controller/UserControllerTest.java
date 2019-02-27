@@ -350,7 +350,7 @@ public class UserControllerTest {
     @Test
     public void like() throws Exception {
 
-        mvc2.perform(get("/user/geraet/addLikes/{id}",1L))
+        mvc2.perform(get("/user/geraet/addLikes/{id}",1L).principal(principal))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 

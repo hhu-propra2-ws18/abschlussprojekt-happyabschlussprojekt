@@ -64,13 +64,13 @@
                      width: 100%; object-fit: cover"
                  th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
             <div class="card-body">
-                <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
-                        font-size: x-large">Content</p>
-                <br>
                 <a class="nav-link" th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}">
                     <i class="far fa-heart"></i>
                     <span class="badge badge-pill badge-info" th:text="${geraet.getLikes()}">4</span>
                 </a>
+                <br>
+                <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
+                        font-size: x-large">Content</p>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
