@@ -11,7 +11,10 @@
     document.getElementById('mietezeitpunktEnd').style.display = '';
     document.getElementById('kautionLabel').style.display = '';
     document.getElementById('mietezeitpunktStartLabel').style.display = '';
-    document.getElementById('mietezeitpunktEndLabel').style.display = '' " checked/>
+    document.getElementById('mietezeitpunktEndLabel').style.display = '' ;
+    document.getElementById('miete').style.display='';
+    document.getElementById('preis').style.display='none';
+    makeFalse()" checked/>
     <label for="rent">Ich möchte verleihen</label>
     <input type="radio" name="option" id="sale" onclick="document.getElementById('kaution').style.display = 'none';
     document.getElementById('mietezeitpunktStart').style.display = 'none';
@@ -19,7 +22,9 @@
     document.getElementById('kautionLabel').style.display = 'none';
     document.getElementById('mietezeitpunktStartLabel').style.display = 'none';
     document.getElementById('mietezeitpunktEndLabel').style.display = 'none';
-    checkForsale()"/>
+    document.getElementById('miete').style.display='none';
+    document.getElementById('preis').style.display='';
+    makeTrue()"/>
     <label for="sale">Ich möchte verkaufen</label>
 
     <div class="row justify-content-md-center">
@@ -33,13 +38,14 @@
             <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
                    placeholder="Eingabe Beschreibung."  required/>
 
-            <label for="kosten">Miete Pro Tag:</label>
+            <label for="kosten" id="miete">Miete Pro Tag:</label>
+            <label for="kosten" id="preis" style="display: none">Preis:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
                    placeholder="Eingabe Miete Pro Tag." onchange="checkKosten()" required/>
 
             <label id="kautionLabel">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
-                   placeholder="Eingabe Kaution." onchange="checkKaution()" value="0"/>
+                   placeholder="Eingabe Kaution." onblur="checkKaution()" value="0"/>
 
                 <!--why for kaution?-->
             <label for="abholort">Abholort:</label>
@@ -81,8 +87,13 @@
         $('#mietezeitpunktEnd').val(today);
     })
 
-    function checkForsale() {
+    function makeTrue() {
         var a = true;
+        $('#forsale').val(a);
+    }
+
+    function makeFalse() {
+        var a = false;
         $('#forsale').val(a);
     }
 
@@ -138,12 +149,11 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if(startDate<nowDate && isnull(endTime)){
+        if (startDate < nowDate) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
-        }
-        else if(!isnull(endTime)){
+        } else {
             var arrayForEndTime = endTime.split("-");
             var endDate =new Date(arrayForEndTime[0],parseInt(arrayForEndTime[1])-1,arrayForEndTime[2]);
             if(startDate > endDate){
@@ -155,9 +165,6 @@
                 return true;
             }
         }
-        else{
-            return true;
-        }
     }
 
     function checkEndTime() {
@@ -168,12 +175,11 @@
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if(endDate<nowDate && isnull(startTime)){
+        if (endDate < nowDate) {
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;
-        }
-        else if(!isnull(startTime)){
+        } else {
             var arrayForStartTime = startTime.split("-");
             var startDate =new Date(arrayForStartTime[0],parseInt(arrayForStartTime[1])-1,arrayForStartTime[2]);
             if(startDate > endDate){
@@ -184,9 +190,6 @@
             else{
                 return true;
             }
-        }
-        else{
-            return true;
         }
     }
     function isnull(str) {
