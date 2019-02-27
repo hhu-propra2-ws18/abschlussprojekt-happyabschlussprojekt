@@ -29,7 +29,7 @@
         <li>
     <form th:action="@{/user/propayErhoehung}"  method="post" >
         <label for="amount">Betrag:</label>
-        <input style="margin-bottom: 10px" type="number" class="form-control" name="amount" id="amount"/>
+        <input style="margin-bottom: 10px" type="text" class="form-control" name="amount" id="amount" required pattern="[0-9]{1,8}"/>
         <input type="hidden" name="account" th:value="${account.account}">
         <button type="submit" class="btn btn-primary">Aufladen</button>
     </form>
