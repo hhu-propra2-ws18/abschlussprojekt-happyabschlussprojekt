@@ -20,8 +20,8 @@
             th:value="${person.getNachname()}"/>
 
             <label for="kontakt">Kontakt : </label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kontakt" id="kontakt"
-            th:value="${person.getKontakt()}"/>
+            <input style="margin-bottom: 10px" type="email" class="form-control" name="kontakt" id="kontakt"
+            th:value="${person.getKontakt()}" required/>
 
             <label for="adresse">Adresse :</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="adresse" id="adresse"

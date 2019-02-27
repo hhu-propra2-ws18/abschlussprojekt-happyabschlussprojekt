@@ -7,59 +7,66 @@
 
 <div class="container" th:if="${person.getRole()=='ROLE_USER'}">
 <div class="row">
-    <div th:each="myThing: ${notification}" class="col-sm-3">
+    <div class="card" style="width: 25rem; border-style: wave; border-width: 10px;" th:each="notification: ${notifications}" >
         <div class="clearfix" style="margin-bottom: 20px;">
             <div class="card" style="padding-top: 40px;padding-bottom: 40px">
-                <ul class="list-inline card-text" th:if="${myThing.getType()=='ausleihen'}">
+                <ul class="list-inline card-text" th:if="${notification.getNotification().getType()=='ausleihen'}">
                     <span class="badge badge-warning">Neue Anfrage zum Ausleihen</span>
                 </ul>
-                <ul class="list-inline card-text" th:if="${myThing.getType()=='zurueck'}">
+                <ul class="list-inline card-text" th:if="${notification.getNotification().getType()=='zurueck'}">
                     <span class="badge badge-warning">Neue Anfrage zum Zurückgeben</span>
                 </ul>
-                <img th:if="${myThing.getEncode()==null}" class="card-img-top"
+                <img th:if="${notification.getNotification().getEncode()==null}" class="card-img-top"
                      src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-                <img th:unless="${myThing.getEncode()==null}" class="card-img-top"
-                     th:src="@{'data:image/jpeg;base64,'+ ${myThing.getEncode()}}">
+                <img th:unless="${notification.getNotification().getEncode()==null}" class="card-img-top"
+                     th:src="@{'data:image/jpeg;base64,'+ ${notification.getNotification().getEncode()}}">
                 <div class="card-body text-left">
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Message: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(myThing.getMessage(),100)}"></li>
+                        <li class="list-inline-item font-weight-bold">Anfragende Person: </li>
+                        <li class="list-inline-item" th:text="${notification.getNotification().getAnfragePerson()}"></li>
+                    </ul>
+                    <ul class="list-inline card-text">
+                        <li class="list-inline-item font-weight-bold" >Nachricht: </li>
+                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(notification.getNotification().getMessage(),100)}"></li>
                     </ul>
                     <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktStart:</li>
-                        <li class="list-inline-item" th:text="${myThing.getMietezeitpunktStart()}"></li>
+                        <li class="list-inline-item font-weight-bold">Gewünschter erster Tag:</li>
+                        <li class="list-inline-item" th:text="${#dates.format(notification.getNotification().getMietezeitpunktStart(), 'dd.MM.yyyy')}"></li>
                     </ul>
                     <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Miete ZeitPunktEnd:</li>
-                        <li class="list-inline-item" th:text="${myThing.getMietezeitpunktEnd()}"></li>
+                        <li class="list-inline-item font-weight-bold">Gewünschter letzter Tag:</li>
+                        <li class="list-inline-item" th:text="${#dates.format(notification.getNotification().getMietezeitpunktEnd(), 'dd.MM.yyyy')}"></li>
                     </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Anfrage Person: </li>
-                        <li class="list-inline-item" th:text="${myThing.getAnfragePerson()}"></li>
-                    </ul>
-                    <div th:if="${myThing.getType()=='request'}" >
-                        <form th:action="@{/user/notification/refuseRequest/{id}(id=${myThing.getId()})}" method="post">
+
+                    <div th:if="${notification.getNotification().getType()=='request'}" >
+                        <form th:action="@{'/user/mieterInfo/' +${notification.getAnfragePerson().getId()}}">
+                            <button class="btn btn-primary" type="submit">
+                                Info zur Person
+                            </button>
+                        </form>
+                        <br>
+                        <form th:action="@{/user/notification/refuseRequest/{id}(id=${notification.getNotification().getId()})}" method="post">
                             <button type="submit" style="background-color: red">Anfrage ablehnen</button>
 
                         </form>
                         <br/>
                         <!--Here Mach API BEZAHLEN-->
-                        <form th:action="@{/user/notification/acceptRequest/{id}(id=${myThing.getId()})}" method="post">
+                        <form th:action="@{/user/notification/acceptRequest/{id}(id=${notification.getNotification().getId()})}" method="post">
                             <button type="submit" style="background-color: green">Anfrage annehmen</button>
 
                         </form>
                         <!-- Button trigger modal -->
                     </div>
-                    <div th:if="${myThing.getType()=='return'}" >
-                        <form th:action="@{/user/notification/refuseReturn/{id}(id=${myThing.getId()})}" method="post">
-                            <input type="text" name="grund"/>
-                            <button type="submit">Ablehnen Return</button>
-                            <input type="text" name="grund" placeholder="Bitte geben Sie den Grund an:">
-
+                    <div th:if="${notification.getNotification().getType()=='return'}" >
+                        <form th:action="@{/user/notification/refuseReturn/{id}(id=${notification.getNotification().getId()})}" method="post">
+                            <input type="text" class="form-control" name="grund" placeholder="Ist das Gerät in schlechtem Zustand zurückgegeben worden?"/>
+                            <button type="submit">Konflikt bei Admin auslösen</button>
                         </form>
+                        <br>
                         <!--Here Mach API BEZAHLEN-->
-                        <form th:action="@{/user/notification/acceptReturn/{id}(id=${myThing.getId()})}" method="post">
-                            <button type="submit">Annehmen Return</button>
+                        <form th:action="@{/user/notification/acceptReturn/{id}(id=${notification.getNotification().getId()})}" method="post">
+                            <input type="text" name="grund" class="form-control" placeholder="Ist die Verleihe reibunglos verlaufen?">
+                            <button type="submit">Das Gerät zurücknehmen</button>
 
                         </form>
                         <!-- Button trigger modal -->

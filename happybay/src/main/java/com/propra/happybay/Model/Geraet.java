@@ -7,7 +7,9 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -20,29 +22,20 @@ public class Geraet {
     @Column(length = 1000)
     String beschreibung;
     String titel;
-    boolean verfuegbar;
-    String mieter;
-
-    int zeitraum;
-
     int kosten;
     int kaution;
     String abholort;
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
-
-    Date mietezeitpunkt;
-
-    LocalDate endzeitpunkt;
     String encode;
-    ReturnStatus returnStatus = ReturnStatus.DEFAULT;
-    String grundReturn = "Das Gerät ist beschädigt";
     int likes = 0;
-
+    boolean forsale;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Person> likedPerson = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     List<RentEvent> verfuegbareEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
-    List<RentEvent> rentEvents;
+    List<RentEvent> rentEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     List<Bild> bilder = new ArrayList<>();
 }

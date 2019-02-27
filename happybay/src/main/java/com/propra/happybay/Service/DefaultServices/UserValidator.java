@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.DefaultServices;
 
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Repository.PersonRepository;

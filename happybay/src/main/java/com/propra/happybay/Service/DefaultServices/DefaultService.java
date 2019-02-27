@@ -5,7 +5,6 @@ import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,11 +20,7 @@ public class DefaultService {
     @Autowired
     GeraetRepository geraetRepository;
     @Autowired
-    private UserValidator userValidator;
-    @Autowired
     public PasswordEncoder encoder;
-    @Autowired
-    private ProPayService proPayService;
 
 
     public String encodeBild(Bild bild) {

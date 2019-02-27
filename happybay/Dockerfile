@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk-alpine AS build
-WORKDIR /person-scs
+WORKDIR /happybay-scs
 COPY . ./
 RUN ./gradlew --no-daemon --stacktrace clean bootJar
 

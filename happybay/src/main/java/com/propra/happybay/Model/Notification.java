@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,13 +14,16 @@ public class Notification {
     @GeneratedValue
     Long id;
     Long geraetId;
+    Long rentEventId;
     String type;
     String message;
     String besitzer;
     String anfragePerson;
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
-    int zeitraum;
     String encode;
+
+//    @OneToMany
+//    List<Long> conflictIds = new ArrayList<>();
 }
 

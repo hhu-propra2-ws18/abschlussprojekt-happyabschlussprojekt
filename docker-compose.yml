@@ -9,13 +9,13 @@ services:
       - ./proxy/conf/domain.conf:/etc/nginx/domain.conf:ro
 
   # ========================================
-  person:
-    build: ./happybay-scs
+  happybay:
+    image: happybay-scs
     environment:
-      - DATABASE_HOST=persondb
+      - DATABASE_HOST=happybaydb
       - DATABASE_USER=root
       - DATABASE_PASSWORD=root
-      - DATABASE_NAME=personen
+      - DATABASE_NAME=happybay
     depends_on:
       - happybaydb
   happybaydb:
@@ -26,5 +26,9 @@ services:
       - MYSQL_PASSWORD=root
     volumes:
       - ./datavolume_happybay:/var/lib/mysql
+  propay:
+    image: propra/propay:latest
+    ports:
+      - "8888:8888"
   # ========================================
 

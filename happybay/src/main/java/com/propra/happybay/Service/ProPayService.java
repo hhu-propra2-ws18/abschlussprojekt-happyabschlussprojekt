@@ -1,12 +1,8 @@
 package com.propra.happybay.Service;
 
 import com.propra.happybay.Model.Account;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.GeraetMitReservationID;
-import com.propra.happybay.Repository.AccountRepository;
-import com.propra.happybay.Repository.GeraetMitReservationIDRepository;
-import com.propra.happybay.Repository.GeraetRepository;
-import com.propra.happybay.Repository.PersonRepository;
+import com.propra.happybay.Model.Transaction;
+import com.propra.happybay.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -17,6 +13,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.Duration;
+import java.util.List;
 
 @Service
 public class ProPayService {
@@ -28,14 +26,11 @@ public class ProPayService {
     @Autowired
     GeraetRepository geraetRepository;
     @Autowired
-    GeraetMitReservationIDRepository geraetMitReservationIDRepository;
+    TransactionRepository transactionRepository;
+
+    static String propayAdress = "localhost";
 
     public void saveAccount(String username) {
-        Account account = getEntity(username, Account.class);
-        accountRepository.save(account);
-    }
-
-    public void updateAccount(String username) {
         Account account = getEntity(username, Account.class);
         accountRepository.save(account);
     }
@@ -44,27 +39,29 @@ public class ProPayService {
         final Mono<T> mono = WebClient
                 .create()
                 .get()
-                .uri("http://localhost:8888/account/" + username)
+                .uri("http://" + propayAdress + ":8888/account/" + username)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
-                .bodyToMono(type);
+                .bodyToMono(type).timeout(Duration.ofSeconds(5));
         return mono.block();
     }
 
     public void erhoeheAmount(String username, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/account/" + username);
+        URL url = new URL("http://" + propayAdress + ":8888/account/" + username);
         makeQuery(amount, "amount", url);
         saveAccount(username);
+        saveTransaction(amount, username, username);
     }
 
     public void ueberweisen(String username, String besizer, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/account/"  + username + "/transfer/" + besizer);
+        URL url = new URL("http://" + propayAdress + ":8888/account/"  + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
         saveAccount(username);
+        saveTransaction(amount, besizer, username);
     }
 
     public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
-        URL url = new URL("http://localhost:8888/reservation/reserve/"  + mieter + "/" + besitzer);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/reserve/"  + mieter + "/" + besitzer);
         Reader reader = makeQuery(amount, "amount", url);
 
         String response = ((BufferedReader) reader).readLine();
@@ -73,32 +70,17 @@ public class ProPayService {
         return Integer.parseInt(lines2[0]);
     }
 
-    public void releaseReservation(String mieter, Long geraetId) throws IOException {
-        Geraet geraet = geraetRepository.findById(geraetId).get();
-        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
-        Long reservationId = geraetMitReservationID.getReservationID();
-        int reservationIdInt = reservationId.intValue();
-
-        URL url = new URL("http://localhost:8888/reservation/release/"  + mieter);
-        makeQuery(reservationIdInt, "reservationId",url);
-
+    public void releaseReservation(String mieter, int reservationId) throws IOException {
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/release/"  + mieter);
+        makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
-        saveAccount(geraet.getBesitzer());
     }
 
-    public void punishReservation(String mieter, Long geraetId) throws IOException {
-        Geraet geraet = geraetRepository.findById(geraetId).get();
-        System.out.println();
-        System.out.println(mieter);
-        System.out.println();
-        GeraetMitReservationID geraetMitReservationID = geraetMitReservationIDRepository.findByGeraetID(geraetId);
-        Long reservationId = geraetMitReservationID.getReservationID();
-        int reservationIdInt = reservationId.intValue();
-
-        URL url = new URL("http://localhost:8888/reservation/punish/"  + mieter);
-        makeQuery(reservationIdInt, "reservationId", url);
+    public void punishReservation(String mieter, String besitzer, int reservationId, int kaution) throws IOException {
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/punish/"  + mieter);
+        makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
-        saveAccount(geraet.getBesitzer());
+        saveTransaction(kaution, besitzer, mieter);
     }
 
     private Reader makeQuery(int amount, String amountString, URL url) throws IOException {
@@ -115,8 +97,23 @@ public class ProPayService {
         connection.setRequestProperty("Content-Length", String.valueOf(queryBytes.length));
         connection.setDoOutput(true);
         connection.getOutputStream().write(queryBytes);
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
 
         Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
         return reader;
+    }
+
+    public List<Transaction> getAllTransactionForPerson(String username) {
+        List<Transaction> transactions = transactionRepository.findAllByReceiverOrGiver(username, username);
+        return transactions;
+    }
+
+    private void saveTransaction(int amount, String receiver, String giver) {
+        Transaction transaction = new Transaction();
+        transaction.setReceiver(receiver);
+        transaction.setAmount(amount);
+        transaction.setGiver(giver);
+        transactionRepository.save(transaction);
     }
 }

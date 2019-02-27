@@ -1,6 +1,5 @@
 package com.propra.happybay.Repository;
 
-import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Notification;
 import org.springframework.data.repository.CrudRepository;
 
@@ -11,5 +10,4 @@ public interface NotificationRepository extends CrudRepository<Notification,Long
     List<Notification> findByGeraetId(Long id);
     List<Notification> findAllByGeraetId(Long id);
     List<Notification> findAllByBesitzer(String besitzer);
-
 }
