@@ -53,14 +53,14 @@
                    placeholder="Eingabe Abholort." required/>
 
             <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktStart"
+            <input style="margin-bottom: 10px" type="date"   class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte." onchange="checkStartTime()"/>
+                   placeholder="Eingabe start Zeitpunkte." onblur="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="mietezeitpunktEnd"
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
-                   placeholder="Eingabe ende Zeitpunkte." onchange="checkEndTime()"/>
+                   placeholder="Eingabe ende Zeitpunkte." onblur="checkEndTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
 

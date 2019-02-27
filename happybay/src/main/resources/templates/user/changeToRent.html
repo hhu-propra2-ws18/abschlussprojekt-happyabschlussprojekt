@@ -39,13 +39,13 @@
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
                    placeholder="Eingabe start Zeitpunkte." th:value="${geraet.getMietezeitpunktStart()}"
-                   onchange="checkStartTime()"/>
+                   onblur="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
                    placeholder="Eingabe ende Zeitpunkte." th:value="${geraet.getMietezeitpunktEnd()}"
-                   onchange="checkEndTime()"/>
+                   onblur="checkEndTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
             <input style="padding-top: 10px" type="file" name="files" multiple
