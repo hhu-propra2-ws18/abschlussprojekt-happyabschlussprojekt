@@ -32,8 +32,8 @@ public class GeraetService {
         return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
     }
 
-    public List<Geraet> getAllByBesitzerWithBilder(String name){
-        return setEncode(geraetRepository.findAllByBesitzer(name));
+    public List<Geraet> getAllByBesitzerWithBilder(Person besitzer){
+        return setEncode(geraetRepository.findAllByBesitzer(besitzer));
     }
 
     public List<String> geraetBilder(Geraet geraet){
@@ -119,7 +119,7 @@ public class GeraetService {
         List<GeraetWithRentEvent> overTimeThings = new ArrayList<>();
         for (RentEvent rentEvent : rentEventsDeadlineOver) {
             GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
-            geraetWithRentEvent.setGeraet(geraetRepository.findById(rentEvent.getGeraetId()).get());
+            geraetWithRentEvent.setGeraet(rentEvent.getGeraet());
             geraetWithRentEvent.setRentEvent(rentEvent);
             overTimeThings.add(geraetWithRentEvent);
         }

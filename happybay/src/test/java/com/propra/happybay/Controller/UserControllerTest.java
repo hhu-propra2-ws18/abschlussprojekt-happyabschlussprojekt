@@ -152,7 +152,7 @@ public class UserControllerTest {
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
         //
-        doNothing().when(notificationService).updateAnzahl(anyString());
+        doNothing().when(notificationService).updateAnzahlOfNotifications(anyString());
         //notificationRepository
         doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
         when(notificationRepository.findById(any())).thenReturn(Optional.ofNullable(notification));

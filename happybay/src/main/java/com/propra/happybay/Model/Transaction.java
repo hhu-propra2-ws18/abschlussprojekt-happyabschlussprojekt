@@ -2,9 +2,7 @@ package com.propra.happybay.Model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -13,6 +11,8 @@ public class Transaction {
     @GeneratedValue
     private Long id;
     private int amount;
-    private String receiver;
-    private String giver;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person receiver;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person giver;
 }

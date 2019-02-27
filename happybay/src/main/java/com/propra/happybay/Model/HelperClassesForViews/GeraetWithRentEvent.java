@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class GeraetWithRentEvent {
-    Geraet geraet;
-    RentEvent rentEvent;
+    private Geraet geraet;
+    private RentEvent rentEvent;
 }

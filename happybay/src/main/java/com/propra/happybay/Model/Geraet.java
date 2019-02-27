@@ -17,26 +17,36 @@ public class Geraet {
 
     @Id
     @GeneratedValue
-    Long id;
-    String besitzer;
+    private Long id;
     @Column(length = 1000)
-    String beschreibung;
-    String titel;
-    int kosten;
-    int kaution;
-    String abholort;
-    Date mietezeitpunktStart;
-    Date mietezeitpunktEnd;
-    String encode;
-    int likes = 0;
-    boolean forsale;
-    @ManyToMany(cascade = CascadeType.ALL)
-    List<Person> likedPerson = new ArrayList<>();
+    private String beschreibung;
+    private String titel;
+    private int kosten;
+    private int kaution;
+    private String abholort;
+    private Date mietezeitpunktStart;
+    private Date mietezeitpunktEnd;
+    private String encode;
+    private int likes = 0;
+    private boolean forsale;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person besitzer;
     @OneToMany(cascade = CascadeType.ALL)
-    List<RentEvent> verfuegbareEvents = new ArrayList<>();
+    private List<Person> likedPerson = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
-    List<RentEvent> rentEvents = new ArrayList<>();
+    private List<RentEvent> verfuegbareEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
-    List<Bild> bilder = new ArrayList<>();
+    private List<RentEvent> rentEvents = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Bild> bilder = new ArrayList<>();
+
+    public String getBesitzerUsername() {
+        return besitzer.getUsername();
+    }
+
+    public Long getBesitzerId() {
+        return besitzer.getId();
+    }
 }
 

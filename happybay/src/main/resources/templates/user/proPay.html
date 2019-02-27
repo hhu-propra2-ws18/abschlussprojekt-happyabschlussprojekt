@@ -54,8 +54,8 @@
                     </thead>
                     <tbody>
                     <tr th:each="transaction : ${transactions}">
-                        <th scope="row" th:text="${transaction.giver}"></th>
-                        <td th:text="${transaction.receiver}"></td>
+                        <td th:text="${transaction.giver.username}"></td>
+                        <td th:text="${transaction.receiver.username}"></td>
                         <td th:text="${transaction.amount} + ' €'">Geld</td>
                     </tr>
                     </tbody>

@@ -12,17 +12,12 @@ import java.util.List;
 public class Comment {
     @Id
     @GeneratedValue
-    Long id;
-
-    Long personId;
-
-    String geraetTitel;
-
-    String message;
-
-    String senderFrom;
-
-    LocalDate date;
+    private Long id;
+    private Long personId;
+    private String geraetTitel;
+    private String message;
+    private String senderFrom;
+    private LocalDate date;
 
 }
 
