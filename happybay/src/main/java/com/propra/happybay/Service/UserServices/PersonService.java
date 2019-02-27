@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -113,5 +114,20 @@ public class PersonService {
             bild.setBild(file.getBytes());
             bilds.add(bild);
         }
+    }
+
+    //Braucht Test
+    public Person savePerson(Principal principal, MultipartFile file, Person p) throws IOException {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
+        Bild bild = new Bild();
+        bild.setBild(file.getBytes());
+        person.setFoto(bild);
+        person.setNachname(p.getNachname());
+        person.setKontakt(p.getKontakt());
+        person.setVorname(p.getVorname());
+        person.setAdresse(p.getAdresse());
+        personRepository.save(person);
+        return person;
     }
 }

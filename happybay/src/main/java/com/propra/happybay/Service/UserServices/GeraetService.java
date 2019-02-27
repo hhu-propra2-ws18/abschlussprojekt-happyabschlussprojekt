@@ -11,7 +11,9 @@ import com.propra.happybay.ReturnStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Collections;
@@ -26,6 +28,8 @@ public class GeraetService {
     PictureService pictureService;
     @Autowired
     RentEventRepository rentEventRepository;
+    @Autowired
+    PersonService personService;
 
     public List<Geraet> getAllWithKeyWithBiler(String key){
         return setEncode(geraetRepository.findAllByTitelLike("%"+key+"%"));
@@ -131,5 +135,25 @@ public class GeraetService {
         Date end = new Date(timeInterval.getEnd().getTime() + 60 * 60 * 1000);
         TimeInterval newTimeInterval = new TimeInterval(start, end);
         return newTimeInterval;
+    }
+
+    //Braucht Test
+    public void saveGeraet(MultipartFile[] files, Geraet geraet, Long id) throws IOException {
+        Geraet geraet1 = geraetRepository.findById(id).get();
+        List<Bild> bilds = new ArrayList<>();
+        personService.umwechsleMutifileZumBild(files, bilds);
+        geraet1.setBilder(bilds);
+        geraet1.setKosten(geraet.getKosten());
+        geraet1.setTitel(geraet.getTitel());
+        geraet1.setBeschreibung(geraet.getBeschreibung());
+        geraet1.setKaution(geraet.getKaution());
+        geraet1.setAbholort(geraet.getAbholort());
+        geraetRepository.save(geraet1);
+    }
+
+    public void addLike(Long id) {
+        Geraet geraet = geraetRepository.findById(id).get();
+        geraet.setLikes(geraet.getLikes() + 1);
+        geraetRepository.save(geraet);
     }
 }

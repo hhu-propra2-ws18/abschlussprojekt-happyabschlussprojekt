@@ -109,11 +109,7 @@ public class UserController {
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieterName, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
 
-        List<RentEvent> jjj = rentEventRepository.findAllByMieter(mieterName);
-        System.out.println("********************* before \n" + jjj.size());
-
         personService.checksActiveOrInActiveRentEvent(bookedRentEvents, bookedGeraete);
-        System.out.println("********************* after \n" + bookedGeraete.size());
         model.addAttribute("person", person);
         model.addAttribute("activeGeraete", activeGeraete);
         model.addAttribute("bookedGeraete", bookedGeraete);
@@ -233,18 +229,14 @@ public class UserController {
         RentEvent verfuegbar = new RentEvent();
         TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
         TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
-        verfuegbar.setTimeInterval(timeInterval);
+        if (!geraet.isForsale()) {
+            verfuegbar.setTimeInterval(timeInterval);
+            geraet.getVerfuegbareEvents().add(verfuegbar);
+        }
         geraet.setBilder(bilds);
         geraet.setLikes(0);
         geraet.setBesitzer(principal.getName());
 
-        Person person = personRepository.findByUsername(principal.getName()).get();
-        int aktionPunkte = person.getAktionPunkte();
-        person.setAktionPunkte(aktionPunkte + 10);
-
-        geraetRepository.save(geraet);
-
-        geraet.getVerfuegbareEvents().add(verfuegbar);
         geraetRepository.save(geraet);
 
         return "redirect://localhost:8080/user/myThings";
@@ -305,6 +297,7 @@ public class UserController {
     @GetMapping("/geraet/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Person person = personRepository.findByUsername(geraetRepository.findById(id).get().getBesitzer()).get();
+
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
@@ -316,7 +309,9 @@ public class UserController {
         RentEvent rentEvent = rentEventRepository.findById(id).get();
         rentEvent.setReturnStatus(ReturnStatus.WAITING_FOR_CONFIRMATION);
         rentEventRepository.save(rentEvent);
+
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
+
         Notification newNotification = new Notification();
         newNotification.setType("return");
         newNotification.setAnfragePerson(principal.getName());
@@ -400,11 +395,9 @@ public class UserController {
 
     @PostMapping("/notification/acceptReturn/{id}")
     public String notificationAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund) throws Exception {
-        Notification notification = notificationRepository.findById(id).get();
-
+        Notification notification = notificationService.getNotificationById(id);
         RentEvent rentEvent = rentEventRepository.findById(notification.getRentEventId()).get();
         Geraet geraet = geraetRepository.findById(rentEvent.getGeraetId()).get();
-
         Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
         mailService.sendAcceptReturnMail(person, geraet);
         personService.makeComment(geraet, person, grund);
@@ -419,7 +412,6 @@ public class UserController {
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
-
         notificationRepository.deleteById(id);
         return "redirect://localhost:8080/user/notifications";
     }
@@ -433,46 +425,22 @@ public class UserController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String chageProfile(Model model, @RequestParam(value = "file",required = false) MultipartFile file,
+    public String chageProfile(Model model, @RequestParam("file") MultipartFile file,
                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
-        if(file!=null){
-            Bild bild = new Bild();
-            bild.setBild(file.getBytes());
-            person.setFoto(bild);
-        }
-        person.setNachname(p.getNachname());
-        person.setKontakt(p.getKontakt());
-        person.setVorname(p.getVorname());
-        person.setAdresse(p.getAdresse());
-        personRepository.save(person);
-        model.addAttribute("person", person);
+        model.addAttribute("person", personService.savePerson(principal, file, p));
         return "default/confirmationOfRegistration";
     }
 
     @GetMapping("/geraet/addLikes/{id}")
     public String like(@PathVariable Long id) {
-        Geraet geraet = geraetRepository.findById(id).get();
-        geraet.setLikes(geraet.getLikes() + 1);
-        geraetRepository.save(geraet);
+        geraetService.addLike(id);
         return "redirect://localhost:8080";
     }
 
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
-                             @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
-        Geraet geraet1 = geraetRepository.findById(id).get();
-        List<Bild> bilds = new ArrayList<>();
-        personService.umwechsleMutifileZumBild(files, bilds);
-        geraet1.setBilder(bilds);
-        geraet1.setKosten(geraet.getKosten());
-        geraet1.setTitel(geraet.getTitel());
-        geraet1.setBeschreibung(geraet.getBeschreibung());
-        geraet1.setKaution(geraet.getKaution());
-        geraet1.setAbholort(geraet.getAbholort());
-
-        geraetRepository.save(geraet1);
+                             @RequestParam("files") MultipartFile[] files) throws IOException {
+        geraetService.saveGeraet(files, geraet, id);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);
         return "redirect://localhost:8080/user/myThings";

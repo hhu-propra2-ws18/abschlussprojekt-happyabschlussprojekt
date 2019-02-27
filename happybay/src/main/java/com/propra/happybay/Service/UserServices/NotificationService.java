@@ -49,6 +49,11 @@ public class NotificationService {
         person.setAnzahlNotifications(notifications.size());
     }
 
+    //Brauchen Test
+    public Notification getNotificationById(Long id) {
+        return notificationRepository.findById(id).get();
+    }
+
 
 //    private List<Notification> getAllNotification(){
 //        List<Notification> notifications = new ArrayList<>();
