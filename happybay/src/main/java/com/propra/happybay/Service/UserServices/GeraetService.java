@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,8 +28,8 @@ public class GeraetService {
     @Autowired
     PersonService personService;
 
-    public List<Geraet> getAllWithKeyWithBiler(String key){
-        return setEncode(geraetRepository.findAllByTitelLike("%"+key+"%"));
+    public List<Geraet> getAllWithKeyWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
     }
 
     public List<Geraet> getAllByBesitzerWithBilder(String name){
