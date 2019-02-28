@@ -41,6 +41,15 @@ public class GeraetController {
     @Autowired
     private PersonRepository personRepository;
 
+    public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
+        this.geraetRepository=geraetRepository;
+        this.rentEventRepository=rentEventRepository;
+        this.mailService=mailService;
+        this.personService=personService;
+        this.accountRepository=accountRepository;
+        this.personRepository=personRepository;
+    }
+
     @GetMapping("/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Geraet geraet = geraetRepository.findById(id).get();
