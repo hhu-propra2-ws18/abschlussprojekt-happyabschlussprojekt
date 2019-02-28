@@ -285,6 +285,8 @@ public class UserController {
         Geraet geraet = geraetRepository.findById(id).get();
         Person personForComment = personRepository.findByUsername(geraet.getBesitzer()).get();
         List<String> encodes = geraetService.geraetBilder(geraet);
+        Account account = accountRepository.findByAccount(person).get();
+        model.addAttribute("account",account);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);

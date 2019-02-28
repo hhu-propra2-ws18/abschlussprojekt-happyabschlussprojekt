@@ -89,8 +89,10 @@
                         <button class="btn btn-primary" type="submit">Anfragen</button>
                     </form>
                     <form th:if="${geraet.isForsale()}" th:action="@{'/user/sale/' +${geraet.getId()}}" method="post">
-                        <button class="btn btn-primary" type="submit">Sofort Kaufen</button>
+                        <p th:if="${account.getAmount()} < ${geraet.getKosten()}">Ihr Kontostand reicht nicht aus. Bitte gehen Sie auf Propay, um sich aufzuladen！</p>
+                        <button th:unless="${account.getAmount()} < ${geraet.getKosten()}" class="btn btn-primary" type="submit" on="checkAccount()">Sofort Kaufen</button>
                     </form>
+
                 </div>
                 <br/>
                 <form th:action="@{'/user/BesitzerInfo/' +${personForComment.getId()}}">
@@ -99,6 +101,8 @@
                     </button>
                 </form>
             </div>
+    </div>
+</div>
     </div>
 </div>
 </body>
