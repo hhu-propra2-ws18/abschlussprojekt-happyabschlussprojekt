@@ -129,7 +129,7 @@ public class PersonServiceTest {
         fakegeraet.setTitel("fake geraet");
         fakegeraet.setBesitzer(fakeBesitzer);
 
-        when(personRepository.findByUsername("fake Besitzer")).thenReturn(java.util.Optional.ofNullable(fakeBesitzer));
+        //when(personRepository.findByUsername("fake Besitzer")).thenReturn(java.util.Optional.ofNullable(fakeBesitzer));
         personService.makeComment(fakegeraet,fakePerson,"fake grund");
         verify(personRepository,times(1)).save(any());
     }
@@ -149,14 +149,22 @@ public class PersonServiceTest {
 
     @Test
     public void checks_active_or_in_active_rent_event(){
+        Bild fakebild = new Bild();
+        fakebild.setBild("fake bild".getBytes());
+        List<Bild> bildList = new ArrayList<>();
+        bildList.add(fakebild);
+
         Geraet geraet1 = new Geraet();
         geraet1.setId(new Long(1));
+        geraet1.setBilder(bildList);
 
         Geraet geraet2 = new Geraet();
         geraet2.setId(new Long(2));
+        geraet2.setBilder(bildList);
 
         Geraet geraet3 = new Geraet();
         geraet3.setId(new Long(3));
+        geraet3.setBilder(bildList);
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
@@ -186,14 +194,9 @@ public class PersonServiceTest {
         List<GeraetWithRentEvent> geraetWithRentEvents = new ArrayList<>();
 
         Geraet fakeGeraet = new Geraet();
-        Bild fakebild = new Bild();
-        fakebild.setBild("fake bild".getBytes());
-        List<Bild> bildList = new ArrayList<>();
-        bildList.add(fakebild);
         fakeGeraet.setBilder(bildList);
-        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(fakeGeraet));
         personService.checksActiveOrInActiveRentEvent(rentEventList,geraetWithRentEvents);
-        verify(geraetRepository,times(3)).findById(anyLong());
+        Assertions.assertThat(geraetWithRentEvents.size()).isEqualTo(3);
     }
 
     @Test
@@ -205,6 +208,4 @@ public class PersonServiceTest {
         personService.umwechsleMutifileZumBild(files,bildList);
         Assertions.assertThat(bildList.size()).isEqualTo(3);
     }
-
-
 }

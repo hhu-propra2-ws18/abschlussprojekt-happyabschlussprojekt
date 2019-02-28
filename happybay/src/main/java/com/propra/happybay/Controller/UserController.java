@@ -77,7 +77,7 @@ public class UserController {
 
         List<RentEvent> activeRentEvents = rentEventService.getActiveEventsForPerson(mieter);
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
-        personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
+        //personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
