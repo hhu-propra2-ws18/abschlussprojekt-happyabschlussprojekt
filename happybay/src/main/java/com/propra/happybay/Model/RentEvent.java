@@ -22,8 +22,4 @@ public class RentEvent {
     @ManyToOne
     private Person mieter;
     ReturnStatus returnStatus = ReturnStatus.OK;
-
-    public double calculatePrice() {
-        return this.timeInterval.getDuration() * this.geraet.getKosten();
-    }
 }

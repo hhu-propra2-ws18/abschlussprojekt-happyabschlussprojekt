@@ -40,13 +40,5 @@ public class Geraet {
     private List<RentEvent> rentEvents = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     private List<Bild> bilder = new ArrayList<>();
-
-    public String getBesitzerUsername() {
-        return besitzer.getUsername();
-    }
-
-    public Long getBesitzerId() {
-        return besitzer.getId();
-    }
 }
 

@@ -29,10 +29,4 @@ public class Person {
     private String encode;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
-
-    public void checkPhoto() {
-        if (this.foto.getBild().length > 0) {
-            this.setEncode(this.foto.encodeBild());
-        }
-    }
 }

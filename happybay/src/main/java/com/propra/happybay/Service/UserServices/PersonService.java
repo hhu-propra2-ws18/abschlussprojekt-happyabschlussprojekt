@@ -71,8 +71,8 @@ public class PersonService {
         comment.setDate(LocalDate.now());
         comment.setGeraetTitel(geraet.getTitel());
         comment.setMessage(grund);
-        comment.setSenderFrom(geraet.getBesitzerUsername());
-        comment.setPersonId(geraet.getBesitzerId());
+        comment.setSenderFrom(geraet.getBesitzer().getUsername());
+        comment.setPersonId(geraet.getBesitzer().getId());
         person.getComments().add(comment);
         personRepository.save(person);
     }
@@ -127,5 +127,11 @@ public class PersonService {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
         return person;
+    }
+
+    public void checkPhoto(Person person) {
+        if (person.getFoto().getBild().length > 0) {
+            person.setEncode(person.getFoto().encodeBild());
+        }
     }
 }

@@ -22,4 +22,9 @@ public class RentEventService {
         activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(person, ReturnStatus.WAITING_FOR_CONFIRMATION));
         return activeRentEvents;
     }
+
+    public double calculatePrice(RentEvent rentEvent) {
+        return rentEvent.getTimeInterval().getDuration() * rentEvent.getGeraet().getKosten();
+    }
+
 }

@@ -10,6 +10,7 @@ import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.GeraetService;
+import com.propra.happybay.Service.UserServices.RentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,9 +34,11 @@ public class AdminController {
     @Autowired
     private RentEventRepository rentEventRepository;
     @Autowired
-    GeraetService geraetService;
+    private GeraetService geraetService;
     @Autowired
-    PersonRepository personRepository;
+    private PersonRepository personRepository;
+    @Autowired
+    private RentEventService rentEventService;
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
@@ -75,7 +78,7 @@ public class AdminController {
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         try {
-            proPayService.punishReservation(mieter, geraet.getBesitzerUsername(), reservationId, geraet.getKaution());
+            proPayService.punishReservation(mieter, geraet.getBesitzer().getUsername(), reservationId, geraet.getKaution());
         } catch (IOException e) {
             return"/admin/propayAdminNotAvailable";
         }
@@ -98,7 +101,7 @@ public class AdminController {
         }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
-        proPayService.ueberweisen(mieter, geraet.getBesitzerUsername(), (int) rentEvent.calculatePrice());
+        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) rentEventService.calculatePrice(rentEvent));
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
