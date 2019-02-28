@@ -65,10 +65,10 @@ public class GeraetServiceTest {
         geraets.add(fakeGeraet1);
         geraets.add(fakeGeraet2);
 
-        Mockito.when(geraetRepository.findAllByTitelLike(any())).thenReturn(geraets);
+        Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesDesc(any())).thenReturn(geraets);
         Mockito.when(geraetRepository.findAllByBesitzer(any())).thenReturn(geraets);
 
-        List<Geraet> geraetsWithEncode = geraetService.getAllWithKeyWithBiler("");
+        List<Geraet> geraetsWithEncode = geraetService.getAllWithKeyWithBilder("");
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
 

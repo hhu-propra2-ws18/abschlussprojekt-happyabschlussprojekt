@@ -1,0 +1,2 @@
+docker run -p 8888:8888 propra/propay:latest
+docker run -p 3307:3306 -e MYSQL_DATABASE=happybay -e MYSQL_ROOT_PASSWORD=root mysql

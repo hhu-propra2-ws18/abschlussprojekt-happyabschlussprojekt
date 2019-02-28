@@ -145,10 +145,10 @@ public class DefaultControllerTest {
         rentEvent.setTimeInterval(timeInterval);
         verfuegbareEvents.add(rentEvent);
 
-        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        when(geraetService.getAllWithKeyWithBilder(any())).thenReturn(geraetList);
         doNothing().when(notificationService).updateAnzahl(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
-        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        when(geraetService.getAllWithKeyWithBilder(any())).thenReturn(geraetList);
         when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -168,7 +168,7 @@ public class DefaultControllerTest {
 
     @Test
     public void index_NO_USER() throws Exception {
-        when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
+        when(geraetService.getAllWithKeyWithBilder(any())).thenReturn(geraetList);
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }

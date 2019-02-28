@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class DefaultController {
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        model.addAttribute("geraete", geraetService.getAllWithKeyWithBilder(key));
 
         if (principal == null) {
             return "default/index";
