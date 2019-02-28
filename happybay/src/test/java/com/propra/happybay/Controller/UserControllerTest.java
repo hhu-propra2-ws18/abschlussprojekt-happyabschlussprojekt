@@ -153,7 +153,6 @@ public class UserControllerTest {
         //
         //doNothing().when(notificationService).updateAnzahlOfNotifications();
         //notificationRepository
-        doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
         //
         when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
@@ -162,8 +161,6 @@ public class UserControllerTest {
 
 
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        when(rentEventRepository.findById(any())).thenReturn(Optional.ofNullable(rentEvent));
-        when(notificationService.getNotificationById(any())).thenReturn(notification);
         mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
