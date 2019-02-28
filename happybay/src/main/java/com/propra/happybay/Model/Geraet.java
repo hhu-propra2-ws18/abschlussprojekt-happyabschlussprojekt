@@ -28,7 +28,6 @@ public class Geraet {
     Date mietezeitpunktStart;
     Date mietezeitpunktEnd;
     String encode;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int likes = 0;
     boolean forsale;
     @ManyToMany(cascade = CascadeType.ALL)
