@@ -192,18 +192,13 @@
             }
         }
     }
-
     function checkFile(el){
         var files = el.files;
         var allowTypes = ["image/jpeg","image/png","image/jpg","image/gif"];
         var allowUpload = true;
-        var errorMessage = "";
-
-        for(var i=0; i< files.length; i++){
+        var errorMessage = "";        for(var i=0; i< files.length; i++){
             var fileName = files[i].name;
-            var fileType = files[i].type;
-
-            var typeAccepted = false;
+            var fileType = files[i].type;            var typeAccepted = false;
             for(var j = 0; j < allowTypes.length; j++){
                 if(allowTypes[j] == fileType){
                     typeAccepted = true;
@@ -214,13 +209,13 @@
                 errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
                 allowUpload = false;
             }
-        }
-
-        if(allowUpload != true){
+        }        if(allowUpload != true){
             el.outerHTML = el.outerHTML;
             alert(errorMessage);
         }
     }
+
+
 </script>
 </body>
 </html>
