@@ -34,8 +34,6 @@ public class GeraetServiceTest {
     RentEventRepository rentEventRepository;
     @Mock
     PersonService personService;
-    @Mock
-    PictureService pictureService;
 
     @InjectMocks
     GeraetService geraetService;
@@ -43,14 +41,14 @@ public class GeraetServiceTest {
 
     @Test
     public void  get_all_with_bilder(){
-        List<Geraet> geraets = new ArrayList<>();
-
         Geraet fakeGeraet1 = new Geraet();
         List<Bild> bilder1 = new ArrayList<>();
         Bild fakeBild1 = new Bild();
         fakeBild1.setBild(new byte[0]);
         bilder1.add(fakeBild1);
         fakeGeraet1.setBilder(bilder1);
+        fakeGeraet1.setKosten(100);
+        fakeGeraet1.setLikes(100);
 
         Geraet fakeGeraet2 = new Geraet();
         List<Bild> bilder2 = new ArrayList<>();
@@ -58,21 +56,60 @@ public class GeraetServiceTest {
         fakeBild2.setBild("fake".getBytes());
         bilder2.add(fakeBild2);
         fakeGeraet2.setBilder(bilder2);
+        fakeGeraet2.setKosten(10);
+        fakeGeraet2.setLikes(1000);
 
+        List<Geraet> geraets = new ArrayList<>();
         geraets.add(fakeGeraet1);
         geraets.add(fakeGeraet2);
+        Mockito.when(geraetRepository.findAllByTitelLike(any())).thenReturn(geraets);
+        Mockito.when(geraetRepository.findAllByBesitzer(any(Person.class))).thenReturn(geraets);
+
+        List<Geraet> geraetSortmitaufsteigenderPreis = new ArrayList<>();
+        geraetSortmitaufsteigenderPreis.add(fakeGeraet2);
+        geraetSortmitaufsteigenderPreis.add(fakeGeraet1);
         Person besitzer = new Person();
+        Mockito.when(geraetRepository.findAllByTitelLikeOrderByKostenAsc(any())).thenReturn(geraetSortmitaufsteigenderPreis);
 
-        Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesDesc(any())).thenReturn(geraets);
-        Mockito.when(geraetRepository.findAllByBesitzer(any())).thenReturn(geraets);
+        List<Geraet> geraetSortmitabsteigenderPreis = new ArrayList<>();
+        geraetSortmitabsteigenderPreis.add(fakeGeraet1);
+        geraetSortmitabsteigenderPreis.add(fakeGeraet2);
+        Mockito.when(geraetRepository.findAllByTitelLikeOrderByKostenDesc(any())).thenReturn(geraetSortmitabsteigenderPreis);
 
-        List<Geraet> geraetsWithEncode = geraetService.getAllWithKeyWithBilder("");
+        List<Geraet> geraetSortmitaufsteigenderLike = new ArrayList<>();
+        geraetSortmitaufsteigenderLike.add(fakeGeraet2);
+        geraetSortmitaufsteigenderLike.add(fakeGeraet1);
+        Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesAsc(any())).thenReturn(geraetSortmitaufsteigenderLike);
+
+        List<Geraet> geraetSortmitabsteigenderLike = new ArrayList<>();
+        geraetSortmitabsteigenderLike.add(fakeGeraet1);
+        geraetSortmitabsteigenderLike.add(fakeGeraet2);
+        Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesDesc(any())).thenReturn(geraetSortmitabsteigenderLike);
+
+        List<Geraet> geraetsWithEncode = geraetService.getAllWithKeyWithBiler("");
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
 
         geraetsWithEncode = geraetService.getAllByBesitzerWithBilder(besitzer);
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
+
+        geraetsWithEncode = geraetService.getAllWithFilterPreisAufsteigendWithBilder("");
+        Assertions.assertThat(geraetsWithEncode.get(0).getKosten()).isEqualTo(10);
+        Assertions.assertThat(geraetsWithEncode.get(1).getKosten()).isEqualTo(100);
+
+        geraetsWithEncode = geraetService.getAllWithFilterPreisAbsteigendWithBilder("");
+        Assertions.assertThat(geraetsWithEncode.get(0).getKosten()).isEqualTo(100);
+        Assertions.assertThat(geraetsWithEncode.get(1).getKosten()).isEqualTo(10);
+
+        geraetsWithEncode = geraetService.getAllWithFilterLikeAufsteigendWithBilder("");
+        Assertions.assertThat(geraetsWithEncode.get(0).getLikes()).isEqualTo(100);
+        Assertions.assertThat(geraetsWithEncode.get(1).getLikes()).isEqualTo(1000);
+
+        geraetsWithEncode = geraetService.getAllWithFilterLikeAbsteigendWithBilder("");
+        Assertions.assertThat(geraetsWithEncode.get(0).getLikes()).isEqualTo(1000);
+        Assertions.assertThat(geraetsWithEncode.get(1).getLikes()).isEqualTo(100);
+
     }
 
     @Test
@@ -103,43 +140,6 @@ public class GeraetServiceTest {
 
         Assertions.assertThat(geraetService.geraetBilder(fakeGeraet2).size()).isEqualTo(1);
 
-    }
-
-    @Test
-    public void check_for_touching_intervals(){
-        TimeInterval time = new TimeInterval();
-        time.setStart(Date.valueOf("2019-2-20"));
-        time.setEnd(Date.valueOf("2019-3-10"));
-        RentEvent fake = new RentEvent();
-        fake.setTimeInterval(time);
-
-        List<RentEvent> rentEventList = new ArrayList<>();
-        RentEvent rentEvent1 = new RentEvent();
-        TimeInterval timeInterval1 = new TimeInterval();
-        timeInterval1.setStart(Date.valueOf("2019-1-10"));
-        timeInterval1.setEnd(Date.valueOf("2019-3-10"));
-        rentEvent1.setTimeInterval(timeInterval1);
-        rentEventList.add(rentEvent1);
-
-        RentEvent rentEvent2 = new RentEvent();
-        TimeInterval timeInterval2 = new TimeInterval();
-        timeInterval2.setStart(Date.valueOf("2019-3-10"));
-        timeInterval2.setEnd(Date.valueOf("2019-4-24"));
-        rentEvent2.setTimeInterval(timeInterval2);
-        rentEventList.add(rentEvent2);
-
-        RentEvent rentEvent3 = new RentEvent();
-        TimeInterval timeInterval3 = new TimeInterval();
-        timeInterval3.setStart(Date.valueOf("2019-5-28"));
-        timeInterval3.setEnd(Date.valueOf("2019-6-24"));
-        rentEvent3.setTimeInterval(timeInterval3);
-        rentEventList.add(rentEvent3);
-
-        Geraet fakeGeraet = new Geraet();
-        fakeGeraet.setVerfuegbareEvents(rentEventList);
-
-        geraetService.checkForTouchingIntervals(fakeGeraet,fake);
-        verify(geraetRepository,times(1)).save(any());
     }
 
     @Test
@@ -182,7 +182,6 @@ public class GeraetServiceTest {
         timeInterval1.setStart(Date.valueOf("2019-1-10"));
         timeInterval1.setEnd(Date.valueOf("2019-3-10"));
         rentEvent1.setTimeInterval(timeInterval1);
-        //rentEvent1.setGeraetId(1L);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
@@ -190,7 +189,6 @@ public class GeraetServiceTest {
         timeInterval2.setStart(Date.valueOf("2019-3-10"));
         timeInterval2.setEnd(Date.valueOf("2019-4-24"));
         rentEvent2.setTimeInterval(timeInterval2);
-        //rentEvent2.setGeraetId(2L);
         rentEventList.add(rentEvent2);
 
         RentEvent rentEvent3 = new RentEvent();
@@ -198,10 +196,8 @@ public class GeraetServiceTest {
         timeInterval3.setStart(Date.valueOf("2019-5-28"));
         timeInterval3.setEnd(Date.valueOf("2019-6-24"));
         rentEvent3.setTimeInterval(timeInterval3);
-        //rentEvent3.setGeraetId(3L);
         rentEventList.add(rentEvent3);
 
-        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(new Geraet()));
         Assertions.assertThat(geraetService.returnGeraeteWithRentEvents(rentEventList).size()).isEqualTo(3);
 
     }
@@ -227,7 +223,7 @@ public class GeraetServiceTest {
         fakegeraet.setKaution(1);
         fakegeraet.setAbholort("fake Ort");
         when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(fakegeraet));
-        geraetService.editGeraet(files,fakegeraet,1L);
+        geraetService.editGeraet(files,fakegeraet,1L,true);
 
     }
 
@@ -250,5 +246,4 @@ public class GeraetServiceTest {
         geraetService.addLike(1L,fakePerson3);
         verify(geraetRepository,times(2)).save(any());
     }
-
 }

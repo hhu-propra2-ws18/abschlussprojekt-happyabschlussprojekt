@@ -22,8 +22,6 @@ public class GeraetService {
     @Autowired
     GeraetRepository geraetRepository;
     @Autowired
-    PictureService pictureService;
-    @Autowired
     RentEventRepository rentEventRepository;
     @Autowired
     PersonService personService;
@@ -34,6 +32,18 @@ public class GeraetService {
 
     public List<Geraet> getAllByBesitzerWithBilder(Person besitzer){
         return setEncode(geraetRepository.findAllByBesitzer(besitzer));
+    }
+    public List<Geraet> getAllWithFilterPreisAufsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenAsc("%"+key+"%") );
+    }
+    public List<Geraet> getAllWithFilterPreisAbsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%"+key+"%"));
+    }
+    public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
+    }
+    public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
     }
 
     public List<String> geraetBilder(Geraet geraet){
@@ -130,18 +140,5 @@ public class GeraetService {
             geraet.setLikes(geraet.getLikes() - 1);
         }
         geraetRepository.save(geraet);
-    }
-
-    public List<Geraet> getAllWithFilterPreisAufsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenAsc("%"+key+"%") );
-    }
-    public List<Geraet> getAllWithFilterPreisAbsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%"+key+"%"));
-    }
-    public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
-    }
-    public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
     }
 }
