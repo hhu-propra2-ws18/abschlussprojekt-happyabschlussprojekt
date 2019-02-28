@@ -63,9 +63,13 @@ public class GeraetControllerTest {
     private List<Geraet> geraetList=new ArrayList<>();
     private List<PersonMitAccount> personMitAccountList = new ArrayList<>();
     private InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
+
+
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
+
+
     private MockMvc mvc;
     Principal principal = new Principal() {
         @Override
@@ -145,7 +149,6 @@ public class GeraetControllerTest {
         rentEvent.setId(3L);
         rentEvent.setReservationId(2);
 
-        when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
         //viewResolver
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
@@ -172,7 +175,8 @@ public class GeraetControllerTest {
     @Test
     public void geraetDelete() throws Exception {
         mvc.perform(post("/user/geraet/delete/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/user/myThings"));
         verify(geraetRepository, Mockito.times(1)).deleteById(any());
 
     }
@@ -183,58 +187,62 @@ public class GeraetControllerTest {
         doNothing().when(geraetService).addLike(any(),any());
 
         mvc.perform(get("/user/geraet/addLikes/{id}",1L).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080"));
     }
     @Test
     public void geraetEdit() throws Exception {
 
         mvc.perform(post("/user/geraet/edit/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("person1", person1).requestAttr("file",multipartFiles).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/user/myThings"));
     }
-//    @Test
-//    public void geraetEditGET() throws Exception {
-//        when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(geraet1));
-//        mvc.perform(get("/user/geraet/edit/{id}",1L))
-//                .andExpect(status().isOk());
-//    }
-//
-//    @Test
-//    public void geraet() throws Exception {
-//        when(personService.findByPrincipal(principal)).thenReturn(person1);
-//        when(geraetRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(geraet1));
-//        when(accountRepository.findByAccount(anyString())).thenReturn(java.util.Optional.ofNullable(account1));
-//        mvc.perform(get("/user/geraet/{id}",3L).principal(principal))
-//                .andExpect(status().isOk());
-//    }
-//
-//    @Test
-//    public void changeToRentGET() throws Exception {
-//
-//        mvc.perform(get("/user/geraet/changeToRent/{id}",1L))
-//                .andExpect(status().isOk());
-//    }
-//    @Test
-//    public void changeToRentPOST() throws Exception {
-//
-//        mvc.perform(post("/user/geraet/changeToRent/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("geraet1", geraet1).requestAttr("files",multipartFiles))
-//                .andExpect(status().is3xxRedirection());
-//    }
-//
-//    @Test
-//    public void addGeraetPost() throws Exception {
-//
-//
-//        mvc.perform(post("/user/geraet/addGeraet").flashAttr("geraet1", geraet1).requestAttr("files",multipartFiles).principal(principal))
-//                .andExpect(status().is3xxRedirection());
-//    }
+    @Test
+    public void geraetEditGET() throws Exception {
+        when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(geraet1));
+        mvc.perform(get("/user/geraet/edit/{id}",1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/edit"));
+    }
+
+    @Test
+    public void geraet() throws Exception {
+        when(personService.findByPrincipal(principal)).thenReturn(person1);
+        when(geraetRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(geraet1));
+        when(accountRepository.findByAccount(anyString())).thenReturn(java.util.Optional.ofNullable(account1));
+        mvc.perform(get("/user/geraet/{id}",3L).principal(principal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/geraet"));
+    }
+
+    @Test
+    public void changeToRentGET() throws Exception {
+        when(geraetRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(geraet1));
+
+        mvc.perform(get("/user/geraet/changeToRent/{id}",3L))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/changeToRent"));
+    }
+    @Test
+    public void changeToRentPOST() throws Exception {
+        when(geraetRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(geraet1));
+        mvc.perform(post("/user/geraet/changeToRent/{id}",3L).contentType(MediaType.APPLICATION_JSON).flashAttr("geraet", geraet1).requestAttr("files",multipartFiles))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/user/myThings"));
+    }
+
+    @Test
+    public void addGeraetPost() throws Exception {
+
+        when(personRepository.findByUsername("user")).thenReturn(java.util.Optional.ofNullable(person1));
+        mvc.perform(post("/user/geraet/addGeraet").flashAttr("geraet", geraet1).requestAttr("files",multipartFiles).principal(principal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/user/myThings"));
+    }
     @Test
     public void addGeraetGet() throws Exception {
         mvc.perform(get("/user/geraet/addGeraet").principal(principal))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void confirmGeraet() {
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/addGeraet"));
     }
 }

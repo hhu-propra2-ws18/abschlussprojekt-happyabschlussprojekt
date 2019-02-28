@@ -2,11 +2,13 @@ package com.propra.happybay.Model;
 
 import com.propra.happybay.ReturnStatus;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.sql.Date;
 
 @Data
+@ToString(exclude = "geraet")
 @Entity
 public class RentEvent {
     @Id
