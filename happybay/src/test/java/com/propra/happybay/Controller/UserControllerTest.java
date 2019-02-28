@@ -157,11 +157,13 @@ public class UserControllerTest {
         doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
         when(notificationRepository.findById(any())).thenReturn(Optional.ofNullable(notification));
         //
+        when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(geraetService.convertToCET(any())).thenReturn(timeInterval);
         when(personRepository.findById(any())).thenReturn(Optional.ofNullable(user));
         doNothing().when(personService).checksActiveOrInActiveRentEvent(any(),any());
-        when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
+
+
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
         when(rentEventRepository.findById(any())).thenReturn(Optional.ofNullable(rentEvent));
         when(notificationService.getNotificationById(any())).thenReturn(notification);
@@ -173,14 +175,13 @@ public class UserControllerTest {
 
     }
 
-    @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proflieWithUser() throws Exception {
         mvc2.perform(get("/user/profile").principal(principal))
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "test", roles = "USER")
+
     @Test
     public void myThings() throws Exception {
         mvc2.perform(get("/user/myThings").principal(principal))
@@ -222,21 +223,6 @@ public class UserControllerTest {
                 .flashAttr("notification",notification))
                 .andExpect(status().is3xxRedirection());
     }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void addGeraetGet() throws Exception {
-        mvc2.perform(get("/user/addGeraet").principal(principal))
-                .andExpect(status().isOk());
-    }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void addGeraetPost() throws Exception {
-
-
-        mvc2.perform(post("/user/addGeraet").flashAttr("geraet", geraet).requestAttr("files",multipartFiles).principal(principal))
-                .andExpect(status().is3xxRedirection());
-    }
-    @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proPay() throws Exception {
 
@@ -250,37 +236,7 @@ public class UserControllerTest {
         mvc2.perform(get("/user/BesitzerInfo/{id}",1L).principal(principal))
                 .andExpect(status().isOk());
     }
-    @Test
-    public void geraetZurueck() throws Exception {
 
-
-        mvc2.perform(get("/user/geraet/zurueckgeben/{id}",1L).principal(principal))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void changeToRentPOST() throws Exception {
-
-        mvc2.perform(post("/user/geraet/changeToRent/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("geraet",geraet).requestAttr("files",multipartFiles))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void changeToRentGET() throws Exception {
-
-        mvc2.perform(get("/user/geraet/changeToRent/{id}",1L))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void geraetEditGET() throws Exception {
-
-        mvc2.perform(get("/user/geraet/edit/{id}",1L))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void geraet() throws Exception {
-
-        mvc2.perform(get("/user/geraet/{id}",1L).principal(principal))
-                .andExpect(status().isOk());
-    }
     @Test
     public void aufladenAntrag() throws Exception {
 
@@ -313,14 +269,7 @@ public class UserControllerTest {
         verify(geraetRepository, Mockito.times(1)).findById(any());
 
     }
-    @Test
-    public void geraetDelete() throws Exception {
 
-        mvc2.perform(post("/user/geraet/delete/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-        verify(geraetRepository, Mockito.times(1)).deleteById(any());
-
-    }
     @Test
     public void notificationAcceptReturn() throws Exception {
 
@@ -340,19 +289,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
     }
-    @Test
-    public void geraetEdit() throws Exception {
 
-        mvc2.perform(post("/user/geraet/edit/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("person",user).requestAttr("file",multipartFiles).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void like() throws Exception {
 
-        mvc2.perform(get("/user/geraet/addLikes/{id}",1L).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
-
-    }
 }
