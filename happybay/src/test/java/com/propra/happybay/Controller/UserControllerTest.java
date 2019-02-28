@@ -3,10 +3,7 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserServices.GeraetService;
-import com.propra.happybay.Service.UserServices.MailService;
-import com.propra.happybay.Service.UserServices.NotificationService;
-import com.propra.happybay.Service.UserServices.PersonService;
+import com.propra.happybay.Service.UserServices.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +54,7 @@ public class UserControllerTest {
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
+    List<RentEvent> activeRentEvents=new ArrayList<>();
     //Bild
     private Bild bild = new Bild();
     private RentEvent verfuerbar = new RentEvent();
@@ -80,6 +78,8 @@ public class UserControllerTest {
     MailService mailService;
     @Mock
     PersonService personService;
+    @Mock
+    RentEventService rentEventService;
     @Mock
     GeraetService geraetService;
     @Mock
@@ -125,7 +125,7 @@ public class UserControllerTest {
         //rentEvent.setGeraetId(2L);
         rentEvent.setMieter(user);
         rentEvent.setTimeInterval(timeInterval);
-                verfuegbareEvents.add(rentEvent);
+                activeRentEvents.add(rentEvent);
         //Geraet
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
@@ -145,7 +145,6 @@ public class UserControllerTest {
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
         //notification.setRentEventId(1L);
-        verfuerbar.setTimeInterval(geraetService.convertToCET(timeInterval));
         geraet.getVerfuegbareEvents().add(verfuerbar);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -155,11 +154,9 @@ public class UserControllerTest {
         //doNothing().when(notificationService).updateAnzahlOfNotifications();
         //notificationRepository
         doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
-        when(notificationRepository.findById(any())).thenReturn(Optional.ofNullable(notification));
         //
         when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
-        when(geraetService.convertToCET(any())).thenReturn(timeInterval);
         when(personRepository.findById(any())).thenReturn(Optional.ofNullable(user));
         doNothing().when(personService).checksActiveOrInActiveRentEvent(any(),any());
 
@@ -167,7 +164,7 @@ public class UserControllerTest {
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
         when(rentEventRepository.findById(any())).thenReturn(Optional.ofNullable(rentEvent));
         when(notificationService.getNotificationById(any())).thenReturn(notification);
-        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
+        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
 
@@ -191,10 +188,10 @@ public class UserControllerTest {
     @Test
     public void rentThings() throws Exception {
 
-
+        when(rentEventService.getActiveEventsForPerson(user)).thenReturn(activeRentEvents);
         mvc2.perform(get("/user/rentThings").principal(principal))
                 .andExpect(status().isOk());
-        verify(rentEventRepository, Mockito.times(6)).findAllByMieterAndReturnStatus(any(),any());
+        verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(),any());
 
     }
 

@@ -153,7 +153,6 @@ public class NotificationControllerTest {
         when(notificationService.getNotificationById(3L)).thenReturn(notification);
         doNothing().when(mailService).sendAcceptReturnMail(person,geraet);
         doNothing().when(personService).makeComment(geraet,person,"grund");
-        doNothing().when(proPayService).ueberweisen("person1","person2",100);
         doNothing().when(proPayService).releaseReservation("person1",2);
         mvc.perform(post("/user/notification/acceptReturn/{id}",3L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
                 .andExpect(status().is3xxRedirection());
