@@ -1,9 +1,6 @@
 package com.propra.happybay.Service;
 
-import com.propra.happybay.Model.Bild;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
@@ -231,6 +228,26 @@ public class GeraetServiceTest {
         when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(fakegeraet));
         geraetService.saveGeraet(files,fakegeraet,1L);
 
+    }
+
+    @Test
+    public void add_like(){
+        Geraet fakegeraet = new Geraet();
+        List<Person> fakeLiekedPerson = new ArrayList<>();
+        Person fakePerson1 = new Person();
+        fakePerson1.setUsername("fake Person1");
+        Person fakePerson2 = new Person();
+        fakePerson2.setUsername("fake Person2");
+        Person fakePerson3 = new Person();
+        fakePerson3.setUsername("fake Person3");
+        fakeLiekedPerson.add(fakePerson1);
+        fakeLiekedPerson.add(fakePerson2);
+        fakegeraet.setLikedPerson(fakeLiekedPerson);
+        fakegeraet.setLikes(2);
+        Mockito.when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(fakegeraet));
+        geraetService.addLike(1L,fakePerson1);
+        geraetService.addLike(1L,fakePerson3);
+        verify(geraetRepository,times(2)).save(any());
     }
 
 }

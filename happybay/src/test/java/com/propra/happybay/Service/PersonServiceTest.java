@@ -11,12 +11,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +198,25 @@ public class PersonServiceTest {
         List<Bild> bildList = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files,bildList);
         Assertions.assertThat(bildList.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void save_person() throws IOException {
+        Person fakePerson = new Person();
+        fakePerson.setKontakt("fake@fake.com");
+        fakePerson.setNachname("fakeN");
+        fakePerson.setVorname("fakeV");
+        fakePerson.setAdresse("fake Adresse");
+        MultipartFile file = mock(MultipartFile.class);
+        Principal principal = new Principal() {
+            @Override
+            public String getName() {
+                return "fake Name";
+            }
+        };
+        Mockito.when(file.getBytes()).thenReturn("fake".getBytes());
+        Mockito.when(personRepository.findByUsername("fake Name")).thenReturn(java.util.Optional.of(new Person()));
+        personService.savePerson(principal,file,fakePerson);
     }
 
 
