@@ -1,5 +1,6 @@
 package com.propra.happybay.Controller;
 
+import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
@@ -57,22 +58,23 @@ public class DefaultController {
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
+        List<Geraet> geraet = new ArrayList<>();
         if(key.equals("preisAufsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAufsteigendWithBilder(""));
+            geraet = geraetService.getAllWithFilterPreisAufsteigendWithBilder("");
         }
         else if(key.equals("preisAbsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAbsteigendWithBilder(""));
+            geraet = geraetService.getAllWithFilterPreisAbsteigendWithBilder("");
         }
         else if(key.equals("likeAufsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAufsteigendWithBilder(""));
+            geraet = geraetService.getAllWithFilterLikeAufsteigendWithBilder("");
         }
         else if(key.equals("likeAbsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAbsteigendWithBilder(""));
+            geraet = geraetService.getAllWithFilterLikeAbsteigendWithBilder("");
         }
         else {
-            model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+            geraet = geraetService.getAllWithKeyWithBiler(key);
         }
-        //model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        model.addAttribute("geraete", geraet);
 
         if (principal == null) {
             return "default/index";

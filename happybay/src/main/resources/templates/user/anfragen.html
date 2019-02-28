@@ -3,61 +3,55 @@
 <html lang="en">
 <head th:replace="fragments.html :: header"></head>
 <body>
-<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-<br>
-<div class="container">
-    <div class="card" style="padding: 10px; margin-bottom: 10px">
-        <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} "  method="post">
-            <ul class="list-group list-group-flush">
-                <span class="badge badge-success">Verfügbar</span>
-                <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
-                    font-weight:  bold; margin-left:  20px">
-
-                    <input type="radio" name="pickTime[]" onclick="document.getElementById('mietezeitpunktStart').style.display='';document.getElementById('label').style.display='';
-                                                                 document.getElementById('mietezeitpunktEnd').style.display='';document.getElementById('label2').style.display=''"
-                           th:text=" ' ' + ${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
-                           ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"
-                           th:value="${verfugbarEvent.getTimeInterval().getStart()} +' '+ ${verfugbarEvent.getTimeInterval().getEnd()}">
-                    </input>
-                </li>
+    <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
+    <br>
+    <div class="container">
+        <div class="card" style="padding: 10px; margin-bottom: 10px">
+            <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} "  method="post">
+                <ul class="list-group list-group-flush">
+                    <span class="badge badge-success">Verfügbar</span>
+                    <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+                        font-weight:  bold; margin-left:  20px">
+                        <input type="radio" name="pickTime[]" onclick="document.getElementById('mietezeitpunktStart').style.display='';document.getElementById('label').style.display='';
+                                                                     document.getElementById('mietezeitpunktEnd').style.display='';document.getElementById('label2').style.display=''"
+                               th:text=" ' ' + ${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                               ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"
+                               th:value="${verfugbarEvent.getTimeInterval().getStart()} +' '+ ${verfugbarEvent.getTimeInterval().getEnd()}">
+                    </li>
+                    <br/>
+                    <span class="badge badge-danger">Schon verliehen</span>
+                    <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                        font-weight: bold; margin-left: 20px; opacity: 0.6">
+                        <tr>
+                            <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                                ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
+                                ' von ' + ${rentEvent.mieter.username}"></td>
+                        </tr>
+                    </li>
+                </ul>
+                <br>
+                <label id="label" style="display:none" for="mietezeitpunktStart">Mieten ab:</label>
+                <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+                       id="mietezeitpunktStart"
+                       placeholder="Eingabe start Zeitpunkte."  required/>
+                <label id="label2" style="display:none" for="mietezeitpunktEnd">Mieten bis:</label>
+                <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+                       id="mietezeitpunktEnd"
+                       placeholder="Eingabe ende Zeitpunkte." required/>
+                <label for="message">Message:</label>
                 <br/>
-                <span class="badge badge-danger">Schon verliehen</span>
-                <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
-                    font-weight: bold; margin-left: 20px; opacity: 0.6">
-                    <tr>
-                        <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
-                            ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
-                            ' von ' + ${rentEvent.mieter.username}"></td>
-                    </tr>
-                </li>
-            </ul>
-            <br>
-
-            <label id="label" style="display:none" for="mietezeitpunktStart">Mieten ab:</label>
-            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
-                   id="mietezeitpunktStart"
-                   placeholder="Eingabe start Zeitpunkte."  required/>
-
-            <label id="label2" style="display:none" for="mietezeitpunktEnd">Mieten bis:</label>
-            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
-                   id="mietezeitpunktEnd"
-                   placeholder="Eingabe ende Zeitpunkte." required/>
-
-
-            <label for="message">Message:</label>
-            <br/>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message"
-            value="Gerne möchte ich Ihr Gerät leihen." placeholder="Gerne möchte ich Ihr Gerät leihen."/>
-            <input type="hidden" name="account" id="account" th:value="${account.getAmount()}">
-            <input type="hidden" name="kost" id="kost" th:value="${geraet.getKosten()}">
-            <input type="hidden" name="kaution" id="kautionen" th:value="${geraet.getKaution()}">
-            <button type="submit" class="btn btn-primary" onclick="checkTimeAndAccount()">Schicken</button>
-        </form>
+                <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message"
+                value="Gerne möchte ich Ihr Gerät leihen." placeholder="Gerne möchte ich Ihr Gerät leihen."/>
+                <input type="hidden" name="account" id="account" th:value="${account.getAmount()}">
+                <input type="hidden" name="kost" id="kost" th:value="${geraet.getKosten()}">
+                <input type="hidden" name="kaution" id="kautionen" th:value="${geraet.getKaution()}">
+                <button type="submit" class="btn btn-primary" onclick="checkTimeAndAccount()">Schicken</button>
+            </form>
+        </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script type="text/javascript">
     function checkTimeAndAccount() {
         obj = document.getElementsByName('pickTime[]');
