@@ -112,10 +112,14 @@ public class NotificationController {
         rentEvent.setReservationId(reservationId);
         rentEvent.setReturnStatus(ReturnStatus.BOOKED);
         geraet.getRentEvents().add(rentEvent);
+        System.out.println("#########");
+        System.out.println(timeInterval.getStart());
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
         personService.splitTimeIntervalsOfGeraetAvailability(geraet, index, rentEvent);
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
+        System.out.println("#########");
+        System.out.println(rentEvent.getTimeInterval().getStart());
 
         Person person = mieter;
         mailService.sendAcceptRequestMail(person, geraet);

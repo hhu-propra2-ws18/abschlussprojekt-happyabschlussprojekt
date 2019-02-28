@@ -23,7 +23,7 @@ public class UserValidator implements Validator {
         Person person = (Person) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "Das Feld 'Benutzername' muss ausgefüllt werden.");
-        if (person.getUsername().length() < 1 || person.getUsername().length() > 32) {
+        if (person.getUsername().length() < 6 || person.getUsername().length() > 32) {
             errors.rejectValue("username", "Bitte wählen Sie zwischen 6 und 32 Zeichen.");
         }
         if (personRepository.findByUsername(person.getUsername()).isPresent()) {
@@ -31,7 +31,7 @@ public class UserValidator implements Validator {
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "Das Feld 'Password' muss ausgefüllt werden.");
-        if (person.getPassword().length() < 1 || person.getPassword().length() > 32) {
+        if (person.getPassword().length() < 8 || person.getPassword().length() > 32) {
             errors.rejectValue("password", "Bitte wählen Sie ein Password mit mindestens 8 Zeichen.");
         }
 

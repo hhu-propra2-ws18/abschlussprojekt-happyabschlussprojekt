@@ -2,71 +2,71 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:replace="fragments.html :: header"></head>
 <body>
-<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-<div class="container" >
-    <div style="margin: 15px">
-        <ul class="list-inline card-text">
-            <li class="list-inline-item font-weight-bold">Kontostand:</li>
-            <li class="list-inline-item" th:text="${account.amount} + ' €'">100 €</li>
-        </ul>
-        <ul class="list-inline card-text">
-            <li class="list-inline-item font-weight-bold">Reservierungen: </li>
-        </ul>
-        <ul class="list-group list-group-flush" style="background-color: transparent">
-            <li class="list-group-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
-            <li class="list-group-item" th:each="reservation : ${account.reservations}"
-                th:text="${reservation.amount} + ' €'">30 €</li><br/>
-        </ul>
-    </div>
-</div>
-<div class="card-body container">
-
-    <div style="margin: 15px">
-        <ul class="list-inline card-text">
-            <li class="list-inline-item font-weight-bold">Konto aufladen</li>
-        </ul>
-        <ul>
-        <li>
-    <form th:action="@{/user/propayErhoehung}"  method="post" >
-        <label for="amount">Betrag:</label>
-        <input style="margin-bottom: 10px" type="text" placeholder="in Euro" class="form-control" name="amount" id="amount" required pattern="[0-9]{1,8}"/>
-        <input type="hidden" name="account" th:value="${account.account}">
-        <button type="submit" class="btn btn-primary">Aufladen</button>
-    </form>
-        </li>
-        </ul>
-</div>
-    <br/>
-    <div class="container">
+    <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
+    <div class="container" >
         <div style="margin: 15px">
             <ul class="list-inline card-text">
-                <li class="list-inline-item font-weight-bold">Vergangene Überweisungen: </li>
+                <li class="list-inline-item font-weight-bold">Kontostand:</li>
+                <li class="list-inline-item" th:text="${account.amount} + ' €'">100 €</li>
+            </ul>
+            <ul class="list-inline card-text">
+                <li class="list-inline-item font-weight-bold">Reservierungen: </li>
             </ul>
             <ul class="list-group list-group-flush" style="background-color: transparent">
-                <li class="list-group-item" th:if="${#lists.isEmpty(transactions)}">Keine</li>
-                <table class="table container">
-                    <thead>
-                    <tr>
-                        <th scope="col">Typ</th>
-                        <th scope="col">Auftraggeber</th>
-                        <th scope="col">Empfänger</th>
-                        <th scope="col">Betrag</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="transaction : ${transactions}">
-                        <td th:text="${transaction.transactionType}"></td>
-                        <td th:text="${transaction.giver.username}"></td>
-                        <td th:text="${transaction.receiver.username}"></td>
-                        <td th:text="${transaction.amount} + ' €'">Geld</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <li class="list-group-item" th:if="${#lists.isEmpty(account.reservations)}">Keine</li>
+                <li class="list-group-item" th:each="reservation : ${account.reservations}"
+                    th:text="${reservation.amount} + ' €'">30 €</li><br/>
             </ul>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <div class="card-body container">
+
+        <div style="margin: 15px">
+            <ul class="list-inline card-text">
+                <li class="list-inline-item font-weight-bold">Konto aufladen</li>
+            </ul>
+            <ul>
+                <li>
+                    <form th:action="@{/user/propayErhoehung}"  method="post" >
+                        <label for="amount">Betrag:</label>
+                        <input style="margin-bottom: 10px" type="text" placeholder="in Euro" class="form-control" name="amount" id="amount" required pattern="[0-9]{1,8}"/>
+                        <input type="hidden" name="account" th:value="${account.account}">
+                        <button type="submit" class="btn btn-primary">Aufladen</button>
+                    </form>
+                </li>
+            </ul>
+    </div>
+        <br/>
+        <div class="container">
+            <div style="margin: 15px">
+                <ul class="list-inline card-text">
+                    <li class="list-inline-item font-weight-bold">Vergangene Überweisungen: </li>
+                </ul>
+                <ul class="list-group list-group-flush" style="background-color: transparent">
+                    <li class="list-group-item" th:if="${#lists.isEmpty(transactions)}">Keine</li>
+                    <table class="table container">
+                        <thead>
+                            <tr>
+                                <th scope="col">Typ</th>
+                                <th scope="col">Auftraggeber</th>
+                                <th scope="col">Empfänger</th>
+                                <th scope="col">Betrag</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="transaction : ${transactions}">
+                                <td th:text="${transaction.transactionType}"></td>
+                                <td th:text="${transaction.giver.username}"></td>
+                                <td th:text="${transaction.receiver.username}"></td>
+                                <td th:text="${transaction.amount} + ' €'">Geld</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ul>
+            </div>
+        </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
