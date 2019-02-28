@@ -41,7 +41,7 @@ public class GeraetController {
     @Autowired
     private PersonRepository personRepository;
 
-    @GetMapping("/geraet/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String geraetEdit(@PathVariable Long id, Model model) {
         Geraet geraet = geraetRepository.findById(id).get();
         Person person = geraet.getBesitzer();
@@ -50,7 +50,7 @@ public class GeraetController {
         return "user/edit";
     }
 
-    @GetMapping("/geraet/zurueckgeben/{id}")
+    @GetMapping("/zurueckgeben/{id}")
     public String geraetZurueck(@PathVariable Long id) throws Exception {
         RentEvent rentEvent = rentEventRepository.findById(id).get();
         rentEvent.setReturnStatus(ReturnStatus.WAITING_FOR_CONFIRMATION);
@@ -62,21 +62,21 @@ public class GeraetController {
         return "redirect://localhost:8080/user/rentThings";
     }
 
-    @PostMapping("/geraet/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String geraetDelete(@PathVariable Long id) {
         geraetRepository.deleteById(id);
         return "redirect://localhost:8080/user/myThings";
     }
 
 
-    @GetMapping("/geraet/addLikes/{id}")
+    @GetMapping("/addLikes/{id}")
     public String like(@PathVariable Long id, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         geraetService.addLike(id, person);
         return "redirect://localhost:8080";
     }
 
-    @PostMapping("/geraet/edit/{id}")
+    @PostMapping("/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
                              @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         geraetService.editGeraet(files, geraet, id, false);
@@ -85,7 +85,7 @@ public class GeraetController {
         return "redirect://localhost:8080/user/myThings";
     }
 
-    @GetMapping("/geraet/{id}")
+    @GetMapping("/{id}")
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         Geraet geraet = geraetRepository.findById(id).get();
@@ -100,7 +100,7 @@ public class GeraetController {
         return "user/geraet";
     }
 
-    @GetMapping("/geraet/changeToRent/{id}")
+    @GetMapping("/changeToRent/{id}")
     public String changeToRent(@PathVariable Long id, Model model) {
         Geraet geraet = geraetRepository.findById(id).get();
         model.addAttribute("person", geraet.getBesitzer());
@@ -108,7 +108,7 @@ public class GeraetController {
         return "user/changeToRent";
     }
 
-    @PostMapping("/geraet/changeToRent/{id}")
+    @PostMapping("/changeToRent/{id}")
     public String changeToRent(@PathVariable Long id, @ModelAttribute("geraet") Geraet geraet, @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         RentEvent verfuegbar = new RentEvent();
         TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());

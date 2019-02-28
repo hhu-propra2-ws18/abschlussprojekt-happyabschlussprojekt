@@ -54,67 +54,69 @@
             </form>
         </div>
 </nav>
+<div class="container">
+<div class="container">
     <div class="row justify-content-around">
         <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
             <div th:fragment="geraetContainer" class="container">
-            <div th:fragment="oneGeraetWithoutDelete">
-            <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
-                 src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-            <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
+                <div th:fragment="oneGeraetWithoutDelete">
+                    <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
+                    src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                    <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
                      width: 100%; object-fit: cover"
-                 th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
-            <div class="card-body">
-                <a class="nav-link" th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}">
-                    <i class="far fa-heart"></i>
-                    <span class="badge badge-pill badge-info" th:text="${geraet.getLikes()}">4</span>
-                </a>
-                <br>
-                <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
+                    th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
+                    <div class="card-body">
+                        <a class="nav-link" th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}">
+                            <i class="far fa-heart"></i>
+                            <span class="badge badge-pill badge-info" th:text="${geraet.getLikes()}">4</span>
+                        </a>
+                        <br>
+                        <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
                         font-size: x-large">Content</p>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
-                <li th:if="${!geraet.isForsale()}" class="list-group-item"
-                    th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST :
-                </li>
-                <li th:if="${geraet.isForsale()}" class="list-group-item"
-                    th:text="'Kosten : ' + ${geraet.getKosten() + '€'}">KOST :
-                </li>
-                <li th:if="${!geraet.isForsale()}" class="list-group-item"
-                    th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
-                </li>
-                <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
-                <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Zum Ausleihen</span>
-                </li>
-                <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Zum Kaufen</span>
-                </li>
-                <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
-                <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
-                    font-weight: bold; margin-left: 20px">
-                    <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
-                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}" th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
-                            ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
-                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().after(#dates.createNow())}" th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
-                            ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
-                    </tr>
-                </li>
-                <br/>
-                <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen im Zeitraum: </span>
-                <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
-                    font-weight: bold; margin-left: 20px; opacity: 0.6">
-                    <tr>
-                        <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
-                            ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
-                            ' von ' + ${rentEvent.mieter.username}"></td>
-                    </tr>
-                </li>
-            </ul>
-                <div class="card-body">
-                    <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" > Mehr </a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST :
+                        </li>
+                        <li th:if="${geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kosten : ' + ${geraet.getKosten() + '€'}">KOST :
+                        </li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
+                        </li>
+                        <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Zum Ausleihen</span></li>
+                        <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Zum Kaufen</span></li>
+                        <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
+                            <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+                        font-weight: bold; margin-left: 20px">
+                                <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
+                                    <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}" th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
+                                        ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                                    <td th:if="${verfugbarEvent.getTimeInterval().getStart().after(#dates.createNow())}" th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                                        ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
+                                </tr>
+                            </li>
+                            <br/>
+                        <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen im Zeitraum: </span>
+                            <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                        font-weight: bold; margin-left: 20px; opacity: 0.6">
+                                <tr>
+                                    <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                                        ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
+                                        ' von ' + ${rentEvent.mieter.username}"></td>
+                                </tr>
+                            </li>
+                    </ul>
+                    <div class="card-body">
+                        <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" > Mehr </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>
