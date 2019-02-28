@@ -52,7 +52,7 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         notificationService.updateAnzahlOfNotifications(person);
-        person.checkPhoto();
+        personService.checkPhoto(person);
         model.addAttribute("person", person);
 
         if (person.getRole().equals("ROLE_ADMIN")) {
@@ -164,14 +164,14 @@ public class UserController {
     @GetMapping("/BesitzerInfo/{id}")
     public String besitzerInfo(@PathVariable Long id, Model model) {
         Person besitzer = personRepository.findById(id).get();
-        besitzer.checkPhoto();
+        personService.checkPhoto(besitzer);
         model.addAttribute("person", besitzer);
         return "user/besitzerInfo";
     }
     @GetMapping("/mieterInfo/{id}")
     public String mieterInfo(@PathVariable Long id, Model model) {
         Person mieter = personRepository.findById(id).get();
-        mieter.checkPhoto();
+        personService.checkPhoto(mieter);
         model.addAttribute("comments", mieter.getComments());
         model.addAttribute("person", mieter);
         return "user/mieterInfo";

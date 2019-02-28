@@ -9,6 +9,7 @@ import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.MailService;
 import com.propra.happybay.Service.UserServices.NotificationService;
 import com.propra.happybay.Service.UserServices.PersonService;
+import com.propra.happybay.Service.UserServices.RentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +37,8 @@ public class NotificationController {
     private NotificationRepository notificationRepository;
     @Autowired
     private RentEventRepository rentEventRepository;
+    @Autowired
+    private RentEventService rentEventService;
 
     @PostMapping("/acceptReturn/{id}")
     public String notificatioxnAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund,
@@ -46,10 +49,10 @@ public class NotificationController {
         Person mieter = rentEvent.getMieter();
         mailService.sendAcceptReturnMail(mieter, geraet);
         personService.makeComment(geraet, mieter, grund);
-        double amount = rentEvent.calculatePrice();
+        double amount = rentEventService.calculatePrice(rentEvent);
         model.addAttribute("person", geraet.getBesitzer());
         try {
-            proPayService.ueberweisen(notification.getAnfragePersonUsername(), notification.getBesitzerUsername(), (int) amount);
+            proPayService.ueberweisen(notification.getAnfragePerson().getUsername(), notification.getBesitzer().getUsername(), (int) amount);
             proPayService.releaseReservation(mieter.getUsername(), rentEvent.getReservationId());
         }catch (IOException e){
             return "user/propayNotAvailable";
@@ -85,7 +88,7 @@ public class NotificationController {
         model.addAttribute("person", geraet.getBesitzer());
         int reservationId = 0;
         try {
-            reservationId = proPayService.erzeugeReservation(mieter.getUsername(), geraet.getBesitzerUsername(), geraet.getKaution());
+            reservationId = proPayService.erzeugeReservation(mieter.getUsername(), geraet.getBesitzer().getUsername(), geraet.getKaution());
         } catch (IOException e) {
             return "user/propayNotAvailable";
         }

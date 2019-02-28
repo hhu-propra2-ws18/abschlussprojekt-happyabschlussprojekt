@@ -30,13 +30,5 @@ public class Notification {
 
     @ManyToOne
     private Person anfragePerson;
-
-    public String getAnfragePersonUsername() {
-        return anfragePerson.getUsername();
-    }
-
-    public String getBesitzerUsername() {
-        return besitzer.getUsername();
-    }
 }
 
