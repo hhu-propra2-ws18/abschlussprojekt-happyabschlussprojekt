@@ -32,11 +32,6 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 public class MailServiceTest {
 
-
-    @Mock
-    private GeraetRepository geraetRepository;
-    @Mock
-    private PersonRepository personRepository;
     @Mock
     private RentEventRepository rentEventRepository;
     @Mock
@@ -49,28 +44,29 @@ public class MailServiceTest {
     @Test
     public void send_Scheduled_Mail() throws Exception {
         List<RentEvent> rentEventList = new ArrayList<>();
+
+        Person fakePerson = new Person();
+        fakePerson.setKontakt("a@b.c");
+
+        Geraet fakeGeraet = new Geraet();
+        fakeGeraet.setTitel("fake Geraet");
+
         RentEvent rentEvent1 = new RentEvent();
-        //rentEvent1.setGeraetId(1L);
-        //rentEvent1.setMieter("fake Mieter");
+        rentEvent1.setGeraet(fakeGeraet);
+        rentEvent1.setMieter(fakePerson);
         rentEvent1.setReturnStatus(ReturnStatus.DEADLINE_CLOSE);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
-        //rentEvent2.setGeraetId(2L);
-        //rentEvent2.setMieter("fake Mieter");
+        rentEvent2.setGeraet(fakeGeraet);
+        rentEvent2.setMieter(fakePerson);
         rentEvent2.setReturnStatus(ReturnStatus.DEADLINE_OVER);
         rentEventList.add(rentEvent2);
         Mockito.when(rentEventRepository.findAll()).thenReturn(rentEventList);
 
-        Person fakePerson = new Person();
-        fakePerson.setKontakt("a@b.c");
-        Mockito.when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.of(fakePerson));
+
         MimeMessage msg = new JavaMailSenderImpl().createMimeMessage();
         Mockito.when(sender.createMimeMessage()).thenReturn(msg);
-
-        Geraet fakeGeraet = new Geraet();
-        fakeGeraet.setTitel("fake Geraet");
-        Mockito.when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(fakeGeraet));
 
         mailService.sendScheduledMail();
         verify(sender,times(2)).createMimeMessage();

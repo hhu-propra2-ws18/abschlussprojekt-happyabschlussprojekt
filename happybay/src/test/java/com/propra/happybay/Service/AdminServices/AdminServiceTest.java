@@ -2,6 +2,7 @@ package com.propra.happybay.Service.AdminServices;
 
 import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Geraet;
+import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.HelperClassesForViews.InformationForMenuBadges;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
@@ -9,6 +10,7 @@ import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.ReturnStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,19 +92,21 @@ public class AdminServiceTest {
     public void get_geraet_with_rent_events_with_conflicts(){
 
         RentEvent fakeRentEvent1 = new RentEvent();
-        //fakeRentEvent1.setGeraetId(1L);
         RentEvent fakeRentEvent2 = new RentEvent();
-        //fakeRentEvent2.setGeraetId(2L);
         RentEvent fakeRentEvent3 = new RentEvent();
-        //fakeRentEvent3.setGeraetId(3L);
         rentEventsWithConflicts.add(fakeRentEvent1);
         rentEventsWithConflicts.add(fakeRentEvent2);
         rentEventsWithConflicts.add(fakeRentEvent3);
-        when(rentEventRepository.findAllByReturnStatus(any())).thenReturn(rentEventsWithConflicts);
-        Geraet fakeGeraet = new Geraet();
-        when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(fakeGeraet));
-
-        Assertions.assertThat(adminService.getGeraetWithRentEventsWithConflicts().size()).isEqualTo(3);
+        GeraetWithRentEvent test = new GeraetWithRentEvent();
+        when(rentEventRepository.findAllByReturnStatus(ReturnStatus.KAPUTT)).thenReturn(rentEventsWithConflicts);
+        List<GeraetWithRentEvent> geraetWithRentEventsWithConflicts = adminService.getGeraetWithRentEventsWithConflicts();
+        Assertions.assertThat(geraetWithRentEventsWithConflicts.size()).isEqualTo(3);
+        test.setRentEvent(fakeRentEvent1);
+        Assertions.assertThat(geraetWithRentEventsWithConflicts.get(0)).isEqualTo(test);
+        test.setRentEvent(fakeRentEvent2);
+        Assertions.assertThat(geraetWithRentEventsWithConflicts.get(1)).isEqualTo(test);
+        test.setRentEvent(fakeRentEvent3);
+        Assertions.assertThat(geraetWithRentEventsWithConflicts.get(2)).isEqualTo(test);
     }
 //
 //        @Test
