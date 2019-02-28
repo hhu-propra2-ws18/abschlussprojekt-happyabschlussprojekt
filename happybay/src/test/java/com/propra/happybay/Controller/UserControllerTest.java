@@ -164,9 +164,6 @@ public class UserControllerTest {
         mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
-
-
-
     }
 
     @Test
@@ -174,7 +171,6 @@ public class UserControllerTest {
         mvc2.perform(get("/user/profile").principal(principal))
                 .andExpect(status().isOk());
     }
-
 
     @Test
     public void myThings() throws Exception {
@@ -189,7 +185,6 @@ public class UserControllerTest {
         mvc2.perform(get("/user/rentThings").principal(principal))
                 .andExpect(status().isOk());
         verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(),any());
-
     }
 
     @Test

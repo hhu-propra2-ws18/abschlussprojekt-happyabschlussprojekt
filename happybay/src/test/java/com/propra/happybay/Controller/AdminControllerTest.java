@@ -147,7 +147,6 @@ public class AdminControllerTest {
     @Test
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        //when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
         when(rentEventService.calculatePrice(any())).thenReturn(100.0);
         doNothing().when(proPayService).ueberweisen("user","person1", (int) 100.0);
         mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","user").flashAttr("reservationId", 2))
@@ -157,7 +156,6 @@ public class AdminControllerTest {
     @Test
     public void punishAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        //when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
         mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection());
     }
