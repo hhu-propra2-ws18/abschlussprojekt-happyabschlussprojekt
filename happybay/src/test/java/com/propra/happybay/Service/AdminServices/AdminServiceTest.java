@@ -90,11 +90,11 @@ public class AdminServiceTest {
     public void get_geraet_with_rent_events_with_conflicts(){
 
         RentEvent fakeRentEvent1 = new RentEvent();
-        fakeRentEvent1.setGeraetId(1L);
+        //fakeRentEvent1.setGeraetId(1L);
         RentEvent fakeRentEvent2 = new RentEvent();
-        fakeRentEvent2.setGeraetId(2L);
+        //fakeRentEvent2.setGeraetId(2L);
         RentEvent fakeRentEvent3 = new RentEvent();
-        fakeRentEvent3.setGeraetId(3L);
+        //fakeRentEvent3.setGeraetId(3L);
         rentEventsWithConflicts.add(fakeRentEvent1);
         rentEventsWithConflicts.add(fakeRentEvent2);
         rentEventsWithConflicts.add(fakeRentEvent3);

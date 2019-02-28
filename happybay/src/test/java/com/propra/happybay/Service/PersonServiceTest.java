@@ -118,7 +118,7 @@ public class PersonServiceTest {
         Geraet fakeGeraet = new Geraet();
         fakeGeraet.setVerfuegbareEvents(rentEventList);
 
-        personService.intervalZerlegen(fakeGeraet,0,fakeAnfragenRentEvent);
+        personService.splitTimeIntervalsOfGeraetAvailability(fakeGeraet,0,fakeAnfragenRentEvent);
         verify(geraetRepository,times(1)).save(any());
     }
 
@@ -129,7 +129,7 @@ public class PersonServiceTest {
         fakeBesitzer.setUsername("fake Besitzer");
         Geraet fakegeraet = new Geraet();
         fakegeraet.setTitel("fake geraet");
-        fakegeraet.setBesitzer("fake Besitzer");
+        fakegeraet.setBesitzer(fakeBesitzer);
 
         when(personRepository.findByUsername("fake Besitzer")).thenReturn(java.util.Optional.ofNullable(fakeBesitzer));
         personService.makeComment(fakegeraet,fakePerson,"fake grund");
@@ -151,6 +151,14 @@ public class PersonServiceTest {
 
     @Test
     public void checks_active_or_in_active_rent_event(){
+        Geraet geraet1 = new Geraet();
+        geraet1.setId(new Long(1));
+
+        Geraet geraet2 = new Geraet();
+        geraet2.setId(new Long(2));
+
+        Geraet geraet3 = new Geraet();
+        geraet3.setId(new Long(3));
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
@@ -158,7 +166,7 @@ public class PersonServiceTest {
         timeInterval1.setStart(Date.valueOf("2019-1-10"));
         timeInterval1.setEnd(Date.valueOf("2019-3-10"));
         rentEvent1.setTimeInterval(timeInterval1);
-        rentEvent1.setGeraetId(1L);
+        rentEvent1.setGeraet(geraet1);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
@@ -166,7 +174,7 @@ public class PersonServiceTest {
         timeInterval2.setStart(Date.valueOf("2019-3-10"));
         timeInterval2.setEnd(Date.valueOf("2019-4-24"));
         rentEvent2.setTimeInterval(timeInterval2);
-        rentEvent2.setGeraetId(2L);
+        rentEvent2.setGeraet(geraet2);
         rentEventList.add(rentEvent2);
 
         RentEvent rentEvent3 = new RentEvent();
@@ -174,7 +182,7 @@ public class PersonServiceTest {
         timeInterval3.setStart(Date.valueOf("2019-5-28"));
         timeInterval3.setEnd(Date.valueOf("2019-6-24"));
         rentEvent3.setTimeInterval(timeInterval3);
-        rentEvent3.setGeraetId(3L);
+        rentEvent3.setGeraet(geraet3);
         rentEventList.add(rentEvent3);
 
         List<GeraetWithRentEvent> geraetWithRentEvents = new ArrayList<>();

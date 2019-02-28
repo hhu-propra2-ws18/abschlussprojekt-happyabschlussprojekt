@@ -19,16 +19,16 @@ public class Notification {
     private Date mietezeitpunktEnd;
     private String encode;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Geraet geraet;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private RentEvent rentEvent;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Person besitzer;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Person anfragePerson;
 
     public String getAnfragePersonUsername() {

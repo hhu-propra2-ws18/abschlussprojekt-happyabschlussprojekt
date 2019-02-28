@@ -105,7 +105,7 @@
                     <tr>
                         <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
-                            ' von ' + ${rentEvent.mieter}"></td>
+                            ' von ' + ${rentEvent.mieter.username}"></td>
                     </tr>
                 </li>
             </ul>

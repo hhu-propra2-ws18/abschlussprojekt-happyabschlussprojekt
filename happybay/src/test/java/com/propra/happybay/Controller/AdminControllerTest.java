@@ -92,7 +92,7 @@ public class AdminControllerTest {
         accountRepository.save(account);
         personMitAccount = new PersonMitAccount(person,account);
         //
-        rentEvent.setGeraetId(2L);
+        rentEvent.setGeraet(geraet);
         rentEvent.setId(2L);
         rentEvent.setReservationId(2);
         List<RentEvent> rentEventList=new ArrayList<>();
@@ -141,9 +141,9 @@ public class AdminControllerTest {
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        doNothing().when(geraetService).checkForTouchingIntervals(any(),any());
+        //doNothing().when(geraetService).checkForTouchingIntervals(any(),any());
 
-        mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","test").flashAttr("reservationId",2))
+        mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","test").flashAttr("reservationId", 2))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }

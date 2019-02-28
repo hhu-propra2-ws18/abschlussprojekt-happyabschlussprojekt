@@ -46,9 +46,9 @@ public class UserController {
     @Autowired
     private RentEventRepository rentEventRepository;
     @Autowired
-    PersonService personService;
+    private PersonService personService;
     @Autowired
-    NotificationService notificationService;
+    private NotificationService notificationService;
 
     public UserController(ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
         this.personRepository = personRepository;
@@ -137,13 +137,8 @@ public class UserController {
         Account account = accountRepository.findByAccount(name).get();
         model.addAttribute("account",account);
         model.addAttribute("person", person);
-        Geraet geraet1 = geraetRepository.findById(id).get();
-
         model.addAttribute("account", account);
-
-        model.addAttribute("geraet", geraet1);
         model.addAttribute("geraet", geraet);
-        model.addAttribute("notification", new Notification());
         return "user/anfragen";
     }
 
@@ -184,19 +179,18 @@ public class UserController {
                            Principal principal) throws Exception {
         Person anfragePerson = personRepository.findByUsername(principal.getName()).get();
         Geraet geraet = geraetRepository.findById(id).get();
-        Notification newNotification = new Notification();
-        newNotification.setType("request");
-        newNotification.setAnfragePerson(anfragePerson);
-        newNotification.setGeraet(geraet);
-        newNotification.setMessage(notification.getMessage());
-        newNotification.setMietezeitpunktStart(new Date(notification.getMietezeitpunktStart().getTime() + 60 * 60 * 6000));
-        newNotification.setMietezeitpunktEnd(new Date(notification.getMietezeitpunktEnd().getTime() + 60 * 60 * 6000));
-        newNotification.setBesitzer(notification.getBesitzer());
+        Date startDate = new Date(notification.getMietezeitpunktStart().getTime() + 60 * 60 * 6000);
+        Date endDate = new Date(notification.getMietezeitpunktEnd().getTime() + 60 * 60 * 6000);
+        notification.setType("request");
+        notification.setAnfragePerson(anfragePerson);
+        notification.setGeraet(geraet);
+        notification.setMietezeitpunktStart(startDate);
+        notification.setMietezeitpunktEnd(endDate);
+        notification.setBesitzer(geraet.getBesitzer());
+        notification.setEncode(geraet.getEncode());
 
         Person besitzer = geraet.getBesitzer();
-
-        newNotification.setEncode(geraet.getEncode());
-        notificationRepository.save(newNotification);
+        notificationRepository.save(notification);
 
         mailService.sendAnfragMail(besitzer, geraet, principal);
 
@@ -258,17 +252,19 @@ public class UserController {
             model.addAttribute("transactions", transactions);
             model.addAttribute("account", account);
         }catch (Exception e){
-            return"/user/propayNotAvailable";
+            return "user/propayNotAvailable";
         }
         return "user/proPay";
     }
 
     @PostMapping("/propayErhoehung")
-    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account){
+    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account,
+                                 Model model){
+        model.addAttribute(personRepository.findByUsername(account));
         try {
             proPayService.erhoeheAmount(account, amount);
         } catch (IOException e) {
-            return"/user/propayNotAvailable";
+            return "user/propayNotAvailable";
         }
         return "redirect://localhost:8080";
     }
@@ -358,28 +354,29 @@ public class UserController {
     }
 
     @PostMapping("/notification/acceptRequest/{id}")
-    public String notificationAcceptRequest(@PathVariable Long id) throws Exception {
+    public String notificationAcceptRequest(@PathVariable Long id, Model model) throws Exception {
 
         Notification notification = notificationRepository.findById(id).get();
         Person mieter = notification.getAnfragePerson();
         Geraet geraet = notification.getGeraet();
+        model.addAttribute("person", geraet.getBesitzer());
         int reservationId = 0;
-        try {
+        //try {
             reservationId = proPayService.erzeugeReservation(mieter.getUsername(), geraet.getBesitzerUsername(), geraet.getKaution());
-        } catch (IOException e) {
-            return "/user/propayNotAvailable";
-        }
+        //} catch (IOException e) {
+            //return "user/propayNotAvailable";
+        //}
 
         TimeInterval timeInterval = new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd());
         RentEvent rentEvent = new RentEvent();
         rentEvent.setMieter(mieter);
         rentEvent.setTimeInterval(timeInterval);
         rentEvent.setGeraet(geraet);
-        rentEvent.setReservationId(new Long(reservationId));
+        rentEvent.setReservationId(reservationId);
         rentEvent.setReturnStatus(ReturnStatus.BOOKED);
         geraet.getRentEvents().add(rentEvent);
         int index = personService.positionOfFreeBlock(geraet, rentEvent);
-        personService.intervalZerlegen(geraet, index, rentEvent);
+        personService.splitTimeIntervalsOfGeraetAvailability(geraet, index, rentEvent);
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
 
@@ -407,24 +404,26 @@ public class UserController {
     }
 
     @PostMapping("/notification/acceptReturn/{id}")
-    public String notificationAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund) throws Exception {
+    public String notificationAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund,
+                                           Model model) throws Exception {
         Notification notification = notificationService.getNotificationById(id);
         RentEvent rentEvent = notification.getRentEvent();
         Geraet geraet = rentEvent.getGeraet();
         Person mieter = rentEvent.getMieter();
         mailService.sendAcceptReturnMail(mieter, geraet);
         personService.makeComment(geraet, mieter, grund);
-        double amount = rentEvent.getTimeInterval().getDuration() * geraet.getKosten();
+        double amount = rentEvent.calculatePrice();
+        model.addAttribute("person", geraet.getBesitzer());
         try {
             proPayService.ueberweisen(notification.getAnfragePersonUsername(), notification.getBesitzerUsername(), (int) amount);
-            proPayService.releaseReservation(mieter.getUsername(), rentEvent.getReservationId().intValue());
+            proPayService.releaseReservation(mieter.getUsername(), rentEvent.getReservationId());
         }catch (IOException e){
-            return"/user/propayNotAvailable";
+            return "user/propayNotAvailable";
         }
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
-        rentEventRepository.delete(rentEvent);
         notificationRepository.deleteById(id);
+        rentEventRepository.delete(rentEvent);
         return "redirect://localhost:8080/user/notifications";
     }
 

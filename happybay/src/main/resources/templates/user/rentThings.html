@@ -84,6 +84,11 @@
                         <li class="list-inline-item font-weight-bold" >Kaution: </li>
                         <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
                     </ul>
+                    <ul class="list-inline card-text" >
+                        <li class="list-inline-item font-weight-bold" >Sie haben gebucht: </li>
+                        <li class="list-inline-item" th:text="${#dates.format(rentThing.rentEvent.timeInterval.start, 'dd.MM.')} + ' - ' +
+                        ${#dates.format(rentThing.rentEvent.timeInterval.end, 'dd.MM.yyyy')}"></li>
+                    </ul>
 
                     <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}" >Details</a><br/>
                     <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"

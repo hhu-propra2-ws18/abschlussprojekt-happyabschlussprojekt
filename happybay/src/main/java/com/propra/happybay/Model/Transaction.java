@@ -1,5 +1,6 @@
 package com.propra.happybay.Model;
 
+import com.propra.happybay.TransactionType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,8 +12,10 @@ public class Transaction {
     @GeneratedValue
     private Long id;
     private int amount;
-    @OneToOne(cascade = CascadeType.ALL)
+    private TransactionType transactionType;
+
+    @ManyToOne
     private Person receiver;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Person giver;
 }

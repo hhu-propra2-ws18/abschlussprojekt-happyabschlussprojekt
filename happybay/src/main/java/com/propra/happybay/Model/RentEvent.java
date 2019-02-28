@@ -12,15 +12,18 @@ public class RentEvent {
     @Id
     @GeneratedValue
     private Long Id;
-    private Long reservationId;
+    private int reservationId;
     private String grundForReturn = "";
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Geraet geraet;
     @Embedded
     private TimeInterval timeInterval;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Person mieter;
     ReturnStatus returnStatus = ReturnStatus.OK;
 
+    public double calculatePrice() {
+        return this.timeInterval.getDuration() * this.geraet.getKosten();
+    }
 }

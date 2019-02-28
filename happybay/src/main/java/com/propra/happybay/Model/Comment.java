@@ -18,6 +18,5 @@ public class Comment {
     private String message;
     private String senderFrom;
     private LocalDate date;
-
 }
 

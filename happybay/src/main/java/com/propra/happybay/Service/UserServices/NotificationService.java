@@ -43,7 +43,7 @@ public class NotificationService {
     public void updateAnzahlOfNotifications(Person person) {
         List<Notification> notifications = notificationRepository.findAllByBesitzer(person);
         person.setAnzahlNotifications(notifications.size());
-        personRepository.save(person);
+        //personRepository.save(person);
     }
 
     public Notification getNotificationById(Long id) {
