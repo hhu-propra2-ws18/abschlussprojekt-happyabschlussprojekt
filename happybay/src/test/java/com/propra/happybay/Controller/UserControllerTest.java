@@ -249,33 +249,7 @@ public class UserControllerTest {
         mvc2.perform(post("/user/sale/{id}",1L).principal(principal))
                 .andExpect(status().is3xxRedirection());
     }
-    @Test
-    public void  notificationAcceptRequest() throws Exception {
 
-        mvc2.perform(post("/user/notification/acceptRequest/{id}",1L).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void notificationRefuseReturn() throws Exception {
-
-        mvc2.perform(post("/user/notification/refuseReturn/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void notificationRefuseRequest() throws Exception {
-
-        mvc2.perform(post("/user/notification/refuseRequest/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-        verify(geraetRepository, Mockito.times(1)).findById(any());
-
-    }
-
-    @Test
-    public void notificationAcceptReturn() throws Exception {
-
-        mvc2.perform(post("/user/notification/acceptReturn/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-    }
     @Test
     public void changeImg() throws Exception {
 
