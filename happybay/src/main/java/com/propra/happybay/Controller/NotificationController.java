@@ -52,7 +52,7 @@ public class NotificationController {
     }
 
     @PostMapping("/acceptReturn/{id}")
-    public String notificatioxnAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund,
+    public String notificationAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund,
                                             Model model) throws Exception {
         Notification notification = notificationService.getNotificationById(id);
         RentEvent rentEvent = notification.getRentEvent();
