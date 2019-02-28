@@ -29,7 +29,7 @@
         <li>
     <form th:action="@{/user/propayErhoehung}"  method="post" >
         <label for="amount">Betrag:</label>
-        <input style="margin-bottom: 10px" type="number" class="form-control" name="amount" id="amount"/>
+        <input style="margin-bottom: 10px" type="text" class="form-control" name="amount" id="amount" required pattern="[0-9]{1,8}"/>
         <input type="hidden" name="account" th:value="${account.account}">
         <button type="submit" class="btn btn-primary">Aufladen</button>
     </form>
@@ -57,11 +57,6 @@
                         <th scope="row" th:text="${transaction.giver}"></th>
                         <td th:text="${transaction.receiver}"></td>
                         <td th:text="${transaction.amount} + ' €'">Geld</td>
-                        <!--<td> <form action="/admin/erhoeheAmount" method="post">-->
-                        <!--<input type="hidden" name="username" th:value="${personMitAccount.person.username}">-->
-                        <!--<br>-->
-                        <!--<input type="submit" value="Erhöhe Kontostand">-->
-                        <!--</form> </td>-->
                     </tr>
                     </tbody>
                 </table>
