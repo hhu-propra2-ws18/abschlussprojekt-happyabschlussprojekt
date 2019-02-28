@@ -101,7 +101,8 @@ public class AdminController {
         }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
-        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) rentEventService.calculatePrice(rentEvent));
+        double a= rentEventService.calculatePrice(rentEvent);
+        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int)a );
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
@@ -114,7 +115,8 @@ public class AdminController {
         return "redirect://localhost:8080/admin";
     }
 
-    public AdminController(ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
+    public AdminController(RentEventService rentEventService, ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
+        this.rentEventService=rentEventService;
         this.proPayService=proPayService;
         this.adminService=adminService;
         this.geraetRepository=geraetRepository;

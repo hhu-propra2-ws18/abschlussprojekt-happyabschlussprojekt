@@ -3,10 +3,7 @@ package com.propra.happybay.Controller;
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserServices.GeraetService;
-import com.propra.happybay.Service.UserServices.MailService;
-import com.propra.happybay.Service.UserServices.NotificationService;
-import com.propra.happybay.Service.UserServices.PersonService;
+import com.propra.happybay.Service.UserServices.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +38,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -54,14 +50,15 @@ public class UserControllerTest {
     private Account account = new Account();
     private RentEvent rentEvent=new RentEvent();
     private List<RentEvent> verfuegbareEvents=new ArrayList<>();
+    List<Transaction> transactions=new ArrayList<>();
+    Transaction transaction=new Transaction();
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
+    List<RentEvent> activeRentEvents=new ArrayList<>();
     //Bild
     private Bild bild = new Bild();
     private RentEvent verfuerbar = new RentEvent();
-    @Autowired
-    private WebApplicationContext context;
     @Autowired
     public PasswordEncoder encoder;
     private MockMvc mvc2;
@@ -81,21 +78,19 @@ public class UserControllerTest {
     @Mock
     PersonService personService;
     @Mock
+    RentEventService rentEventService;
+    @Mock
     GeraetService geraetService;
+
     @Mock
     NotificationRepository notificationRepository;
     @Mock
     RentEventRepository rentEventRepository;
-    Principal principal = new Principal() {
-        @Override
-        public String getName() {
-            return "test";
-        }
-    };
-    final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
-    final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
+    Principal principal = () -> "test";
+    private final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
+    private final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
 
-    MultipartFile[] multipartFiles = new MultipartFile[1];
+    private MultipartFile[] multipartFiles = new MultipartFile[1];
 
     public UserControllerTest() throws IOException {
     }
@@ -113,19 +108,15 @@ public class UserControllerTest {
         user.setRole("ROLE_USER");
         user.setAdresse("test dusseldorf");
         user.setAnzahlNotifications(0);
-
         //Admin
         admin.setUsername("admin");
         admin.setId(2L);
         admin.setFoto(bild);
         admin.setRole("ROLE_ADMIN");
-
         personRepository.save(admin);
-        //VerfügbarEvent
-        //rentEvent.setGeraetId(2L);
         rentEvent.setMieter(user);
         rentEvent.setTimeInterval(timeInterval);
-                verfuegbareEvents.add(rentEvent);
+        activeRentEvents.add(rentEvent);
         //Geraet
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
@@ -135,52 +126,45 @@ public class UserControllerTest {
         geraet.setMietezeitpunktEnd(end);
         geraet.setMietezeitpunktStart(start);
         geraet.setVerfuegbareEvents(verfuegbareEvents);
-       // geraetRepository.save(geraet);
-
+        //
+        transactions.add(transaction);
         //Account
         account.setAccount(user.getUsername());
         account.setAmount(100.0);
         //
-        //notification.setGeraetId(3L);
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
-        //notification.setRentEventId(1L);
-        verfuerbar.setTimeInterval(geraetService.convertToCET(timeInterval));
         geraet.getVerfuegbareEvents().add(verfuerbar);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
         //
-        //doNothing().when(notificationService).updateAnzahlOfNotifications();
-        //notificationRepository
-        doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
-        when(notificationRepository.findById(any())).thenReturn(Optional.ofNullable(notification));
         //
+        when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
-        when(geraetService.convertToCET(any())).thenReturn(timeInterval);
         when(personRepository.findById(any())).thenReturn(Optional.ofNullable(user));
         doNothing().when(personService).checksActiveOrInActiveRentEvent(any(),any());
-        when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
+
+
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        when(rentEventRepository.findById(any())).thenReturn(Optional.ofNullable(rentEvent));
-        when(notificationService.getNotificationById(any())).thenReturn(notification);
-        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
+        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
-
-
-
     }
 
-    @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proflieWithUser() throws Exception {
         mvc2.perform(get("/user/profile").principal(principal))
                 .andExpect(status().isOk());
     }
+    @Test
+    public void proflieWithAdmin() throws Exception {
+        user.setRole("ROLE_ADMIN");
+        mvc2.perform(get("/user/profile").principal(principal))
+                .andExpect(status().is3xxRedirection());
+    }
 
-    @WithMockUser(value = "test", roles = "USER")
     @Test
     public void myThings() throws Exception {
         mvc2.perform(get("/user/myThings").principal(principal))
@@ -190,11 +174,10 @@ public class UserControllerTest {
     @Test
     public void rentThings() throws Exception {
 
-
+        when(rentEventService.getActiveEventsForPerson(user)).thenReturn(activeRentEvents);
         mvc2.perform(get("/user/rentThings").principal(principal))
                 .andExpect(status().isOk());
-        verify(rentEventRepository, Mockito.times(6)).findAllByMieterAndReturnStatus(any(),any());
-
+        verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(),any());
     }
 
     @Test
@@ -222,24 +205,10 @@ public class UserControllerTest {
                 .flashAttr("notification",notification))
                 .andExpect(status().is3xxRedirection());
     }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void addGeraetGet() throws Exception {
-        mvc2.perform(get("/user/addGeraet").principal(principal))
-                .andExpect(status().isOk());
-    }
-    @WithMockUser(value = "test", roles = "USER")
-    @Test
-    public void addGeraetPost() throws Exception {
-
-
-        mvc2.perform(post("/user/addGeraet").flashAttr("geraet", geraet).requestAttr("files",multipartFiles).principal(principal))
-                .andExpect(status().is3xxRedirection());
-    }
-    @WithMockUser(value = "test", roles = "USER")
     @Test
     public void proPay() throws Exception {
-
+        when(accountRepository.findByAccount(anyString())).thenReturn(Optional.ofNullable(account));
+        when(proPayService.getAllPastTransactionsForPerson(user)).thenReturn(transactions);
         mvc2.perform(get("/user/proPay").principal(principal))
                 .andExpect(status().isOk());
 
@@ -251,41 +220,23 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
     @Test
-    public void geraetZurueck() throws Exception {
-
-
-        mvc2.perform(get("/user/geraet/zurueckgeben/{id}",1L).principal(principal))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void changeToRentPOST() throws Exception {
-
-        mvc2.perform(post("/user/geraet/changeToRent/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("geraet",geraet).requestAttr("files",multipartFiles))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void changeToRentGET() throws Exception {
-
-        mvc2.perform(get("/user/geraet/changeToRent/{id}",1L))
+    public void mieterInfo() throws Exception {
+        mvc2.perform(get("/user/mieterInfo/{id}",1L))
                 .andExpect(status().isOk());
     }
-    @Test
-    public void geraetEditGET() throws Exception {
 
-        mvc2.perform(get("/user/geraet/edit/{id}",1L))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void geraet() throws Exception {
 
-        mvc2.perform(get("/user/geraet/{id}",1L).principal(principal))
-                .andExpect(status().isOk());
-    }
     @Test
-    public void aufladenAntrag() throws Exception {
+    public void aufladenAntragOk() throws Exception {
 
         mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
                 .andExpect(status().is3xxRedirection());
+    }
+    @Test
+    public void aufladenAntragError() throws Exception {
+        doCallRealMethod().when(proPayService).erhoeheAmount("test",100);
+        mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
+                .andExpect(status().isOk());
     }
     @Test
     public void anfragen() throws Exception {
@@ -293,40 +244,7 @@ public class UserControllerTest {
         mvc2.perform(post("/user/sale/{id}",1L).principal(principal))
                 .andExpect(status().is3xxRedirection());
     }
-    @Test
-    public void  notificationAcceptRequest() throws Exception {
 
-        mvc2.perform(post("/user/notification/acceptRequest/{id}",1L).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void notificationRefuseReturn() throws Exception {
-
-        mvc2.perform(post("/user/notification/refuseReturn/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void notificationRefuseRequest() throws Exception {
-
-        mvc2.perform(post("/user/notification/refuseRequest/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-        verify(geraetRepository, Mockito.times(1)).findById(any());
-
-    }
-    @Test
-    public void geraetDelete() throws Exception {
-
-        mvc2.perform(post("/user/geraet/delete/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-        verify(geraetRepository, Mockito.times(1)).deleteById(any());
-
-    }
-    @Test
-    public void notificationAcceptReturn() throws Exception {
-
-        mvc2.perform(post("/user/notification/acceptReturn/{id}",1L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
-                .andExpect(status().is3xxRedirection());
-    }
     @Test
     public void changeImg() throws Exception {
 
@@ -340,19 +258,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
     }
-    @Test
-    public void geraetEdit() throws Exception {
 
-        mvc2.perform(post("/user/geraet/edit/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("person",user).requestAttr("file",multipartFiles).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
-    }
-    @Test
-    public void like() throws Exception {
 
-        mvc2.perform(get("/user/geraet/addLikes/{id}",1L).principal(principal))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
-
-    }
 }

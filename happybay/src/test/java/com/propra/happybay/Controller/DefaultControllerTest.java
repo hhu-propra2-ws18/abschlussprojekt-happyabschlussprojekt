@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
@@ -66,11 +67,7 @@ public class DefaultControllerTest {
     PersonService personService;
     @Autowired
     public PasswordEncoder encoder;
-    @Autowired
-    private WebApplicationContext context;
     private MockMvc mvc;
-    @Mock
-    BindingResult result;
     @Mock
     RentEventRepository rentEventRepository;
     @Mock
@@ -85,47 +82,12 @@ public class DefaultControllerTest {
             return "test";
         }
     };
-    private MultipartFile file=new MultipartFile() {
-        @Override
-        public String getName() {
-            return null;
-        }
+    private final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
+    private final MockMultipartFile file = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
 
-        @Override
-        public String getOriginalFilename() {
-            return null;
-        }
+    public DefaultControllerTest() throws IOException {
+    }
 
-        @Override
-        public String getContentType() {
-            return null;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public long getSize() {
-            return 0;
-        }
-
-        @Override
-        public byte[] getBytes() throws IOException {
-            return new byte[0];
-        }
-
-        @Override
-        public InputStream getInputStream() throws IOException {
-            return null;
-        }
-
-        @Override
-        public void transferTo(File dest) throws IOException, IllegalStateException {
-
-        }
-    };
     @Before
     public void setup() throws IOException {
         person.setUsername("testAdmin");
@@ -160,12 +122,30 @@ public class DefaultControllerTest {
     }
 
     @Test
-    public void index_USER() throws Exception {
-
+    public void index_USER_no_key() throws Exception {
         mvc.perform(get("/").param("key","").principal(principal))
                 .andExpect(status().isOk());
     }
-
+    @Test
+    public void index_USER_preisAufsteigend() throws Exception {
+        mvc.perform(get("/").param("key","preisAufsteigend").principal(principal))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void index_USER_preisAbsteigend() throws Exception {
+        mvc.perform(get("/").param("key","preisAbsteigend").principal(principal))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void index_USER_likeAufsteigend() throws Exception {
+        mvc.perform(get("/").param("key","likeAufsteigend").principal(principal))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void index_USER_likeAbsteigend() throws Exception {
+        mvc.perform(get("/").param("key","likeAbsteigend").principal(principal))
+                .andExpect(status().isOk());
+    }
     @Test
     public void index_NO_USER() throws Exception {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);

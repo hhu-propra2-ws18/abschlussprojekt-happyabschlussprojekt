@@ -77,7 +77,7 @@ public class UserController {
 
         List<RentEvent> activeRentEvents = rentEventService.getActiveEventsForPerson(mieter);
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
-        personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
+        //personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
         List<RentEvent> bookedRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.BOOKED);
         List<GeraetWithRentEvent> bookedGeraete = new ArrayList<>();
@@ -203,7 +203,8 @@ public class UserController {
                 "    </div>";
     }
 
-    public UserController(ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
+    public UserController(RentEventService rentEventService, ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
+        this.rentEventService=rentEventService;
         this.personRepository = personRepository;
         this.geraetRepository=geraetRepository;
         this.notificationService=notificationService;

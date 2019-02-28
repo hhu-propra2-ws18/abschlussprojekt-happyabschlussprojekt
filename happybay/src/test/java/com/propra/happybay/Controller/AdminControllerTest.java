@@ -11,6 +11,7 @@ import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.GeraetService;
+import com.propra.happybay.Service.UserServices.RentEventService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +30,13 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,8 +62,8 @@ public class AdminControllerTest {
     private AccountRepository accountRepository;
     @Mock
     AdminService adminService;
-    @Mock
-    RentEvent rentEvent;
+
+    RentEvent rentEvent=new RentEvent();
     @Mock
     GeraetRepository geraetRepository;
     @Mock
@@ -70,15 +73,16 @@ public class AdminControllerTest {
     @Mock
     ProPayService proPayService;
     @Mock
-    GeraetWithRentEvent geraetWithRentEvent;
+    RentEventService rentEventService;
     @Autowired
     public PasswordEncoder encoder;
-    @Autowired
-    private WebApplicationContext context;
+    Date start = new Date(2019,10,20);
+    Date end = new Date(2019,11,21);
+    private TimeInterval timeInterval = new TimeInterval(start,end);
     private MockMvc mvc;
     @Before
     public void setup() throws IOException {
-        person.setUsername("testAdmin");
+        person.setUsername("person1");
         person.setId(1L);
         person.setAdresse("test dusseldorf");
         personRepository.save(person);
@@ -91,22 +95,25 @@ public class AdminControllerTest {
         account.setReservations(reservationList);
         accountRepository.save(account);
         personMitAccount = new PersonMitAccount(person,account);
+
+        //gerät
+        geraet.setId(2L);
+        geraet.setBesitzer(person);
+        geraet.setKosten(100);
+        geraetList.add(geraet);
         //
         rentEvent.setGeraet(geraet);
         rentEvent.setId(2L);
         rentEvent.setReservationId(2);
+        rentEvent.setTimeInterval(timeInterval);
         List<RentEvent> rentEventList=new ArrayList<>();
         rentEventList.add(rentEvent);
-        //gerät
-        geraet.setId(2L);
         geraet.setRentEvents(rentEventList);
-        geraetList.add(geraet);
-        personMitAccountList.add(personMitAccount);
         when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
-        mvc = MockMvcBuilders.standaloneSetup(new AdminController(proPayService,adminService,geraetRepository,rentEventRepository,geraetService))
+        mvc = MockMvcBuilders.standaloneSetup(new AdminController(rentEventService,proPayService,adminService,geraetRepository,rentEventRepository,geraetService))
                 .setViewResolvers(viewResolver)
                 .build();
     }
@@ -140,18 +147,16 @@ public class AdminControllerTest {
     @Test
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        //doNothing().when(geraetService).checkForTouchingIntervals(any(),any());
-
-        mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","test").flashAttr("reservationId", 2))
+        when(rentEventService.calculatePrice(any())).thenReturn(100.0);
+        doNothing().when(proPayService).ueberweisen("user","person1", (int) 100.0);
+        mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","user").flashAttr("reservationId", 2))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }
     @Test
     public void punishAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","test").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection());
     }
 

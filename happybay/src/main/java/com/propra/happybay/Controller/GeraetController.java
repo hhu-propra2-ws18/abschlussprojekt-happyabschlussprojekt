@@ -41,11 +41,13 @@ public class GeraetController {
     @Autowired
     private PersonRepository personRepository;
 
-    public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
+    public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, NotificationService notificationService, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
         this.geraetRepository=geraetRepository;
         this.rentEventRepository=rentEventRepository;
+        this.notificationService=notificationService;
         this.mailService=mailService;
         this.personService=personService;
+        this.geraetService=geraetService;
         this.accountRepository=accountRepository;
         this.personRepository=personRepository;
     }
@@ -86,7 +88,7 @@ public class GeraetController {
     }
 
     @PostMapping("/edit/{id}")
-    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
+    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute(value = "geraet") Geraet geraet,
                              @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         geraetService.editGeraet(files, geraet, id, false);
         List<Geraet> geraete = null;
@@ -98,7 +100,9 @@ public class GeraetController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         Geraet geraet = geraetRepository.findById(id).get();
+
         Person personForComment = geraet.getBesitzer();
+
         List<String> encodes = geraetService.geraetBilder(geraet);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account",account);
