@@ -40,6 +40,17 @@ public class NotificationController {
     @Autowired
     private RentEventService rentEventService;
 
+    public NotificationController(NotificationService notificationService, MailService mailService, ProPayService proPayService, PersonService personService, GeraetRepository geraetRepository, NotificationRepository notificationRepository, RentEventRepository rentEventRepository, RentEventService rentEventService) {
+        this.notificationService=notificationService;
+        this.mailService=mailService;
+        this.proPayService=proPayService;
+        this.personService=personService;
+        this.geraetRepository=geraetRepository;
+        this.notificationRepository=notificationRepository;
+        this.rentEventRepository=rentEventRepository;
+        this.rentEventService=rentEventService;
+    }
+
     @PostMapping("/acceptReturn/{id}")
     public String notificatioxnAcceptReturn(@PathVariable Long id, @ModelAttribute("grund") String grund,
                                             Model model) throws Exception {
