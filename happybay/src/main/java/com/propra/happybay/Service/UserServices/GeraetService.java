@@ -23,6 +23,8 @@ public class GeraetService {
     @Autowired
     GeraetRepository geraetRepository;
     @Autowired
+    PictureService pictureService;
+    @Autowired
     RentEventRepository rentEventRepository;
     @Autowired
     PersonService personService;
@@ -41,10 +43,10 @@ public class GeraetService {
         return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%"+key+"%"));
     }
     public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
     }
     public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
     }
 
     public List<String> geraetBilder(Geraet geraet){
