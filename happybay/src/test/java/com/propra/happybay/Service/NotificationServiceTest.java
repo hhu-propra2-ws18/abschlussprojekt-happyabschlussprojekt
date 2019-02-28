@@ -92,7 +92,7 @@ public class NotificationServiceTest {
 //        notification.setGeraetId(1L);
 //        notification.setBesitzer("fakeBesitzer");
 //        notification.setZeitraum(5);
-//        Assertions.assertThat(notificationService.makeNotification("fakeName",1L,fakeGeraet)).isEqualTo(notification);
+//        Assertions.assertThat(notificationService.copyAndEditNotification("fakeName",1L,fakeGeraet)).isEqualTo(notification);
 //    }
 
     @Test

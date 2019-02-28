@@ -227,7 +227,7 @@ public class GeraetServiceTest {
         fakegeraet.setKaution(1);
         fakegeraet.setAbholort("fake Ort");
         when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(fakegeraet));
-        geraetService.saveGeraet(files,fakegeraet,1L);
+        geraetService.editGeraet(files,fakegeraet,1L);
 
     }
 
