@@ -65,7 +65,7 @@
             <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
 
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
-            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" />
+            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
             <br/><br/>
 
             <button type="submit" class="btn btn-primary">Save</button>
@@ -149,7 +149,7 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < nowDate) {
+        if (startDate < (nowDate-(18*60*60*1000))) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
@@ -175,7 +175,7 @@
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if (endDate < nowDate) {
+        if (endDate < (nowDate-(18*60*60*1000))) {
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;
@@ -192,12 +192,26 @@
             }
         }
     }
-    function isnull(str) {
-
-        if (str == '' || str == undefined || str == null) {
-            return true;
-        } else {
-            return false;
+    function checkFile(el){
+        var files = el.files;
+        var allowTypes = ["image/jpeg","image/png","image/jpg","image/gif"];
+        var allowUpload = true;
+        var errorMessage = "";        for(var i=0; i< files.length; i++){
+            var fileName = files[i].name;
+            var fileType = files[i].type;            var typeAccepted = false;
+            for(var j = 0; j < allowTypes.length; j++){
+                if(allowTypes[j] == fileType){
+                    typeAccepted = true;
+                    break;
+                }
+            }
+            if(typeAccepted != true){
+                errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
+                allowUpload = false;
+            }
+        }        if(allowUpload != true){
+            el.outerHTML = el.outerHTML;
+            alert(errorMessage);
         }
     }
 

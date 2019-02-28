@@ -109,7 +109,6 @@ public class PersonService {
         }
     }
 
-    //Braucht Test
     public Person savePerson(Principal principal, MultipartFile file, Person p) throws IOException {
         String name = principal.getName();
         Person person = personRepository.findByUsername(name).get();
@@ -121,6 +120,12 @@ public class PersonService {
         person.setVorname(p.getVorname());
         person.setAdresse(p.getAdresse());
         personRepository.save(person);
+        return person;
+    }
+
+    public Person findByPrincipal(Principal principal) {
+        String name = principal.getName();
+        Person person = personRepository.findByUsername(name).get();
         return person;
     }
 }

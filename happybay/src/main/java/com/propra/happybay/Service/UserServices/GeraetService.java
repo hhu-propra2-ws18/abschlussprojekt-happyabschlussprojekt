@@ -58,41 +58,6 @@ public class GeraetService {
         return geraets;
     }
 
-    public void checkForTouchingIntervals(Geraet geraet, RentEvent rentEvent) {
-        List<RentEvent> rentEvents = geraet.getVerfuegbareEvents();
-        rentEvents.add(rentEvent);
-        for (int j = 0; j < rentEvents.size(); j++) {
-            int smallest = j;
-            for (int i = j + 1; i < rentEvents.size(); i++) {
-                Long start = rentEvents.get(i).getTimeInterval().getStart().getTime();
-                if (start < rentEvents.get(j).getTimeInterval().getStart().getTime()) {
-                    smallest = i;
-                }
-            }
-            Collections.swap(rentEvents, j, smallest);
-        }
-
-        for (int i = 0; i < rentEvents.size()-1; i++) {
-            TimeInterval timeInterval1 = rentEvents.get(i).getTimeInterval();
-            TimeInterval timeInterval2 = rentEvents.get(i + 1).getTimeInterval();
-            Date timeInterval1Start = timeInterval1.getStart();
-            Date timeInterval1End = timeInterval1.getEnd();
-            Date timeInterval2Start = timeInterval2.getStart();
-
-            if (timeInterval1End.compareTo(timeInterval2Start) == 0) {
-                timeInterval2.setStart(timeInterval1Start);
-                timeInterval1.setStart(null);
-            }
-        }
-        List<RentEvent> toRemove = new ArrayList<>();
-        for (RentEvent rentEvent1: rentEvents) {
-            if (rentEvent1.getTimeInterval().getStart() == null) {
-                toRemove.add(rentEvent1);
-            }
-        }
-        rentEvents.removeAll(toRemove);
-        geraetRepository.save(geraet);
-    }
     @Scheduled(fixedRate = 86400000)
     public void checkRentEventStatus() {
         List<RentEvent> rentEvents = rentEventRepository.findAll();
@@ -134,8 +99,7 @@ public class GeraetService {
         return newTimeInterval;
     }
 
-    //Braucht Test
-    public void saveGeraet(MultipartFile[] files, Geraet geraet, Long id) throws IOException {
+    public void saveGeraet(MultipartFile[] files, Geraet geraet, Long id, boolean isForSale) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
         List<Bild> bilds = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files, bilds);
@@ -143,6 +107,7 @@ public class GeraetService {
         geraet1.setKosten(geraet.getKosten());
         geraet1.setTitel(geraet.getTitel());
         geraet1.setBeschreibung(geraet.getBeschreibung());
+        geraet1.setForsale(isForSale);
         geraet1.setKaution(geraet.getKaution());
         geraet1.setAbholort(geraet.getAbholort());
         geraetRepository.save(geraet1);
@@ -161,6 +126,23 @@ public class GeraetService {
             geraet.getLikedPerson().add(person);
             geraet.setLikes(geraet.getLikes() + 1);
         }
+        else{
+            geraet.getLikedPerson().remove(person);
+            geraet.setLikes(geraet.getLikes() - 1);
+        }
         geraetRepository.save(geraet);
+    }
+
+    public List<Geraet> getAllWithFilterPreisAufsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenAsc("%"+key+"%") );
+    }
+    public List<Geraet> getAllWithFilterPreisAbsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%"+key+"%"));
+    }
+    public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
+    }
+    public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key){
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
     }
 }

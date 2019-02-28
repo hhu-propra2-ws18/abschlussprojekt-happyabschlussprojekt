@@ -5,10 +5,7 @@ import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Repository.*;
 import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.ProPayService;
-import com.propra.happybay.Service.UserServices.GeraetService;
-import com.propra.happybay.Service.UserServices.MailService;
-import com.propra.happybay.Service.UserServices.NotificationService;
-import com.propra.happybay.Service.UserServices.PersonService;
+import com.propra.happybay.Service.UserServices.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -49,42 +46,25 @@ public class UserController {
     private PersonService personService;
     @Autowired
     private NotificationService notificationService;
-
-    public UserController(ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
-        this.personRepository = personRepository;
-        this.geraetRepository=geraetRepository;
-        this.notificationService=notificationService;
-        this.rentEventRepository=rentEventRepository;
-        this.personService=personService;
-        this.notificationRepository=notificationRepository;
-        this.mailService=mailService;
-        this.geraetService=geraetService;
-        this.accountRepository=accountRepository;
-        this.proPayService=proPayService;
-    }
+    @Autowired
+    private RentEventService rentEventService;
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
-        String name = principal.getName();
-
-        Person person = personRepository.findByUsername(name).get();
+        Person person = personService.findByPrincipal(principal);
         notificationService.updateAnzahlOfNotifications(person);
-        if (person.getFoto().getBild().length > 0) {
-            person.setEncode(person.getFoto().encodeBild());
-        }
-
+        person.checkPhoto();
         model.addAttribute("person", person);
+
         if (person.getRole().equals("ROLE_ADMIN")) {
             return "redirect://localhost:8080/admin";
-        } else {
-            return "user/profile";
         }
+        return "user/profile";
     }
 
     @GetMapping("/myThings")
     public String myThings(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+        Person person = personService.findByPrincipal(principal);
         notificationService.updateAnzahlOfNotifications(person);
         model.addAttribute("person", person);
         model.addAttribute("geraete", geraetService.getAllByBesitzerWithBilder(person));
@@ -93,17 +73,10 @@ public class UserController {
 
     @GetMapping("/rentThings")
     public String rentThings(Model model, Principal principal) {
-        String mieterName = principal.getName();
-        Person mieter = personRepository.findByUsername(mieterName).get();
+        Person mieter = personService.findByPrincipal(principal);
         notificationService.updateAnzahlOfNotifications(mieter);
 
-
-        List<RentEvent> activeRentEvents = rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.ACTIVE);
-        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.DEADLINE_CLOSE));
-        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.DEADLINE_OVER));
-        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.KAPUTT));
-        activeRentEvents.addAll(rentEventRepository.findAllByMieterAndReturnStatus(mieter, ReturnStatus.WAITING_FOR_CONFIRMATION));
-
+        List<RentEvent> activeRentEvents = rentEventService.getActiveEventsForPerson(mieter);
         List<GeraetWithRentEvent> activeGeraete = new ArrayList<>();
         personService.checksActiveOrInActiveRentEvent(activeRentEvents, activeGeraete);
 
@@ -119,10 +92,8 @@ public class UserController {
 
     @GetMapping("/notifications")
     public String makeNotifications(Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+        Person person = personService.findByPrincipal(principal);
         notificationService.updateAnzahlOfNotifications(person);
-
         model.addAttribute("person", person);
         List<Notification> notificationList = notificationService.findAllByBesitzer(person);
         model.addAttribute("notifications", notificationList);
@@ -131,13 +102,11 @@ public class UserController {
 
     @GetMapping("/anfragen/{id}")
     public String anfragen(@PathVariable Long id, Model model, Principal principal) {
-        String name = principal.getName();
-        Person person = personRepository.findByUsername(name).get();
+        Person person = personService.findByPrincipal(principal);
         Geraet geraet = geraetRepository.findById(id).get();
-        Account account = accountRepository.findByAccount(name).get();
-        model.addAttribute("account",account);
-        model.addAttribute("person", person);
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account", account);
+        model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
         return "user/anfragen";
     }
@@ -145,8 +114,7 @@ public class UserController {
     @GetMapping("/geraet/changeToRent/{id}")
     public String changeToRent(@PathVariable Long id, Model model) {
         Geraet geraet = geraetRepository.findById(id).get();
-        Person person = geraet.getBesitzer();
-        model.addAttribute("person", person);
+        model.addAttribute("person", geraet.getBesitzer());
         model.addAttribute("geraet", geraet);
         return "user/changeToRent";
     }
@@ -159,16 +127,17 @@ public class UserController {
         verfuegbar.setTimeInterval(timeInterval);
 
         Geraet geraet1 = geraetRepository.findById(id).get();
-        List<Bild> bilds = new ArrayList<>();
-        personService.umwechsleMutifileZumBild(files, bilds);
-        geraet1.setBilder(bilds);
-        geraet1.setKosten(geraet.getKosten());
-        geraet1.setTitel(geraet.getTitel());
-        geraet1.setBeschreibung(geraet.getBeschreibung());
-        geraet1.setKaution(geraet.getKaution());
-        geraet1.setForsale(false);
-        geraet1.setAbholort(geraet.getAbholort());
-        geraetRepository.save(geraet1);
+        geraetService.saveGeraet(files, geraet, id, false);
+        //List<Bild> bilds = new ArrayList<>();
+        //personService.umwechsleMutifileZumBild(files, bilds);
+        //geraet1.setBilder(bilds);
+        //geraet1.setKosten(geraet.getKosten());
+        //geraet1.setTitel(geraet.getTitel());
+        //geraet1.setBeschreibung(geraet.getBeschreibung());
+        //geraet1.setKaution(geraet.getKaution());
+        //geraet1.setForsale(false);
+        //geraet1.setAbholort(geraet.getAbholort());
+        //geraetRepository.save(geraet1);
         geraet1.getVerfuegbareEvents().add(verfuegbar);
         geraetRepository.save(geraet1);
         return "redirect://localhost:8080/user/myThings";
@@ -275,6 +244,8 @@ public class UserController {
         Geraet geraet = geraetRepository.findById(id).get();
         Person personForComment = geraet.getBesitzer();
         List<String> encodes = geraetService.geraetBilder(geraet);
+        Account account = accountRepository.findByAccount(person).get();
+        model.addAttribute("account",account);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", personRepository.findByUsername(person).get());
         model.addAttribute("geraet", geraet);
@@ -361,11 +332,11 @@ public class UserController {
         Geraet geraet = notification.getGeraet();
         model.addAttribute("person", geraet.getBesitzer());
         int reservationId = 0;
-        //try {
+        try {
             reservationId = proPayService.erzeugeReservation(mieter.getUsername(), geraet.getBesitzerUsername(), geraet.getKaution());
-        //} catch (IOException e) {
-            //return "user/propayNotAvailable";
-        //}
+        } catch (IOException e) {
+            return "user/propayNotAvailable";
+        }
 
         TimeInterval timeInterval = new TimeInterval(notification.getMietezeitpunktStart(), notification.getMietezeitpunktEnd());
         RentEvent rentEvent = new RentEvent();
@@ -453,7 +424,7 @@ public class UserController {
     @PostMapping("/geraet/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
                              @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
-        geraetService.saveGeraet(files, geraet, id);
+        geraetService.saveGeraet(files, geraet, id, false);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);
         return "redirect://localhost:8080/user/myThings";
@@ -470,5 +441,18 @@ public class UserController {
                 "                <a href=\"/\">Or if you want to back to home</a>\n" +
                 "            </span>\n" +
                 "    </div>";
+    }
+
+    public UserController(ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
+        this.personRepository = personRepository;
+        this.geraetRepository=geraetRepository;
+        this.notificationService=notificationService;
+        this.rentEventRepository=rentEventRepository;
+        this.personService=personService;
+        this.notificationRepository=notificationRepository;
+        this.mailService=mailService;
+        this.geraetService=geraetService;
+        this.accountRepository=accountRepository;
+        this.proPayService=proPayService;
     }
 }

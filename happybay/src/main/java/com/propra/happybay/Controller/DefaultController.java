@@ -57,7 +57,22 @@ public class DefaultController {
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        if(key.equals("preisAufsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAufsteigendWithBilder(""));
+        }
+        else if(key.equals("preisAbsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAbsteigendWithBilder(""));
+        }
+        else if(key.equals("likeAufsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAufsteigendWithBilder(""));
+        }
+        else if(key.equals("likeAbsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAbsteigendWithBilder(""));
+        }
+        else {
+            model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        }
+        //model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
 
         if (principal == null) {
             return "default/index";

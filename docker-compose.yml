@@ -10,7 +10,7 @@ services:
 
   # ========================================
   happybay:
-    image: happybay-scs
+    build: ./happybay
     environment:
       - DATABASE_HOST=happybaydb
       - DATABASE_USER=root
