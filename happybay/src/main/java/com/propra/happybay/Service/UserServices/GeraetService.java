@@ -98,7 +98,7 @@ public class GeraetService {
         return newTimeInterval;
     }
 
-    public void saveGeraet(MultipartFile[] files, Geraet geraet, Long id, boolean isForSale) throws IOException {
+    public void editGeraet(MultipartFile[] files, Geraet geraet, Long id, boolean isForSale) throws IOException {
         Geraet geraet1 = geraetRepository.findById(id).get();
         List<Bild> bilds = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files, bilds);
