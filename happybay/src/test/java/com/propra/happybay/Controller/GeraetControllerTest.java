@@ -1,13 +1,10 @@
 package com.propra.happybay.Controller;
 
 import com.propra.happybay.Model.*;
-import com.propra.happybay.Model.HelperClassesForViews.InformationForMenuBadges;
-import com.propra.happybay.Model.HelperClassesForViews.PersonMitAccount;
 import com.propra.happybay.Repository.AccountRepository;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
-import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.UserServices.GeraetService;
 import com.propra.happybay.Service.UserServices.MailService;
 import com.propra.happybay.Service.UserServices.NotificationService;
@@ -18,11 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -32,8 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -53,45 +45,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class GeraetControllerTest {
     private Person person1 = new Person();
-    private Person person2 = new Person();
-
     private Account account1 = new Account();
     private Geraet geraet1 =new Geraet();
-    private Geraet geraet2=new Geraet();
-    private PersonMitAccount personMitAccount;
     private RentEvent rentEvent=new RentEvent();
     private List<Geraet> geraetList=new ArrayList<>();
-    private List<PersonMitAccount> personMitAccountList = new ArrayList<>();
-    private InformationForMenuBadges informationForMenuBadges = new InformationForMenuBadges();
-
-
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
-    private TimeInterval timeInterval = new TimeInterval(start,end);
-
-
     private MockMvc mvc;
-    Principal principal = new Principal() {
-        @Override
-        public String getName() {
-            return "user";
-        }
-    };
-    final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
-    final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
-
+    Principal principal = () -> "user";
     MultipartFile[] multipartFiles = new MultipartFile[1];
-
-    public GeraetControllerTest() throws IOException {
-    }
 
     @Mock
     private PersonRepository personRepository;
     @Mock
     private AccountRepository accountRepository;
-    @Mock
-    AdminService adminService;
-
     @Mock
     GeraetRepository geraetRepository;
     @Mock
@@ -104,9 +71,6 @@ public class GeraetControllerTest {
     PersonService personService;
     @Mock
     NotificationService notificationService;
-    @Autowired
-    public PasswordEncoder encoder;
-
 
     @Before
     public void setup() {
@@ -115,20 +79,10 @@ public class GeraetControllerTest {
         person1.setId(1L);
         person1.setAnzahlNotifications(0);
         person1.setAdresse("hanoi");
-
-        person2.setUsername("person2");
-        person2.setId(2L);
-
-
-        informationForMenuBadges.setNumberOfConflicts(1);
-        informationForMenuBadges.setNumberOfNotifications(1);
-        informationForMenuBadges.setNumberOfPersons(1);
-
         List<Reservation> reservationList = new ArrayList<>();
         account1.setAccount(person1.getUsername());
         account1.setAmount(100.0);
         account1.setReservations(reservationList);
-        personMitAccount = new PersonMitAccount(person1, account1);
         List<RentEvent> rentEventList=new ArrayList<>();
         rentEventList.add(rentEvent);
         //gerät1 von person1 bzw..
@@ -137,18 +91,11 @@ public class GeraetControllerTest {
         geraet1.setBesitzer(person1);
         geraet1.setMietezeitpunktStart(start);
         geraet1.setMietezeitpunktEnd(end);
-        geraet2.setId(4L);
-        geraet2.setRentEvents(rentEventList);
-        geraet2.setBesitzer(person2);
-
         geraetList.add(geraet1);
-
-        personMitAccountList.add(personMitAccount);
         //rentEvent
         rentEvent.setGeraet(geraet1);
         rentEvent.setId(3L);
         rentEvent.setReservationId(2);
-
         //viewResolver
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
@@ -189,13 +136,17 @@ public class GeraetControllerTest {
         mvc.perform(get("/user/geraet/addLikes/{id}",1L).principal(principal))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect://localhost:8080"));
+        verify(geraetService, Mockito.times(1)).addLike(1L,person1);
+
     }
     @Test
     public void geraetEdit() throws Exception {
 
-        mvc.perform(post("/user/geraet/edit/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("person1", person1).requestAttr("file",multipartFiles).principal(principal))
+        mvc.perform(post("/user/geraet/edit/{id}",1L).contentType(MediaType.APPLICATION_JSON).flashAttr("person1", person1).flashAttr("geraet",geraet1).requestAttr("file",multipartFiles).principal(principal))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect://localhost:8080/user/myThings"));
+        verify(geraetService, Mockito.times(1)).editGeraet(null,geraet1,1L,false);
+
     }
     @Test
     public void geraetEditGET() throws Exception {
@@ -203,6 +154,8 @@ public class GeraetControllerTest {
         mvc.perform(get("/user/geraet/edit/{id}",1L))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/edit"));
+        verify(geraetRepository, Mockito.times(1)).findById(1L);
+
     }
 
     @Test
@@ -213,6 +166,11 @@ public class GeraetControllerTest {
         mvc.perform(get("/user/geraet/{id}",3L).principal(principal))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/geraet"));
+        verify(personService, Mockito.times(1)).findByPrincipal(principal);
+        verify(geraetRepository, Mockito.times(1)).findById(3L);
+        verify(geraetService, Mockito.times(1)).geraetBilder(geraet1);
+        verify(accountRepository, Mockito.times(1)).findByAccount("person1");
+
     }
 
     @Test
@@ -222,6 +180,8 @@ public class GeraetControllerTest {
         mvc.perform(get("/user/geraet/changeToRent/{id}",3L))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/changeToRent"));
+        verify(geraetRepository, Mockito.times(1)).findById(3L);
+
     }
     @Test
     public void changeToRentPOST() throws Exception {
@@ -229,6 +189,11 @@ public class GeraetControllerTest {
         mvc.perform(post("/user/geraet/changeToRent/{id}",3L).contentType(MediaType.APPLICATION_JSON).flashAttr("geraet", geraet1).requestAttr("files",multipartFiles))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect://localhost:8080/user/myThings"));
+        verify(geraetService, Mockito.times(1)).convertToCET(any());
+        verify(geraetRepository, Mockito.times(1)).findById(3L);
+        verify(geraetService, Mockito.times(1)).editGeraet(null,geraet1,3L,false);
+        verify(geraetRepository, Mockito.times(1)).save(geraet1);
+
     }
 
     @Test
@@ -238,11 +203,18 @@ public class GeraetControllerTest {
         mvc.perform(post("/user/geraet/addGeraet").flashAttr("geraet", geraet1).requestAttr("files",multipartFiles).principal(principal))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect://localhost:8080/user/myThings"));
+        verify(personService, Mockito.times(1)).umwechsleMutifileZumBild(any(),any());
+        verify(geraetService, Mockito.times(1)).convertToCET(any());
+        verify(personRepository, Mockito.times(1)).findByUsername("user");
+        verify(geraetRepository, Mockito.times(1)).save(geraet1);
+
     }
     @Test
     public void addGeraetGet() throws Exception {
         mvc.perform(get("/user/geraet/addGeraet").principal(principal))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/addGeraet"));
+        verify(personService, Mockito.times(1)).findByPrincipal(principal);
+
     }
 }

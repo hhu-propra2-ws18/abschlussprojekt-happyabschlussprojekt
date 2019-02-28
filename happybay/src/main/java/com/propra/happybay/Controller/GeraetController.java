@@ -88,7 +88,7 @@ public class GeraetController {
     }
 
     @PostMapping("/edit/{id}")
-    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute Geraet geraet,
+    public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute(value = "geraet") Geraet geraet,
                              @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
         geraetService.editGeraet(files, geraet, id, false);
         List<Geraet> geraete = null;
@@ -104,8 +104,7 @@ public class GeraetController {
         Person personForComment = geraet.getBesitzer();
 
         List<String> encodes = geraetService.geraetBilder(geraet);
-        String a=person.getUsername();
-        Account account = accountRepository.findByAccount(a).get();
+        Account account = accountRepository.findByAccount(person.getUsername()).get();
         model.addAttribute("account",account);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", person);
