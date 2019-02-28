@@ -21,12 +21,12 @@
 
             <label for="kosten">Miete Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
-                   placeholder="Eingabe Miete Pro Tag." th:value="${geraet.getKosten()}" onchange="checkKosten()"
+                   placeholder="in Euro" th:value="${geraet.getKosten()}" onchange="checkKosten()"
                    required/>
 
             <label id="kautionLabel">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
-                   placeholder="Eingabe Kaution." th:value="${geraet.getKaution()}" onchange="checkKaution()"
+                   placeholder="in Euro" th:value="${geraet.getKaution()}" onchange="checkKaution()"
                    value="0"/>
 
             <!--why for kaution?-->

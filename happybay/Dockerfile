@@ -1,13 +1,19 @@
 FROM openjdk:8-jdk-alpine AS build
-WORKDIR /happybay-scs
+
+WORKDIR /app
+
 COPY . ./
+
 RUN ./gradlew --no-daemon --stacktrace clean bootJar
 
 FROM openjdk:8-jre-alpine
+
 RUN apk add --no-cache bash
-WORKDIR /happybay-scs
+
+WORKDIR /app
 
 COPY wait-for-it.sh .
-COPY --from=build /happybay-scs/build/libs/*.jar happybay-scs.jar
 
-CMD java -jar happybay-scs.jar
+COPY --from=build /app/build/libs/*.jar app.jar
+
+CMD java -jar app.jar

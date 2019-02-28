@@ -30,9 +30,9 @@ public class Geraet {
     private int likes = 0;
     private boolean forsale;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Person besitzer;
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Person> likedPerson = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL)
     private List<RentEvent> verfuegbareEvents = new ArrayList<>();

@@ -4,6 +4,7 @@ import com.propra.happybay.Model.Account;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.Transaction;
 import com.propra.happybay.Repository.*;
+import com.propra.happybay.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class ProPayService {
     @Autowired
     TransactionRepository transactionRepository;
 
-    static String propayAdress = "localhost";
+    static String propayAdress = "propay";
 
     public void saveAccount(String username) {
         Account account = getEntity(username, Account.class);
@@ -51,14 +52,14 @@ public class ProPayService {
         URL url = new URL("http://" + propayAdress + ":8888/account/" + username);
         makeQuery(amount, "amount", url);
         saveAccount(username);
-        saveTransaction(amount, username, username);
+        saveTransaction(amount, username, username, TransactionType.EINZAHLUNG);
     }
 
     public void ueberweisen(String username, String besizer, int amount) throws IOException {
         URL url = new URL("http://" + propayAdress + ":8888/account/"  + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
         saveAccount(username);
-        saveTransaction(amount, besizer, username);
+        saveTransaction(amount, besizer, username, TransactionType.ZAHLUNG);
     }
 
     public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
@@ -81,7 +82,7 @@ public class ProPayService {
         URL url = new URL("http://" + propayAdress + ":8888/reservation/punish/"  + mieter);
         makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
-        saveTransaction(kaution, besitzer, mieter);
+        saveTransaction(kaution, besitzer, mieter, TransactionType.KAUTION);
     }
 
     private Reader makeQuery(int amount, String amountString, URL url) throws IOException {
@@ -110,13 +111,15 @@ public class ProPayService {
         return transactions;
     }
 
-    private void saveTransaction(int amount, String receiverUsername, String giverUsername) {
+    private void saveTransaction(int amount, String receiverUsername, String giverUsername,
+                                 TransactionType transactionType) {
         Transaction transaction = new Transaction();
         Person receiver = personRepository.findByUsername(receiverUsername).get();
         Person giver = personRepository.findByUsername(giverUsername).get();
         transaction.setReceiver(receiver);
         transaction.setAmount(amount);
         transaction.setGiver(giver);
+        transaction.setTransactionType(transactionType);
         transactionRepository.save(transaction);
     }
 }

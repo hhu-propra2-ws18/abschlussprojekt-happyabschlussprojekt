@@ -23,35 +23,30 @@ public class MailService {
     @Autowired
     private JavaMailSender sender;
     @Autowired
-    private GeraetRepository geraetRepository;
-    @Autowired
-    private PersonRepository personRepository;
-    @Autowired
     private RentEventRepository rentEventRepository;
-
 
     @Scheduled(fixedRate = 86400000)
     public void sendScheduledMail() throws Exception {
-        //List<RentEvent> rentEvents = rentEventRepository.findAll();
-        //for (RentEvent rentEvent : rentEvents) {
-        //    if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_CLOSE && rentEvent.getMieter() != null) {
-        //        Person person = rentEvent.getMieter();
-        //        MimeMessage message1 = sender.createMimeMessage();
-        //        MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-        //        helper1.setTo(person.getKontakt());
-        //        helper1.setSubject("Rückkehrzeit");
-        //        helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist fast abgelaufen.");
-        //        sender.send(message1);
-        //    } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER && rentEvent.getMieter() != null) {
-        //        Person person = personRepository.findByUsername(rentEvent.getMieter()).get();
-        //        MimeMessage message1 = sender.createMimeMessage();
-        //        MimeMessageHelper helper1 = new MimeMessageHelper(message1);
-        //        helper1.setTo(person.getKontakt());
-        //        helper1.setSubject("Rückkehrzeit");
-        //        helper1.setText("Ihre Vermietung(" + geraetRepository.findById(rentEvent.getGeraetId()).get().getTitel() + ") ist abgelaufen.");
-        //        sender.send(message1);
-        //    }
-        //}
+        List<RentEvent> rentEvents = rentEventRepository.findAll();
+        for (RentEvent rentEvent : rentEvents) {
+            if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_CLOSE && rentEvent.getMieter() != null) {
+                Person person = rentEvent.getMieter();
+                MimeMessage message1 = sender.createMimeMessage();
+                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+                helper1.setTo(person.getKontakt());
+                helper1.setSubject("Rückkehrzeit");
+                helper1.setText("Ihre Vermietung(" + rentEvent.getGeraet().getTitel() + ") ist fast abgelaufen.");
+                sender.send(message1);
+            } else if (rentEvent.getReturnStatus() == ReturnStatus.DEADLINE_OVER && rentEvent.getMieter() != null) {
+                Person person = rentEvent.getMieter();
+                MimeMessage message1 = sender.createMimeMessage();
+                MimeMessageHelper helper1 = new MimeMessageHelper(message1);
+                helper1.setTo(person.getKontakt());
+                helper1.setSubject("Rückkehrzeit");
+                helper1.setText("Ihre Vermietung(" + rentEvent.getGeraet().getTitel() + ") ist abgelaufen.");
+                sender.send(message1);
+            }
+        }
     }
 
     public void sendAnfragMail(Person person, Geraet geraet, Principal principal) throws Exception{

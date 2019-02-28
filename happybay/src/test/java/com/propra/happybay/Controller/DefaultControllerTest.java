@@ -140,8 +140,8 @@ public class DefaultControllerTest {
         geraet.setId(2L);
         geraetList.add(geraet);
 
-        rentEvent.setGeraetId(2L);
-        rentEvent.setMieter(person.getUsername());
+        //rentEvent.setGeraetId(2L);
+        rentEvent.setMieter(person);
         rentEvent.setTimeInterval(timeInterval);
         verfuegbareEvents.add(rentEvent);
 

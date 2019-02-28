@@ -105,12 +105,12 @@
                     <tr>
                         <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
-                            ' von ' + ${rentEvent.mieter}"></td>
+                            ' von ' + ${rentEvent.mieter.username}"></td>
                     </tr>
                 </li>
             </ul>
                 <div class="card-body">
-                    <a th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}" > Mehr </a>
+                    <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" > Mehr </a>
                 </div>
             </div>
         </div>

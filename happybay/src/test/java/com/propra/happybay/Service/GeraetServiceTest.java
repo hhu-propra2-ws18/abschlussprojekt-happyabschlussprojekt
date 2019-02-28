@@ -1,9 +1,6 @@
 package com.propra.happybay.Service;
 
-import com.propra.happybay.Model.Bild;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.RentEvent;
-import com.propra.happybay.Model.TimeInterval;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.RentEventRepository;
 import com.propra.happybay.Service.UserServices.GeraetService;
@@ -64,6 +61,7 @@ public class GeraetServiceTest {
 
         geraets.add(fakeGeraet1);
         geraets.add(fakeGeraet2);
+        Person besitzer = new Person();
 
         Mockito.when(geraetRepository.findAllByTitelLike(any())).thenReturn(geraets);
         Mockito.when(geraetRepository.findAllByBesitzer(any())).thenReturn(geraets);
@@ -72,7 +70,7 @@ public class GeraetServiceTest {
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
 
-        geraetsWithEncode = geraetService.getAllByBesitzerWithBilder("");
+        geraetsWithEncode = geraetService.getAllByBesitzerWithBilder(besitzer);
         Assertions.assertThat(geraetsWithEncode.get(0).getEncode()).isEqualTo(null);
         Assertions.assertThat(geraetsWithEncode.get(1).getEncode()).isNotEqualTo(null);
     }
@@ -184,7 +182,7 @@ public class GeraetServiceTest {
         timeInterval1.setStart(Date.valueOf("2019-1-10"));
         timeInterval1.setEnd(Date.valueOf("2019-3-10"));
         rentEvent1.setTimeInterval(timeInterval1);
-        rentEvent1.setGeraetId(1L);
+        //rentEvent1.setGeraetId(1L);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
@@ -192,7 +190,7 @@ public class GeraetServiceTest {
         timeInterval2.setStart(Date.valueOf("2019-3-10"));
         timeInterval2.setEnd(Date.valueOf("2019-4-24"));
         rentEvent2.setTimeInterval(timeInterval2);
-        rentEvent2.setGeraetId(2L);
+        //rentEvent2.setGeraetId(2L);
         rentEventList.add(rentEvent2);
 
         RentEvent rentEvent3 = new RentEvent();
@@ -200,7 +198,7 @@ public class GeraetServiceTest {
         timeInterval3.setStart(Date.valueOf("2019-5-28"));
         timeInterval3.setEnd(Date.valueOf("2019-6-24"));
         rentEvent3.setTimeInterval(timeInterval3);
-        rentEvent3.setGeraetId(3L);
+        //rentEvent3.setGeraetId(3L);
         rentEventList.add(rentEvent3);
 
         when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.of(new Geraet()));

@@ -45,7 +45,7 @@ public class PersonService {
         return -1;
     }
 
-    public void intervalZerlegen(Geraet geraet, int index, RentEvent rentEvent) {
+    public void splitTimeIntervalsOfGeraetAvailability(Geraet geraet, int index, RentEvent rentEvent) {
         if (geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart().getTime()
                 != rentEvent.getTimeInterval().getStart().getTime()) {
             TimeInterval timeInterval1 = new TimeInterval(geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart(),

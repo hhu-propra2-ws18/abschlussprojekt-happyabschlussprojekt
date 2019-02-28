@@ -5,8 +5,8 @@ import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.HelperClassesForViews.InformationForMenuBadges;
 import com.propra.happybay.Model.HelperClassesForViews.PersonMitAccount;
 import com.propra.happybay.Repository.GeraetRepository;
+import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
-import com.propra.happybay.ReturnStatus;
 import com.propra.happybay.Service.AdminServices.AdminService;
 import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.GeraetService;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -35,11 +34,14 @@ public class AdminController {
     private RentEventRepository rentEventRepository;
     @Autowired
     GeraetService geraetService;
+    @Autowired
+    PersonRepository personRepository;
 
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model){
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
+
         if (adminService.isAdminHasDefaultPassword()) {
             return "admin/changePassword";
         }
@@ -66,9 +68,12 @@ public class AdminController {
     }
 
     @PostMapping("/punishAccount")
-    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) {
+    public String punishAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId,
+                                Model model) {
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
+        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         try {
             proPayService.punishReservation(mieter, geraet.getBesitzerUsername(), reservationId, geraet.getKaution());
         } catch (IOException e) {
@@ -82,7 +87,10 @@ public class AdminController {
 
 
     @PostMapping("/releaseAccount")
-    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId) {
+    public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId,
+                                 Model model) throws IOException {
+        InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         try {
             proPayService.releaseReservation(mieter, reservationId);
         } catch (IOException e) {
@@ -90,6 +98,7 @@ public class AdminController {
         }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
+        proPayService.ueberweisen(mieter, geraet.getBesitzerUsername(), (int) rentEvent.calculatePrice());
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);

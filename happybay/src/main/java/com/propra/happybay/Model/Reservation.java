@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class Reservation {
     @Id
-    private Long id;
+    private int id;
     private Double amount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn

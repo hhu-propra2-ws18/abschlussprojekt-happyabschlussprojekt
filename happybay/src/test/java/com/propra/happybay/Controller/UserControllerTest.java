@@ -122,14 +122,14 @@ public class UserControllerTest {
 
         personRepository.save(admin);
         //VerfügbarEvent
-        rentEvent.setGeraetId(2L);
-        rentEvent.setMieter(user.getUsername());
+        //rentEvent.setGeraetId(2L);
+        rentEvent.setMieter(user);
         rentEvent.setTimeInterval(timeInterval);
                 verfuegbareEvents.add(rentEvent);
         //Geraet
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
-        geraet.setBesitzer(user.getUsername());
+        geraet.setBesitzer(user);
         geraet.setKosten(3);
         geraet.setKaution(10);
         geraet.setMietezeitpunktEnd(end);
@@ -141,10 +141,10 @@ public class UserControllerTest {
         account.setAccount(user.getUsername());
         account.setAmount(100.0);
         //
-        notification.setGeraetId(3L);
+        //notification.setGeraetId(3L);
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
-        notification.setRentEventId(1L);
+        //notification.setRentEventId(1L);
         verfuerbar.setTimeInterval(geraetService.convertToCET(timeInterval));
         geraet.getVerfuegbareEvents().add(verfuerbar);
 
@@ -152,7 +152,7 @@ public class UserControllerTest {
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
         //
-        doNothing().when(notificationService).updateAnzahlOfNotifications(anyString());
+        //doNothing().when(notificationService).updateAnzahlOfNotifications();
         //notificationRepository
         doReturn(notificationRepository.save(new Notification())).when(notificationRepository).save(any());
         when(notificationRepository.findById(any())).thenReturn(Optional.ofNullable(notification));

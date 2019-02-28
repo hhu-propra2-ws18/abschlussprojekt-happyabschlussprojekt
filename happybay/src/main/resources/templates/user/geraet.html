@@ -8,36 +8,8 @@
 <br>
 
 <div class="container" style="max-height: 400px; max-width: 712px">
-    <!--<div class="row">-->
-        <!--<div id="controller" class="carousel slide" data-ride="carousel">-->
-            <!--<div class="carousel-inner">-->
-                <!--<div class="carousel-item active" >-->
-                    <!--<img th:if="${geraet.getEncode()==null}" src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4"-->
-                         <!--class="d-block w-100" style="max-height: 400px; max-width: available">-->
-                    <!--<img th:unless="${geraet.getEncode()==null}" th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}"-->
-                         <!--class="d-block w-100" style="max-height: 400px; max-width: available">-->
-                <!--</div>-->
-                <!--<div class="carousel-item" th:each="encode:${encodes}">-->
-                    <!--<img th:src="@{'data:image/jpeg;base64,'+ ${encode}}"-->
-                         <!--class="d-block w-100" style="max-height: 400px; max-width: available">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<a class="carousel-control-prev" href="#controller" role="button" data-slide="prev">-->
-                <!--<span class="carousel-control-prev-icon" style="color: darkgrey" aria-hidden="true"></span>-->
-                <!--<span class="sr-only">Previous</span>-->
-            <!--</a>-->
-            <!--<a class="carousel-control-next" href="#controller" role="button" data-slide="next">-->
-                <!--<span class="carousel-control-next-icon" style="color: darkgrey" aria-hidden="true"></span>-->
-                <!--<span class="sr-only">Next</span>-->
-            <!--</a>-->
-        <!--</div>-->
-    <!--</div>-->
     <br/>
     <div class="w-100">
-        <!--<h4 th:text="${geraet.getTitel()}"></h4>-->
-        <!--<label th:text="'Beschreibung: ' + ${geraet.getBeschreibung()}"></label><br/>-->
-        <!--<label th:text="'Miete: ' + ${geraet.getKosten()}+'€/Tag'" style="color: blue"></label><br/>-->
-        <!--<label th:text="'Kaution: '+${geraet.getKaution()}+'€'" style="color: blue"></label>-->
         <div class="card" style="width: 25rem; border-style: wave; border-width: 10px">
         <div th:fragment="geraetContainer" class="container">
             <div th:fragment="oneGeraetWithoutDelete">
@@ -80,11 +52,11 @@
                 <tr>
                     <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
-                            ' von ' + ${rentEvent.mieter}"></td>
+                            ' von ' + ${rentEvent.mieter.username}"></td>
                 </tr>
             </li>
         </ul><br/>
-                <div th:if="${(geraet.getBesitzer()!= person.username)}">
+                <div th:if="${(geraet.getBesitzer().getUsername()!= person.getUsername())}">
                     <form th:if="${!geraet.isForsale()}" th:action="@{'/user/anfragen/' +${geraet.getId()}}">
                         <button class="btn btn-primary" type="submit">Anfragen</button>
                     </form>
@@ -99,6 +71,8 @@
                     </button>
                 </form>
             </div>
+        </div>
+        </div>
     </div>
 </div>
 </body>

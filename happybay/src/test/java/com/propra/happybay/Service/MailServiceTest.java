@@ -50,14 +50,14 @@ public class MailServiceTest {
     public void send_Scheduled_Mail() throws Exception {
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
-        rentEvent1.setGeraetId(1L);
-        rentEvent1.setMieter("fake Mieter");
+        //rentEvent1.setGeraetId(1L);
+        //rentEvent1.setMieter("fake Mieter");
         rentEvent1.setReturnStatus(ReturnStatus.DEADLINE_CLOSE);
         rentEventList.add(rentEvent1);
 
         RentEvent rentEvent2 = new RentEvent();
-        rentEvent2.setGeraetId(2L);
-        rentEvent2.setMieter("fake Mieter");
+        //rentEvent2.setGeraetId(2L);
+        //rentEvent2.setMieter("fake Mieter");
         rentEvent2.setReturnStatus(ReturnStatus.DEADLINE_OVER);
         rentEventList.add(rentEvent2);
         Mockito.when(rentEventRepository.findAll()).thenReturn(rentEventList);
