@@ -2,6 +2,8 @@ package com.propra.happybay.Model;
 
 import com.propra.happybay.ReturnStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -11,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Data @ToString
 @Entity
 public class Geraet {
 

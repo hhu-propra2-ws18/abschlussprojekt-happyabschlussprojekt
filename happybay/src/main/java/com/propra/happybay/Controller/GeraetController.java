@@ -41,11 +41,13 @@ public class GeraetController {
     @Autowired
     private PersonRepository personRepository;
 
-    public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
+    public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, NotificationService notificationService, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
         this.geraetRepository=geraetRepository;
         this.rentEventRepository=rentEventRepository;
+        this.notificationService=notificationService;
         this.mailService=mailService;
         this.personService=personService;
+        this.geraetService=geraetService;
         this.accountRepository=accountRepository;
         this.personRepository=personRepository;
     }
@@ -98,9 +100,12 @@ public class GeraetController {
     public String geraet(@PathVariable Long id, Model model, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         Geraet geraet = geraetRepository.findById(id).get();
+
         Person personForComment = geraet.getBesitzer();
+
         List<String> encodes = geraetService.geraetBilder(geraet);
-        Account account = accountRepository.findByAccount(person.getUsername()).get();
+        String a=person.getUsername();
+        Account account = accountRepository.findByAccount(a).get();
         model.addAttribute("account",account);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", person);
