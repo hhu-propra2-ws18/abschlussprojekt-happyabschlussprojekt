@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -51,6 +50,8 @@ public class UserControllerTest {
     private Account account = new Account();
     private RentEvent rentEvent=new RentEvent();
     private List<RentEvent> verfuegbareEvents=new ArrayList<>();
+    List<Transaction> transactions=new ArrayList<>();
+    Transaction transaction=new Transaction();
     Date start = new Date(2019,10,20);
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
@@ -58,8 +59,6 @@ public class UserControllerTest {
     //Bild
     private Bild bild = new Bild();
     private RentEvent verfuerbar = new RentEvent();
-    @Autowired
-    private WebApplicationContext context;
     @Autowired
     public PasswordEncoder encoder;
     private MockMvc mvc2;
@@ -82,20 +81,16 @@ public class UserControllerTest {
     RentEventService rentEventService;
     @Mock
     GeraetService geraetService;
+
     @Mock
     NotificationRepository notificationRepository;
     @Mock
     RentEventRepository rentEventRepository;
-    Principal principal = new Principal() {
-        @Override
-        public String getName() {
-            return "test";
-        }
-    };
-    final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
-    final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
+    Principal principal = () -> "test";
+    private final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
+    private final MockMultipartFile mockMultipartFile = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
 
-    MultipartFile[] multipartFiles = new MultipartFile[1];
+    private MultipartFile[] multipartFiles = new MultipartFile[1];
 
     public UserControllerTest() throws IOException {
     }
@@ -113,19 +108,15 @@ public class UserControllerTest {
         user.setRole("ROLE_USER");
         user.setAdresse("test dusseldorf");
         user.setAnzahlNotifications(0);
-
         //Admin
         admin.setUsername("admin");
         admin.setId(2L);
         admin.setFoto(bild);
         admin.setRole("ROLE_ADMIN");
-
         personRepository.save(admin);
-        //VerfügbarEvent
-        //rentEvent.setGeraetId(2L);
         rentEvent.setMieter(user);
         rentEvent.setTimeInterval(timeInterval);
-                activeRentEvents.add(rentEvent);
+        activeRentEvents.add(rentEvent);
         //Geraet
         geraet.setTitel("Das ist ein Test");
         geraet.setId(2L);
@@ -135,24 +126,20 @@ public class UserControllerTest {
         geraet.setMietezeitpunktEnd(end);
         geraet.setMietezeitpunktStart(start);
         geraet.setVerfuegbareEvents(verfuegbareEvents);
-       // geraetRepository.save(geraet);
-
+        //
+        transactions.add(transaction);
         //Account
         account.setAccount(user.getUsername());
         account.setAmount(100.0);
         //
-        //notification.setGeraetId(3L);
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
-        //notification.setRentEventId(1L);
         geraet.getVerfuegbareEvents().add(verfuerbar);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
         //
-        //doNothing().when(notificationService).updateAnzahlOfNotifications();
-        //notificationRepository
         //
         when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
@@ -170,6 +157,12 @@ public class UserControllerTest {
     public void proflieWithUser() throws Exception {
         mvc2.perform(get("/user/profile").principal(principal))
                 .andExpect(status().isOk());
+    }
+    @Test
+    public void proflieWithAdmin() throws Exception {
+        user.setRole("ROLE_ADMIN");
+        mvc2.perform(get("/user/profile").principal(principal))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -214,7 +207,8 @@ public class UserControllerTest {
     }
     @Test
     public void proPay() throws Exception {
-
+        when(accountRepository.findByAccount(anyString())).thenReturn(Optional.ofNullable(account));
+        when(proPayService.getAllPastTransactionsForPerson(user)).thenReturn(transactions);
         mvc2.perform(get("/user/proPay").principal(principal))
                 .andExpect(status().isOk());
 
@@ -225,12 +219,24 @@ public class UserControllerTest {
         mvc2.perform(get("/user/BesitzerInfo/{id}",1L).principal(principal))
                 .andExpect(status().isOk());
     }
+    @Test
+    public void mieterInfo() throws Exception {
+        mvc2.perform(get("/user/mieterInfo/{id}",1L))
+                .andExpect(status().isOk());
+    }
+
 
     @Test
-    public void aufladenAntrag() throws Exception {
+    public void aufladenAntragOk() throws Exception {
 
         mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
                 .andExpect(status().is3xxRedirection());
+    }
+    @Test
+    public void aufladenAntragError() throws Exception {
+        doCallRealMethod().when(proPayService).erhoeheAmount("test",100);
+        mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
+                .andExpect(status().isOk());
     }
     @Test
     public void anfragen() throws Exception {
