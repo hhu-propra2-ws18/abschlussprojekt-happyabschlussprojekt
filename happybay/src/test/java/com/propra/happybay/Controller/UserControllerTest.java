@@ -39,6 +39,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
@@ -159,34 +161,39 @@ public class UserControllerTest {
     @Test
     public void proflieWithUser() throws Exception {
         mvc2.perform(get("/user/profile").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/profile"));
     }
     @Test
     public void proflieWithAdmin() throws Exception {
         user.setRole("ROLE_ADMIN");
         mvc2.perform(get("/user/profile").principal(principal))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/admin"));
     }
 
     @Test
     public void myThings() throws Exception {
         mvc2.perform(get("/user/myThings").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/myThings"));
     }
-    @WithMockUser(value = "test", roles = "USER")
+
     @Test
     public void rentThings() throws Exception {
 
         when(rentEventService.getActiveEventsForPerson(user)).thenReturn(activeRentEvents);
         mvc2.perform(get("/user/rentThings").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/rentThings"));
         verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(),any());
     }
 
     @Test
-    public void makeNotifications() throws Exception {
+    public void notifications() throws Exception {
         mvc2.perform(get("/user/notifications").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/notifications"));
     }
 
     @Test
@@ -196,7 +203,8 @@ public class UserControllerTest {
        when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
 
        mvc2.perform(get("/user/anfragen/{id}",2L).principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+               .andExpect(view().name("user/anfragen"));
     }
     @Test
     public void anfragenPost() throws Exception {
@@ -206,26 +214,31 @@ public class UserControllerTest {
         mvc2.perform(post("/user/anfragen/{id}",2L).principal(principal)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .flashAttr("notification",notification))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080"));
     }
     @Test
     public void proPay() throws Exception {
         when(accountRepository.findByAccount(anyString())).thenReturn(Optional.ofNullable(account));
         when(proPayService.getAllPastTransactionsForPerson(user)).thenReturn(transactions);
         mvc2.perform(get("/user/proPay").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/proPay"));
 
     }
+
 
     @Test
     public void besitzerInfo() throws Exception {
         mvc2.perform(get("/user/BesitzerInfo/{id}",1L).principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/besitzerInfo"));
     }
     @Test
     public void mieterInfo() throws Exception {
         mvc2.perform(get("/user/mieterInfo/{id}",1L))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/mieterInfo"));
     }
 
 
@@ -233,32 +246,37 @@ public class UserControllerTest {
     public void aufladenAntragOk() throws Exception {
 
         mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080"));
     }
     @Test
     public void aufladenAntragWithErrorPropayService() throws Exception {
         doThrow(IOException.class).when(proPayService).erhoeheAmount("test",100);
         mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/propayNotAvailable"));
     }
     @Test
     public void anfragen() throws Exception {
 
         mvc2.perform(post("/user/sale/{id}",1L).principal(principal))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080"));
     }
 
     @Test
     public void changeImg() throws Exception {
 
         mvc2.perform(get("/user/PersonInfo/Profile/ChangeProfile").principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/changeProfile"));
     }
     @Test
     public void chageProfile() throws Exception {
 
         mvc2.perform(post("/user/PersonInfo/Profile/ChangeProfile").contentType(MediaType.APPLICATION_JSON).flashAttr("person",user).requestAttr("file",multipartFiles).principal(principal))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("default/confirmationOfRegistration"));
 
     }
 
