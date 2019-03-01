@@ -42,6 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,7 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class DefaultControllerTest {
     private Person person = new Person();
-    private Account account = new Account();
     private Geraet geraet=new Geraet();
     private List<Geraet> geraetList=new ArrayList<>();
     private RentEvent rentEvent=new RentEvent();
@@ -94,15 +94,12 @@ public class DefaultControllerTest {
         person.setId(1L);
         person.setAdresse("test dusseldorf");
 
-        //file
         byte[] bytes=new byte[100];
         new Random().nextBytes(bytes);
 
-        //gerät
         geraet.setId(2L);
         geraetList.add(geraet);
 
-        //rentEvent.setGeraetId(2L);
         rentEvent.setMieter(person);
         rentEvent.setTimeInterval(timeInterval);
         verfuegbareEvents.add(rentEvent);
@@ -161,6 +158,7 @@ public class DefaultControllerTest {
         verify(userValidator, Mockito.times(1)).validate(any(),any());
 
     }
+
     @Test
     public void register() throws Exception {
         mvc.perform(get("/register").principal(principal))

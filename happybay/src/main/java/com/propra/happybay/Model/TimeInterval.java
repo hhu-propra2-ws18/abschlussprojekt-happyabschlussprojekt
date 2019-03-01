@@ -12,11 +12,8 @@ import java.sql.Date;
 @Embeddable
 public class TimeInterval {
     private Date start;
-
     private Date end;
-
     private int duration;
-
 
     public TimeInterval(Date start, Date end) {
         this.start = start;

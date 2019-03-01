@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.Person;

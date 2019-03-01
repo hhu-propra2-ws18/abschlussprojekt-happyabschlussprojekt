@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
+import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
@@ -56,7 +56,7 @@ public class UserControllerTest {
     Date end = new Date(2019,11,21);
     private TimeInterval timeInterval = new TimeInterval(start,end);
     List<RentEvent> activeRentEvents=new ArrayList<>();
-    //Bild
+
     private Bild bild = new Bild();
     private RentEvent verfuerbar = new RentEvent();
     @Autowired
@@ -131,7 +131,7 @@ public class UserControllerTest {
         //Account
         account.setAccount(user.getUsername());
         account.setAmount(100.0);
-        //
+
         notification.setMietezeitpunktStart(start);
         notification.setMietezeitpunktEnd(end);
         geraet.getVerfuegbareEvents().add(verfuerbar);
@@ -139,8 +139,7 @@ public class UserControllerTest {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
-        //
-        //
+
         when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(personRepository.findById(any())).thenReturn(Optional.ofNullable(user));
@@ -151,6 +150,11 @@ public class UserControllerTest {
         mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
+    }
+
+    @Test
+    public void timeIntervalComputesDuration() {
+        assertEquals(timeInterval.getDuration(), 31);
     }
 
     @Test

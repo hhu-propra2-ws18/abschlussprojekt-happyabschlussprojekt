@@ -1,4 +1,4 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
@@ -40,7 +40,7 @@ public class GeraetServiceTest {
 
 
     @Test
-    public void  get_all_with_bilder(){
+    public void  getAllWithBilder(){
         Geraet fakeGeraet1 = new Geraet();
         List<Bild> bilder1 = new ArrayList<>();
         Bild fakeBild1 = new Bild();
@@ -143,7 +143,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void check_Rent_EventStatus(){
+    public void checkRentEventStatus(){
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();

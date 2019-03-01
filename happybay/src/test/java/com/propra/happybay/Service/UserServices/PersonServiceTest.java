@@ -1,10 +1,11 @@
-package com.propra.happybay.Service;
+package com.propra.happybay.Service.UserServices;
 
 import com.propra.happybay.Model.*;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.PersonRepository;
 import com.propra.happybay.Repository.RentEventRepository;
+import com.propra.happybay.Service.ProPayService;
 import com.propra.happybay.Service.UserServices.PersonService;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -122,15 +123,22 @@ public class PersonServiceTest {
 
     @Test
     public void make_comment(){
-        Person fakePerson = new Person();
+        Person fakeSender = new Person();
+        fakeSender.setUsername("fake sender");
         Person fakeBesitzer = new Person();
         fakeBesitzer.setUsername("fake Besitzer");
+        fakeBesitzer.setId(3L);
         Geraet fakegeraet = new Geraet();
         fakegeraet.setTitel("fake geraet");
         fakegeraet.setBesitzer(fakeBesitzer);
 
-        //when(personRepository.findByUsername("fake Besitzer")).thenReturn(java.util.Optional.ofNullable(fakeBesitzer));
-        personService.makeComment(fakegeraet,fakePerson,"fake grund");
+        personService.makeComment(fakegeraet,fakeSender,"fake grund");
+        List<Comment> savedComments = fakeSender.getComments();
+        Assertions.assertThat(savedComments.size()).isEqualTo(1);
+        Assertions.assertThat(savedComments.get(0).getMessage().equals("fake grund"));
+        Assertions.assertThat(savedComments.get(0).getGeraetTitel().equals("fake geraet"));
+        Assertions.assertThat(savedComments.get(0).getSenderFrom().equals("fake sender"));
+        Assertions.assertThat(savedComments.get(0).getPersonId().equals(3L));
         verify(personRepository,times(1)).save(any());
     }
 

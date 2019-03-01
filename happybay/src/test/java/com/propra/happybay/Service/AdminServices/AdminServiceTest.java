@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -58,9 +59,7 @@ public class AdminServiceTest {
     Person fakePerson2 = new Person();
     List<RentEvent> rentEventsWithConflicts = new ArrayList<>();
     @Test
-    public void return_information_for_menuBadges() {
-
-
+    public void returnInformationForMenuBadges() {
         fakePerson1.setUsername("notadmin");
         personList.add(fakePerson1);
         personList.add(fakePerson1);
@@ -68,13 +67,10 @@ public class AdminServiceTest {
 
         fakePerson2.setUsername("admin");
         personList.add(fakePerson2);
-
         rentEventList.add(new RentEvent());
         rentEventList.add(new RentEvent());
         rentEventList.add(new RentEvent());
         rentEventList.add(new RentEvent());
-
-
 
         when(personRepository.findAll()).thenReturn(personList);
         Account fakeAccount = new Account();
@@ -89,7 +85,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    public void get_geraet_with_rent_events_with_conflicts(){
+    public void getGeraetWithRentEventsWithConflicts(){
 
         RentEvent fakeRentEvent1 = new RentEvent();
         RentEvent fakeRentEvent2 = new RentEvent();
@@ -108,20 +104,36 @@ public class AdminServiceTest {
         test.setRentEvent(fakeRentEvent3);
         Assertions.assertThat(geraetWithRentEventsWithConflicts.get(2)).isEqualTo(test);
     }
-//
-//        @Test
-//    public void is_admin_default_password(){
-//        Person admin = new Person();
-//        admin.setUsername("admin");
-//        admin.setPassword(encoder.encode("admin"));
-//        Mockito.when(personRepository.findByUsername("admin")).thenReturn(java.util.Optional.ofNullable(admin));
-//        Assertions.assertThat(adminService.isAdminHasDefaultPassword()).isEqualTo(true);
-//
-//    }
-//    @Test
-//    public void changeAdminPassword(){
-//        AdminService adminService= new AdminService();
-//        adminService.changeAdminPassword("");
-//
-//    }
+
+    @Test
+    public void returnAllPersonsWithAccounts() {
+    }
+
+    @Test
+    public void returnInformationForMenuBadges1() {
+    }
+
+    @Test
+    public void isAdminHasDefaultPassword() {
+    }
+
+    @Test
+    public void changeAdminPassword() {
+        Person admin = new Person();
+        admin.setUsername("admin");
+        admin.setPassword("admin");
+        admin.setId(1L);
+
+        when(encoder.encode(anyString())).thenReturn("encodedNewPassword");
+        when(personRepository.findByUsername("admin")).thenReturn(Optional.of(admin));
+        adminService.changeAdminPassword("newPassword");
+        assertEquals(encoder.encode("newPassword"), admin.getPassword());
+
+        verify(encoder, times(2)).encode(any());
+        verify(personRepository, times(1)).findByUsername("admin");
+    }
+
+    @Test
+    public void getGeraetWithRentEventsWithConflicts1() {
+    }
 }

@@ -29,7 +29,7 @@ public class ProPayServiceTest {
     @Test
     public void testSaveAccount() {
         proPayService.saveAccount("Anton");
-       Mockito.verify(accountRepository,times(1)).save(any());
+        Mockito.verify(accountRepository,times(1)).save(any());
     }
 
     @Test

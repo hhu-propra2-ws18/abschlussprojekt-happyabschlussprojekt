@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,6 @@ public class DefaultController {
         else {
             model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
         }
-        //model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
 
         if (principal == null) {
             return "default/index";
@@ -102,7 +102,7 @@ public class DefaultController {
     @PostMapping("/addNewUser")
     public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model)  {
+                                Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         model.addAttribute("person", person);
         if (bindingResult.hasErrors()) {
@@ -116,7 +116,7 @@ public class DefaultController {
         try {
             personService.makeAndSaveNewPerson(file, person);
         } catch (Exception e) {
-            return "/user/propayNotAvailable";
+            return "user/propayNotAvailable";
         }
         person.setPassword(""); // to not send real password to view
         return "default/confirmationOfRegistration";
