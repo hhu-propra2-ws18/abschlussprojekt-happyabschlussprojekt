@@ -41,7 +41,7 @@ public class AdminController {
     private RentEventService rentEventService;
 
     @GetMapping(value = {"/", ""})
-    public String adminFunktion(Model model){
+    public String adminFunktion(Model model) {
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
 
@@ -80,7 +80,7 @@ public class AdminController {
         try {
             proPayService.punishReservation(mieter, geraet.getBesitzer().getUsername(), reservationId, geraet.getKaution());
         } catch (IOException e) {
-            return"/admin/propayAdminNotAvailable";
+            return "/admin/propayAdminNotAvailable";
         }
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
@@ -97,12 +97,12 @@ public class AdminController {
         try {
             proPayService.releaseReservation(mieter, reservationId);
         } catch (IOException e) {
-            return"/admin/propayAdminNotAvailable";
+            return "/admin/propayAdminNotAvailable";
         }
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
-        double a= rentEventService.calculatePrice(rentEvent);
-        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int)a );
+        double a = rentEventService.calculatePrice(rentEvent);
+        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) a);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
@@ -116,11 +116,11 @@ public class AdminController {
     }
 
     public AdminController(RentEventService rentEventService, ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {
-        this.rentEventService=rentEventService;
-        this.proPayService=proPayService;
-        this.adminService=adminService;
-        this.geraetRepository=geraetRepository;
-        this.rentEventRepository=rentEventRepository;
-        this.geraetService=geraetService;
+        this.rentEventService = rentEventService;
+        this.proPayService = proPayService;
+        this.adminService = adminService;
+        this.geraetRepository = geraetRepository;
+        this.rentEventRepository = rentEventRepository;
+        this.geraetService = geraetService;
     }
 }

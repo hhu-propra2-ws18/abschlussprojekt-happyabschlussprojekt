@@ -116,7 +116,7 @@ public class UserController {
         Person anfragePerson = personService.findByPrincipal(principal);
         Geraet geraet = geraetRepository.findById(id).get();
         notificationService.copyAndEditNotification(anfragePerson, geraet, notification, "request");
-        
+
         Person besitzer = geraet.getBesitzer();
         mailService.sendAnfragMail(besitzer, geraet, principal);
         return "redirect://localhost:8080";
@@ -144,14 +144,14 @@ public class UserController {
             List<Transaction> transactions = proPayService.getAllPastTransactionsForPerson(person);
             model.addAttribute("transactions", transactions);
             model.addAttribute("account", account);
-        }catch (Exception e){
+        } catch (Exception e) {
             return "user/propayNotAvailable";
         }
         return "user/proPay";
     }
 
     @PostMapping("/propayErhoehung")
-    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account, Model model){
+    public String aufladenAntrag(@ModelAttribute("amount") int amount, @ModelAttribute("account") String account, Model model) {
         model.addAttribute(personRepository.findByUsername(account));
         try {
             proPayService.erhoeheAmount(account, amount);
@@ -168,6 +168,7 @@ public class UserController {
         model.addAttribute("person", besitzer);
         return "user/besitzerInfo";
     }
+
     @GetMapping("/mieterInfo/{id}")
     public String mieterInfo(@PathVariable Long id, Model model) {
         Person mieter = personRepository.findById(id).get();
@@ -185,15 +186,15 @@ public class UserController {
     }
 
     @PostMapping("/PersonInfo/Profile/ChangeProfile")
-    public String changeProfile(Model model, @RequestParam(value = "file",required = false) MultipartFile file,
-                               @ModelAttribute("person") Person p, Principal principal) throws IOException {
+    public String changeProfile(Model model, @RequestParam(value = "file", required = false) MultipartFile file,
+                                @ModelAttribute("person") Person p, Principal principal) throws IOException {
         model.addAttribute("person", personService.savePerson(principal, file, p));
         return "default/confirmationOfRegistration";
     }
 
     @ExceptionHandler(MultipartException.class)
     @ResponseBody
-    String permittedSizeException (Exception e){
+    String permittedSizeException(Exception e) {
         e.printStackTrace();
         return "<h3>The file exceeds its maximum permitted size of 15 MB. Please reload your page.</h3>" +
                 "    <div>\n" +
@@ -204,16 +205,16 @@ public class UserController {
     }
 
     public UserController(RentEventService rentEventService, ProPayService proPayService, AccountRepository accountRepository, GeraetService geraetService, MailService mailService, NotificationRepository notificationRepository, PersonService personService, RentEventRepository rentEventRepository, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
-        this.rentEventService=rentEventService;
+        this.rentEventService = rentEventService;
         this.personRepository = personRepository;
-        this.geraetRepository=geraetRepository;
-        this.notificationService=notificationService;
-        this.rentEventRepository=rentEventRepository;
-        this.personService=personService;
-        this.notificationRepository=notificationRepository;
-        this.mailService=mailService;
-        this.geraetService=geraetService;
-        this.accountRepository=accountRepository;
-        this.proPayService=proPayService;
+        this.geraetRepository = geraetRepository;
+        this.notificationService = notificationService;
+        this.rentEventRepository = rentEventRepository;
+        this.personService = personService;
+        this.notificationRepository = notificationRepository;
+        this.mailService = mailService;
+        this.geraetService = geraetService;
+        this.accountRepository = accountRepository;
+        this.proPayService = proPayService;
     }
 }

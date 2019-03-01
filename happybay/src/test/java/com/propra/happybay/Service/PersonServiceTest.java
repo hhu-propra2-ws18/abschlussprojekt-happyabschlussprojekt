@@ -43,7 +43,7 @@ public class PersonServiceTest {
     PersonService personService;
 
     @Test
-    public void get_by_username(){
+    public void get_by_username() {
         Person fakePerson = new Person();
         fakePerson.setUsername("fake");
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(fakePerson));
@@ -52,7 +52,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void position_of_free_block(){
+    public void position_of_free_block() {
 
         TimeInterval time1 = new TimeInterval();
         time1.setStart(Date.valueOf("2019-3-20"));
@@ -92,13 +92,13 @@ public class PersonServiceTest {
         fakeGeraet.setVerfuegbareEvents(rentEventList);
 
 
-        Assertions.assertThat(personService.positionOfFreeBlock(fakeGeraet,fakeAnfragenRentEvent1)).isEqualTo(1);
-        Assertions.assertThat(personService.positionOfFreeBlock(fakeGeraet,fakeAnfragenRentEvent2)).isEqualTo(-1);
+        Assertions.assertThat(personService.positionOfFreeBlock(fakeGeraet, fakeAnfragenRentEvent1)).isEqualTo(1);
+        Assertions.assertThat(personService.positionOfFreeBlock(fakeGeraet, fakeAnfragenRentEvent2)).isEqualTo(-1);
 
     }
 
     @Test
-    public void interval_zerlagen(){
+    public void interval_zerlagen() {
         TimeInterval time = new TimeInterval();
         time.setStart(Date.valueOf("2019-3-20"));
         time.setEnd(Date.valueOf("2019-4-10"));
@@ -116,12 +116,12 @@ public class PersonServiceTest {
         Geraet fakeGeraet = new Geraet();
         fakeGeraet.setVerfuegbareEvents(rentEventList);
 
-        personService.splitTimeIntervalsOfGeraetAvailability(fakeGeraet,0,fakeAnfragenRentEvent);
-        verify(geraetRepository,times(1)).save(any());
+        personService.splitTimeIntervalsOfGeraetAvailability(fakeGeraet, 0, fakeAnfragenRentEvent);
+        verify(geraetRepository, times(1)).save(any());
     }
 
     @Test
-    public void make_comment(){
+    public void make_comment() {
         Person fakePerson = new Person();
         Person fakeBesitzer = new Person();
         fakeBesitzer.setUsername("fake Besitzer");
@@ -130,8 +130,8 @@ public class PersonServiceTest {
         fakegeraet.setBesitzer(fakeBesitzer);
 
         //when(personRepository.findByUsername("fake Besitzer")).thenReturn(java.util.Optional.ofNullable(fakeBesitzer));
-        personService.makeComment(fakegeraet,fakePerson,"fake grund");
-        verify(personRepository,times(1)).save(any());
+        personService.makeComment(fakegeraet, fakePerson, "fake grund");
+        verify(personRepository, times(1)).save(any());
     }
 
     @Test
@@ -141,14 +141,14 @@ public class PersonServiceTest {
         fakePerson.setUsername("fake Person");
         fakePerson.setPassword("fakePassword");
         when(file.getBytes()).thenReturn("fake".getBytes());
-        personService.makeAndSaveNewPerson(file,fakePerson);
-        verify(encoder,times(1)).encode("fakePassword");
-        verify(personRepository,times(1)).save(any());
-        verify(proPayService,times(1)).saveAccount("fake Person");
+        personService.makeAndSaveNewPerson(file, fakePerson);
+        verify(encoder, times(1)).encode("fakePassword");
+        verify(personRepository, times(1)).save(any());
+        verify(proPayService, times(1)).saveAccount("fake Person");
     }
 
     @Test
-    public void checks_active_or_in_active_rent_event(){
+    public void checks_active_or_in_active_rent_event() {
         Bild fakebild = new Bild();
         fakebild.setBild("fake bild".getBytes());
         List<Bild> bildList = new ArrayList<>();
@@ -195,17 +195,17 @@ public class PersonServiceTest {
 
         Geraet fakeGeraet = new Geraet();
         fakeGeraet.setBilder(bildList);
-        personService.checksActiveOrInActiveRentEvent(rentEventList,geraetWithRentEvents);
+        personService.checksActiveOrInActiveRentEvent(rentEventList, geraetWithRentEvents);
         Assertions.assertThat(geraetWithRentEvents.size()).isEqualTo(3);
     }
 
     @Test
     public void umwechsel_multiparfile_zum_bild() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
-        MultipartFile[] files = {file,file,file};
+        MultipartFile[] files = {file, file, file};
         when(file.getBytes()).thenReturn("fake".getBytes());
         List<Bild> bildList = new ArrayList<>();
-        personService.umwechsleMutifileZumBild(files,bildList);
+        personService.umwechsleMutifileZumBild(files, bildList);
         Assertions.assertThat(bildList.size()).isEqualTo(3);
     }
 }

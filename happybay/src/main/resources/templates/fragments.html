@@ -4,121 +4,135 @@
 <head th:fragment="header">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <script type="text/javascript" src="../static/addGeraet.js"></script>
 </head>
 <body>
 
-    <nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
-        <div class="container">
-            <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
-                                                  width="100px"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
-                    </li>
-                    <li sec:authorize="isAnonymous()" class="nav-item">
-                        <a class="nav-link" th:href="@{/login}"> Anmelden</a>
-                    </li>
-                    <li sec:authorize="isAnonymous()" class="nav-item">
-                        <a class="nav-link" th:href="@{/register}"> Registrieren</a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()"class="nav-item">
-                        <a class="nav-link" th:href="@{/user/profile}"> Meine Daten</a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" th:href="@{/user/proPay}"> Mein ProPay</a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" th:href="@{/user/myThings}"> Meine Geräte</a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" th:href="@{/user/rentThings}"> Meine Ausleihen</a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" th:href="@{/user/notifications}">
-                        <i class="fas fa-bell"></i>
-                            <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
-                        </a>
-                    </li>
-                    <li sec:authorize="isAuthenticated()" class="nav-item ml-auto">
-                        <a class="nav-link" th:href="@{http://localhost:8080/logout}"> Abmelden</a>
-                    </li>
-                </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input stype="margin-right: 0px" class="form-control mr-sm-2" type="search" placeholder="Suchen" aria-label="Search" name="key">
-                    <button style="background-color: white; margin-left: 0px; border: none" class="btn btn-outline-dark my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-        </div>
-    </nav>
+<nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
     <div class="container">
-        <div class="row justify-content-around">
-            <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}" >
-                <div th:fragment="geraetContainer" class="container">
-                    <div th:fragment="oneGeraetWithoutDelete">
-                        <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
-                        src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-                        <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
+        <a class="navbar-brand" href="/"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png"
+                                              height="100px"
+                                              width="100px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/login}"> Anmelden</a>
+                </li>
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <a class="nav-link" th:href="@{/register}"> Registrieren</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/profile}"> Meine Daten</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/proPay}"> Mein ProPay</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/myThings}"> Meine Geräte</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/rentThings}"> Meine Ausleihen</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" th:href="@{/user/notifications}">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-pill badge-info" th:text="${person.anzahlNotifications}">4</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item ml-auto">
+                    <a class="nav-link" th:href="@{http://localhost:8080/logout}"> Abmelden</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input stype="margin-right: 0px" class="form-control mr-sm-2" type="search" placeholder="Suchen"
+                       aria-label="Search" name="key">
+                <button style="background-color: white; margin-left: 0px; border: none"
+                        class="btn btn-outline-dark my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="card" style="width: 25rem; border-style: wave; border-width: 10px" th:each="geraet: ${geraete}">
+            <div th:fragment="geraetContainer" class="container">
+                <div th:fragment="oneGeraetWithoutDelete">
+                    <img th:if="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem"
+                         src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                    <img th:unless="${geraet.getEncode()==null}" class="card-img-top" style="height: 20rem;
                          width: 100%; object-fit: cover"
-                        th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
-                        <div class="card-body">
-                            <a class="nav-link" th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}">
-                                <i th:if="${geraet.getLikedPerson().contains(person)}" class="fas fa-heart"></i>
-                                <i th:if="${!geraet.getLikedPerson().contains(person)}" class="far fa-heart"></i>
-                                <span class="badge badge-pill badge-info" th:text="${geraet.getLikes()}">4</span>
-                            </a>
-                            <br>
-                            <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
+                         th:src="@{'data:image/jpeg;base64,'+ ${geraet.getEncode()}}">
+                    <div class="card-body">
+                        <a class="nav-link" th:href="@{/user/geraet/addLikes/{id}(id=${geraet.getId()})}">
+                            <i th:if="${geraet.getLikedPerson().contains(person)}" class="fas fa-heart"></i>
+                            <i th:if="${!geraet.getLikedPerson().contains(person)}" class="far fa-heart"></i>
+                            <span class="badge badge-pill badge-info" th:text="${geraet.getLikes()}">4</span>
+                        </a>
+                        <br>
+                        <p class="card-text" th:text="${geraet.getTitel()}" style="font-weight: bold;
                             font-size: x-large">Content</p>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item font-weight-bold" th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG : </li>
-                            <li th:if="${!geraet.isForsale()}" class="list-group-item"
-                                th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST :
-                            </li>
-                            <li th:if="${geraet.isForsale()}" class="list-group-item"
-                                th:text="'Kosten : ' + ${geraet.getKosten() + '€'}">KOST :
-                            </li>
-                            <li th:if="${!geraet.isForsale()}" class="list-group-item"
-                                th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
-                            </li>
-                            <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
-                            <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Zum Ausleihen</span></li>
-                            <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Zum Kaufen</span></li>
-                            <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
-                                <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item font-weight-bold"
+                            th:text="'Beschreibung : ' + ${#strings.abbreviate(geraet.beschreibung,100)}">BESCHREIBUNG :
+                        </li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kosten : ' + ${geraet.getKosten() + '€/Tag'}">KOST :
+                        </li>
+                        <li th:if="${geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kosten : ' + ${geraet.getKosten() + '€'}">KOST :
+                        </li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"
+                            th:text="'Kaution : ' + ${geraet.getKaution() + '€'}">KAUTION:
+                        </li>
+                        <li class="list-group-item" th:text="'Abholort : ' + ${geraet.getAbholort()}">ABHOLORT: :</li>
+                        <li th:if="${!geraet.isForsale()}" class="list-group-item"><span class="badge badge-primary">Zum Ausleihen</span>
+                        </li>
+                        <li th:if="${geraet.isForsale()}" class="list-group-item"><span class="badge badge-warning">Zum Kaufen</span>
+                        </li>
+                        <span th:if="${!geraet.isForsale()}" class="badge badge-success">Verfügbar im Zeitraum :</span>
+                        <li th:if="${!geraet.isForsale()}" th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}"
+                            style="margin: 15px; color: darkgreen;
                             font-weight: bold; margin-left: 20px">
-                                    <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
-                                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}" th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
+                            <tr th:if="${verfugbarEvent.getTimeInterval().getEnd().after(#dates.createNow())}">
+                                <td th:if="${verfugbarEvent.getTimeInterval().getStart().before(#dates.createNow())}"
+                                    th:text="${#dates.format(#dates.createNow(), 'dd.MM.')} +
                                             ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
-                                        <td th:if="${verfugbarEvent.getTimeInterval().getStart().after(#dates.createNow())}" th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                                <td th:if="${verfugbarEvent.getTimeInterval().getStart().after(#dates.createNow())}"
+                                    th:text="${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                                             ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"></td>
-                                    </tr>
-                                </li>
-                                <br/>
-                            <span th:if="${!geraet.isForsale()}" class="badge badge-danger">Schon verliehen im Zeitraum: </span>
-                                <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                            </tr>
+                        </li>
+                        <br/>
+                        <span th:if="${!geraet.isForsale()}"
+                              class="badge badge-danger">Schon verliehen im Zeitraum: </span>
+                        <li th:if="${!geraet.isForsale()}" th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
                             font-weight: bold; margin-left: 20px; opacity: 0.6">
-                                    <tr>
-                                        <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                            <tr>
+                                <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                                             ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
                                             ' von ' + ${rentEvent.mieter.username}"></td>
-                                    </tr>
-                                </li>
-                        </ul>
-                        <div class="card-body">
-                            <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}" > Mehr </a>
-                        </div>
+                            </tr>
+                        </li>
+                    </ul>
+                    <div class="card-body">
+                        <a th:href="@{/user/geraet/{id}(id=${geraet.getId()})}"> Mehr </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

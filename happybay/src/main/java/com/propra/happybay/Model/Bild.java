@@ -15,10 +15,10 @@ public class Bild {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name="gerat_bilder", columnDefinition="longblob", nullable=true)
+    @Column(name = "gerat_bilder", columnDefinition = "longblob", nullable = true)
     private byte[] bild;
 
-    public String encodeBild(){
+    public String encodeBild() {
         Base64.Encoder encoder = Base64.getEncoder();
         String encode = encoder.encodeToString(bild);
         return encode;

@@ -29,7 +29,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/user/**").authenticated()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.POST,"/add").permitAll()
+                .antMatchers(HttpMethod.POST, "/add").permitAll()
                 .antMatchers("/addNewUser").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
@@ -48,6 +48,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("http://localhost:8080", true)
                 .permitAll();
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();

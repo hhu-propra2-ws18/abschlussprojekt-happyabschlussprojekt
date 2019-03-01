@@ -7,7 +7,8 @@
 
 <div class="container" th:if="${person.getRole()=='ROLE_USER'}">
     <div class="row">
-        <div class="card" style="width: 25rem; border-style: wave; border-width: 10px;" th:each="notification: ${notifications}" >
+        <div class="card" style="width: 25rem; border-style: wave; border-width: 10px;"
+             th:each="notification: ${notifications}">
             <div class="clearfix" style="margin-bottom: 20px;">
                 <div class="card" style="padding-top: 40px;padding-bottom: 40px">
                     <ul class="list-inline card-text" th:if="${notification.getType()=='ausleihen'}">
@@ -22,47 +23,57 @@
                          th:src="@{'data:image/jpeg;base64,'+ ${notification.getEncode()}}">
                     <div class="card-body text-left">
                         <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold">Anfragende Person: </li>
-                            <li class="list-inline-item" th:text="${notification.getAnfragePerson().getUsername()}"></li>
+                            <li class="list-inline-item font-weight-bold">Anfragende Person:</li>
+                            <li class="list-inline-item"
+                                th:text="${notification.getAnfragePerson().getUsername()}"></li>
                         </ul>
                         <ul class="list-inline card-text">
-                            <li class="list-inline-item font-weight-bold" >Nachricht: </li>
-                            <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(notification.getMessage(),100)}"></li>
+                            <li class="list-inline-item font-weight-bold">Nachricht:</li>
+                            <li class="list-inline-item text-truncate" style="max-width: 200px"
+                                th:text="${#strings.abbreviate(notification.getMessage(),100)}"></li>
                         </ul>
-                        <ul class="list-inline card-text" >
+                        <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">Gewünschter erster Tag:</li>
-                            <li class="list-inline-item" th:text="${#dates.format(notification.getMietezeitpunktStart(), 'dd.MM.yyyy')}"></li>
+                            <li class="list-inline-item"
+                                th:text="${#dates.format(notification.getMietezeitpunktStart(), 'dd.MM.yyyy')}"></li>
                         </ul>
                         <ul class="list-inline card-text">
                             <li class="list-inline-item font-weight-bold">Gewünschter letzter Tag:</li>
-                            <li class="list-inline-item" th:text="${#dates.format(notification.getMietezeitpunktEnd(), 'dd.MM.yyyy')}"></li>
+                            <li class="list-inline-item"
+                                th:text="${#dates.format(notification.getMietezeitpunktEnd(), 'dd.MM.yyyy')}"></li>
                         </ul>
 
-                        <div th:if="${notification.getType()=='request'}" >
+                        <div th:if="${notification.getType()=='request'}">
                             <form th:action="@{'/user/mieterInfo/' +${notification.getAnfragePerson().getId()}}">
                                 <button class="btn btn-primary" type="submit">
                                     Info zur Person
                                 </button>
                             </form>
                             <br>
-                            <form th:action="@{/user/notification/refuseRequest/{id}(id=${notification.getId()})}" method="post">
+                            <form th:action="@{/user/notification/refuseRequest/{id}(id=${notification.getId()})}"
+                                  method="post">
                                 <button type="submit" style="background-color: red">Anfrage ablehnen</button>
 
                             </form>
                             <br/>
-                            <form th:action="@{/user/notification/acceptRequest/{id}(id=${notification.getId()})}" method="post">
+                            <form th:action="@{/user/notification/acceptRequest/{id}(id=${notification.getId()})}"
+                                  method="post">
                                 <button type="submit" style="background-color: green">Anfrage annehmen</button>
 
                             </form>
                         </div>
-                        <div th:if="${notification.getType()=='return'}" >
-                            <form th:action="@{/user/notification/refuseReturn/{id}(id=${notification.getId()})}" method="post">
-                                <input type="text" class="form-control" name="grund" placeholder="Ist das Gerät in schlechtem Zustand zurückgegeben worden?"/>
+                        <div th:if="${notification.getType()=='return'}">
+                            <form th:action="@{/user/notification/refuseReturn/{id}(id=${notification.getId()})}"
+                                  method="post">
+                                <input type="text" class="form-control" name="grund"
+                                       placeholder="Ist das Gerät in schlechtem Zustand zurückgegeben worden?"/>
                                 <button type="submit">Konflikt bei Admin auslösen</button>
                             </form>
                             <br>
-                            <form th:action="@{/user/notification/acceptReturn/{id}(id=${notification.getId()})}" method="post">
-                                <input type="text" name="grund" class="form-control" placeholder="Ist die Verleihe reibunglos verlaufen?">
+                            <form th:action="@{/user/notification/acceptReturn/{id}(id=${notification.getId()})}"
+                                  method="post">
+                                <input type="text" name="grund" class="form-control"
+                                       placeholder="Ist die Verleihe reibunglos verlaufen?">
                                 <button type="submit">Das Gerät zurücknehmen</button>
                             </form>
                         </div>
