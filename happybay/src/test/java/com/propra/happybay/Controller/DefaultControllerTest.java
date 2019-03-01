@@ -42,22 +42,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
 @WebAppConfiguration
 public class DefaultControllerTest {
     private Person person = new Person();
-    private Account account = new Account();
-    private Geraet geraet = new Geraet();
-    private List<Geraet> geraetList = new ArrayList<>();
-    private RentEvent rentEvent = new RentEvent();
-    private List<RentEvent> verfuegbareEvents = new ArrayList<>();
-    Date start = new Date(2019, 10, 20);
-    Date end = new Date(2019, 11, 21);
-    private TimeInterval timeInterval = new TimeInterval(start, end);
+    private Geraet geraet=new Geraet();
+    private List<Geraet> geraetList=new ArrayList<>();
+    private RentEvent rentEvent=new RentEvent();
+    private List<RentEvent> verfuegbareEvents=new ArrayList<>();
+    Date start = new Date(2019,10,20);
+    Date end = new Date(2019,11,21);
+    private TimeInterval timeInterval = new TimeInterval(start,end);
     @Mock
     private PersonRepository personRepository;
     @Mock
@@ -95,15 +94,12 @@ public class DefaultControllerTest {
         person.setId(1L);
         person.setAdresse("test dusseldorf");
 
-        //file
-        byte[] bytes = new byte[100];
+        byte[] bytes=new byte[100];
         new Random().nextBytes(bytes);
 
-        //gerät
         geraet.setId(2L);
         geraetList.add(geraet);
 
-        //rentEvent.setGeraetId(2L);
         rentEvent.setMieter(person);
         rentEvent.setTimeInterval(timeInterval);
         verfuegbareEvents.add(rentEvent);
@@ -112,46 +108,41 @@ public class DefaultControllerTest {
         doNothing().when(notificationService).updateAnzahlOfNotifications(any());
         when(personRepository.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(person));
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
-        when(rentEventRepository.findAllByMieterAndReturnStatus(any(), any())).thenReturn(verfuegbareEvents);
+        when(rentEventRepository.findAllByMieterAndReturnStatus(any(),any())).thenReturn(verfuegbareEvents);
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
-        mvc = MockMvcBuilders.standaloneSetup(new DefaultController(userValidator, rentEventRepository, geraetService, personService, personRepository, geraetRepository, notificationService))
+        mvc = MockMvcBuilders.standaloneSetup(new DefaultController(userValidator,rentEventRepository,geraetService,personService, personRepository,geraetRepository,notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
     }
 
     @Test
     public void index_USER_no_key() throws Exception {
-        mvc.perform(get("/").param("key", "").principal(principal))
+        mvc.perform(get("/").param("key","").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void index_USER_preisAufsteigend() throws Exception {
-        mvc.perform(get("/").param("key", "preisAufsteigend").principal(principal))
+        mvc.perform(get("/").param("key","preisAufsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void index_USER_preisAbsteigend() throws Exception {
-        mvc.perform(get("/").param("key", "preisAbsteigend").principal(principal))
+        mvc.perform(get("/").param("key","preisAbsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void index_USER_likeAufsteigend() throws Exception {
-        mvc.perform(get("/").param("key", "likeAufsteigend").principal(principal))
+        mvc.perform(get("/").param("key","likeAufsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void index_USER_likeAbsteigend() throws Exception {
-        mvc.perform(get("/").param("key", "likeAbsteigend").principal(principal))
+        mvc.perform(get("/").param("key","likeAbsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void index_NO_USER() throws Exception {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
@@ -161,10 +152,10 @@ public class DefaultControllerTest {
 
     @Test
     public void addToDatabase_noErrorPassWord() throws Exception {
-        doNothing().when(userValidator).validate(any(), any());
-        mvc.perform(post("/addNewUser").principal(principal).flashAttr("person", person).requestAttr("file", file))
+        doNothing().when(userValidator).validate(any(),any());
+        mvc.perform(post("/addNewUser").principal(principal).flashAttr("person",person).requestAttr("file", file))
                 .andExpect(status().isOk());
-        verify(userValidator, Mockito.times(1)).validate(any(), any());
+        verify(userValidator, Mockito.times(1)).validate(any(),any());
 
     }
 
@@ -173,22 +164,19 @@ public class DefaultControllerTest {
         mvc.perform(get("/register").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void login() throws Exception {
         mvc.perform(get("/login").principal(principal))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void loginWithError() throws Exception {
-        mvc.perform(get("/login").principal(principal).param("error", ""))
+        mvc.perform(get("/login").principal(principal).param("error",""))
                 .andExpect(status().isOk());
     }
-
     @Test
     public void loginWithLogOut() throws Exception {
-        mvc.perform(get("/login").principal(principal).param("logout", ""))
+        mvc.perform(get("/login").principal(principal).param("logout",""))
                 .andExpect(status().isOk());
     }
 

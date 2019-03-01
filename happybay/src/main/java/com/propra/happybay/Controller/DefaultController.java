@@ -1,6 +1,5 @@
 package com.propra.happybay.Controller;
 
-import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,30 +47,32 @@ public class DefaultController {
     private PersonService personService;
 
     public DefaultController(UserValidator userValidator, RentEventRepository rentEventRepository, GeraetService geraetService, PersonService personService, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
-        this.personRepository = personRepository;
-        this.geraetRepository = geraetRepository;
-        this.personService = personService;
-        this.notificationService = notificationService;
-        this.geraetService = geraetService;
-        this.rentEventRepository = rentEventRepository;
-        this.userValidator = userValidator;
+        this.personRepository=personRepository;
+        this.geraetRepository=geraetRepository;
+        this.personService=personService;
+        this.notificationService=notificationService;
+        this.geraetService=geraetService;
+        this.rentEventRepository=rentEventRepository;
+        this.userValidator=userValidator;
     }
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        List<Geraet> geraet = new ArrayList<>();
-        if (key.equals("preisAufsteigend")) {
-            geraet = geraetService.getAllWithFilterPreisAufsteigendWithBilder("");
-        } else if (key.equals("preisAbsteigend")) {
-            geraet = geraetService.getAllWithFilterPreisAbsteigendWithBilder("");
-        } else if (key.equals("likeAufsteigend")) {
-            geraet = geraetService.getAllWithFilterLikeAufsteigendWithBilder("");
-        } else if (key.equals("likeAbsteigend")) {
-            geraet = geraetService.getAllWithFilterLikeAbsteigendWithBilder("");
-        } else {
-            geraet = geraetService.getAllWithKeyWithBiler(key);
+        if(key.equals("preisAufsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAufsteigendWithBilder(""));
         }
-        model.addAttribute("geraete", geraet);
+        else if(key.equals("preisAbsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAbsteigendWithBilder(""));
+        }
+        else if(key.equals("likeAufsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAufsteigendWithBilder(""));
+        }
+        else if(key.equals("likeAbsteigend")){
+            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAbsteigendWithBilder(""));
+        }
+        else {
+            model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
+        }
 
         if (principal == null) {
             return "default/index";
@@ -98,14 +100,14 @@ public class DefaultController {
     }
 
     @PostMapping("/addNewUser")
-    public String addToDatabase(@RequestParam(value = "file", name = "file", required = false) MultipartFile file,
+    public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) {
+                                Model model) throws IOException {
         userValidator.validate(person, bindingResult);
         model.addAttribute("person", person);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
-            for (int i = 0; i < bindingResult.getAllErrors().size(); i++) {
+            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
                 errorList.add(bindingResult.getAllErrors().get(i).getCode());
             }
             model.addAttribute("errorList", errorList);
@@ -114,7 +116,7 @@ public class DefaultController {
         try {
             personService.makeAndSaveNewPerson(file, person);
         } catch (Exception e) {
-            return "/user/propayNotAvailable";
+            return "user/propayNotAvailable";
         }
         person.setPassword(""); // to not send real password to view
         return "default/confirmationOfRegistration";
@@ -133,7 +135,7 @@ public class DefaultController {
 
     @ExceptionHandler(MultipartException.class)
     @ResponseBody
-    String permittedSizeException(Exception e) {
+    String permittedSizeException (Exception e){
         e.printStackTrace();
         return "<h3>The file exceeds its maximum permitted size of 15 MB. Please reload your page.</h3>" +
                 "    <div>\n" +
