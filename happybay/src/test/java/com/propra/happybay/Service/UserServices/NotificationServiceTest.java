@@ -1,9 +1,6 @@
 package com.propra.happybay.Service.UserServices;
 
-import com.propra.happybay.Model.Bild;
-import com.propra.happybay.Model.Geraet;
-import com.propra.happybay.Model.Notification;
-import com.propra.happybay.Model.Person;
+import com.propra.happybay.Model.*;
 import com.propra.happybay.Repository.GeraetRepository;
 import com.propra.happybay.Repository.NotificationRepository;
 import com.propra.happybay.Service.UserServices.NotificationService;
@@ -21,14 +18,12 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -38,20 +33,12 @@ public class NotificationServiceTest {
 
     @Mock
     private NotificationRepository notificationRepository;
-    @Mock
-    private GeraetRepository geraetRepository;
-    @Mock
-    private PersonService personService;
 
     @InjectMocks
     private NotificationService notificationService;
 
     @Test
     public void find_all_by_besitzer(){
-        List<Notification> notificationList = new ArrayList<>();
-        Notification fakeNotification1 = new Notification();
-        Notification fakeNotification2 = new Notification();
-
         Geraet fakeGeraet1 = new Geraet();
         fakeGeraet1.setId(1L);
         List<Bild> bilder1 = new ArrayList<>();
@@ -67,54 +54,74 @@ public class NotificationServiceTest {
         fakeBild2.setBild("fake".getBytes());
         bilder2.add(fakeBild2);
         fakeGeraet2.setBilder(bilder2);
-        Person besitzer = new Person();
 
+        List<Notification> notificationList = new ArrayList<>();
+        Notification fakeNotification1 = new Notification();
         fakeNotification1.setGeraet(fakeGeraet1);
+        Notification fakeNotification2 = new Notification();
         fakeNotification2.setGeraet(fakeGeraet2);
-
         notificationList.add(fakeNotification1);
         notificationList.add(fakeNotification2);
-        Mockito.when(notificationRepository.findAllByBesitzer(besitzer)).thenReturn(notificationList);
 
-        Assertions.assertThat(notificationService.findAllByBesitzer(besitzer).get(0).getEncode()).isEqualTo(null);
-        Assertions.assertThat(notificationService.findAllByBesitzer(besitzer).get(1).getEncode()).isNotEqualTo(null);
+
+        Person besitzer = new Person();
+
+        Mockito.when(notificationRepository.findAllByBesitzer(besitzer)).thenReturn(notificationList);
+        List<Notification> testNotification = notificationService.findAllByBesitzer(besitzer);
+        Assertions.assertThat(testNotification.get(0).getEncode()).isEqualTo(null);
+        Assertions.assertThat(testNotification.get(1).getEncode()).isNotEqualTo(null);
+
     }
 
 
-    //@Test
-    //public void make_notification(){
-    //    Person besitzer = new Person();
-    //    Geraet fakeGeraet = new Geraet();
-    //    fakeGeraet.setBesitzer(besitzer);
-    //    Notification notification = new Notification();
-    //    notification.setAnfragePerson(besitzer);
-    //    notification.setGeraet(fakeGeraet);
-    //    notification.setBesitzer(besitzer);
-    //
-    //    when(notificationRepository.save(any()).
-    //    Assertions.assertThat(notificationService.copyAndEditNotification(besitzer,fakeGeraet, notification, "request"))
-    //            .isEqualTo(notification);
-    //}
+//    @Test
+//    public void make_notification(){
+//        Geraet fakeGeraet = new Geraet();
+//        fakeGeraet.setBesitzer("fakeBesitzer");
+//        fakeGeraet.setZeitraum(5);
+//        Notification notification = new Notification();
+//        notification.setAnfragePerson("fakeName");
+//        notification.setGeraetId(1L);
+//        notification.setBesitzer("fakeBesitzer");
+//        notification.setZeitraum(5);
+//        Assertions.assertThat(notificationService.copyAndEditNotification("fakeName",1L,fakeGeraet)).isEqualTo(notification);
+//    }
 
     @Test
-    public void updateAnzahl(){
+    public void update_anzahl_ofNotifications(){
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(new Notification());
-        Person fakePerson = new Person();
+        notificationList.add(new Notification());
+        Person fakePerson = mock(Person.class);
 
         Mockito.when(notificationRepository.findAllByBesitzer(fakePerson)).thenReturn(notificationList);
-        //Mockito.when(personService.getByUsername(anyString())).thenReturn(new Person());
 
         notificationService.updateAnzahlOfNotifications(fakePerson);
         verify(notificationRepository,times(1)).findAllByBesitzer(fakePerson);
-        //verify(personService,times(1)).getByUsername("fakeUsername");
+        verify(fakePerson,times(1)).setAnzahlNotifications(2);
 
     }
 
     @Test
-    public void getNotificationById(){
+    public void get_notification_by_id(){
         Notification fake = new Notification();
         when(notificationRepository.findById(1L)).thenReturn(java.util.Optional.of(fake));
         Assertions.assertThat(notificationService.getNotificationById(1L)).isEqualTo(fake);
+    }
+
+    @Test
+    public void copy_and_edit_notification(){
+        Notification fakeNotification = new Notification();
+        fakeNotification.setMietezeitpunktStart(Date.valueOf("2020-01-01"));
+        fakeNotification.setMietezeitpunktEnd(Date.valueOf("2020-02-03"));
+        notificationService.copyAndEditNotification(new Person(),new Geraet(), fakeNotification,"typ");
+        verify(notificationRepository,times(1)).save(any());
+    }
+
+    @Test
+    public void make_new_notification(){
+        notificationService.makeNewNotification(new Geraet(),new RentEvent(),"faketyp");
+        verify(notificationRepository,times(1)).save(any());
+
     }
 }
