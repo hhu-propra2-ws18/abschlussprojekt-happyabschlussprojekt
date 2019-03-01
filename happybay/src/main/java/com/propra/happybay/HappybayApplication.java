@@ -21,6 +21,7 @@ public class HappybayApplication {
     private PersonRepository personRepository;
     @Autowired
     public PasswordEncoder encoder;
+
     public static void main(String[] args) {
         SpringApplication.run(HappybayApplication.class, args);
     }
@@ -37,6 +38,7 @@ public class HappybayApplication {
             }
         };
     }
+
     @Bean
     InitializingBean initializeTest() {
         return () -> {

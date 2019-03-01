@@ -1,6 +1,7 @@
 package com.propra.happybay.Model;
 
 import lombok.Data;
+import org.thymeleaf.util.DateUtils;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;

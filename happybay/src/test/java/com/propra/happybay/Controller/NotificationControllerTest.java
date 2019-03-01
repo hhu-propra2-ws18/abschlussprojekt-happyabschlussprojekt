@@ -47,18 +47,18 @@ public class NotificationControllerTest {
     private Person person = new Person();
     private Person person2 = new Person();
     private Account account = new Account();
-    private Geraet geraet=new Geraet();
+    private Geraet geraet = new Geraet();
     private PersonMitAccount personMitAccount;
 
-    private List<Geraet> geraetList=new ArrayList<>();
+    private List<Geraet> geraetList = new ArrayList<>();
     private List<PersonMitAccount> personMitAccountList = new ArrayList<>();
-    private Notification notification=new Notification();
+    private Notification notification = new Notification();
     @Mock
     private PersonRepository personRepository;
     @Mock
     private AccountRepository accountRepository;
 
-    private RentEvent rentEvent=new RentEvent();
+    private RentEvent rentEvent = new RentEvent();
     @Mock
     GeraetRepository geraetRepository;
     @Mock
@@ -78,9 +78,10 @@ public class NotificationControllerTest {
     @Autowired
     public PasswordEncoder encoder;
     private MockMvc mvc;
-    Date start = new Date(2019,10,20);
-    Date end = new Date(2019,11,21);
-    private TimeInterval timeInterval = new TimeInterval(start,end);
+    Date start = new Date(2019, 10, 20);
+    Date end = new Date(2019, 11, 21);
+    private TimeInterval timeInterval = new TimeInterval(start, end);
+
     @Before
     public void setup() throws IOException {
         person.setUsername("person1");
@@ -95,7 +96,7 @@ public class NotificationControllerTest {
         account.setAmount(100.0);
         account.setReservations(reservationList);
         accountRepository.save(account);
-        personMitAccount = new PersonMitAccount(person,account);
+        personMitAccount = new PersonMitAccount(person, account);
 
         //gerät
         geraet.setId(3L);
@@ -118,30 +119,33 @@ public class NotificationControllerTest {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
-        mvc = MockMvcBuilders.standaloneSetup(new NotificationController(notificationService,mailService,proPayService,personService,geraetRepository,notificationRepository,rentEventRepository,rentEventService))
+        mvc = MockMvcBuilders.standaloneSetup(new NotificationController(notificationService, mailService, proPayService, personService, geraetRepository, notificationRepository, rentEventRepository, rentEventService))
                 .setViewResolvers(viewResolver)
                 .build();
     }
+
     @Test
-    public void  notificationAcceptRequest() throws Exception {
+    public void notificationAcceptRequest() throws Exception {
         when(notificationRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(notification));
-        mvc.perform(post("/user/notification/acceptRequest/{id}",3L).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/user/notification/acceptRequest/{id}", 3L).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection());
     }
+
     @Test
     public void notificationRefuseReturn() throws Exception {
         when(notificationRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(notification));
 
-        mvc.perform(post("/user/notification/refuseReturn/{id}",3L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
+        mvc.perform(post("/user/notification/refuseReturn/{id}", 3L).contentType(MediaType.APPLICATION_JSON).param("grund", "grund"))
                 .andExpect(status().is3xxRedirection());
     }
+
     @Test
     public void notificationRefuseRequest() throws Exception {
         when(notificationRepository.findById(3L)).thenReturn(java.util.Optional.ofNullable(notification));
 
-        mvc.perform(post("/user/notification/refuseRequest/{id}",3L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
+        mvc.perform(post("/user/notification/refuseRequest/{id}", 3L).contentType(MediaType.APPLICATION_JSON).param("grund", "grund"))
                 .andExpect(status().is3xxRedirection());
-        verify(mailService, Mockito.times(1)).sendRefuseRequestMail(person,geraet);
+        verify(mailService, Mockito.times(1)).sendRefuseRequestMail(person, geraet);
         verify(notificationRepository, Mockito.times(1)).deleteById(3L);
         verify(notificationRepository, Mockito.times(1)).findById(3L);
 
@@ -151,10 +155,10 @@ public class NotificationControllerTest {
     @Test
     public void notificationAcceptReturn() throws Exception {
         when(notificationService.getNotificationById(3L)).thenReturn(notification);
-        doNothing().when(mailService).sendAcceptReturnMail(person,geraet);
-        doNothing().when(personService).makeComment(geraet,person,"grund");
-        doNothing().when(proPayService).releaseReservation("person1",2);
-        mvc.perform(post("/user/notification/acceptReturn/{id}",3L).contentType(MediaType.APPLICATION_JSON).param("grund","grund"))
+        doNothing().when(mailService).sendAcceptReturnMail(person, geraet);
+        doNothing().when(personService).makeComment(geraet, person, "grund");
+        doNothing().when(proPayService).releaseReservation("person1", 2);
+        mvc.perform(post("/user/notification/acceptReturn/{id}", 3L).contentType(MediaType.APPLICATION_JSON).param("grund", "grund"))
                 .andExpect(status().is3xxRedirection());
     }
 }

@@ -3,55 +3,43 @@
 <head th:replace="fragments.html :: header"></head>
 <body>
 <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-
 <div class="container"><br/>
     <h3 class="text-justify text-center font-weight-normal">Change to Rent </h3>
-
     <div class="row justify-content-md-center">
         <form th:action="@{/user/geraet/changeToRent/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post"
               enctype="multipart/form-data"><br/>
-
             <label for="titel">Titel:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
                    placeholder="Eingabe Titel." onchange="check()" th:value="${geraet.getTitel()}" required/>
-
             <label for="beschreibung">Beschreibung:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
                    placeholder="Eingabe Beschreibung." th:value="${geraet.getBeschreibung()}" required/>
-
             <label for="kosten">Miete Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
                    placeholder="in Euro" th:value="${geraet.getKosten()}" onchange="checkKosten()"
                    required/>
-
             <label id="kautionLabel">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
                    placeholder="in Euro" th:value="${geraet.getKaution()}" onchange="checkKaution()"
                    value="0"/>
-
-            <!--why for kaution?-->
             <label for="abholort">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" th:value="${geraet.getAbholort()}"
                    name="abholort" id="abholort"
                    placeholder="Eingabe Abholort." required/>
-
             <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
                    id="mietezeitpunktStart"
                    placeholder="Eingabe start Zeitpunkte." th:value="${geraet.getMietezeitpunktStart()}"
                    onblur="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
-
             <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
             <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
                    id="mietezeitpunktEnd"
                    placeholder="Eingabe ende Zeitpunkte." th:value="${geraet.getMietezeitpunktEnd()}"
                    onblur="checkEndTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
-
             <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
             <input style="padding-top: 10px" type="file" name="files" multiple
                    accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
             <br/><br/>
-
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
@@ -129,7 +117,7 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < (nowDate-(18*60*60*1000))) {
+        if (startDate < (nowDate - (18 * 60 * 60 * 1000))) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
@@ -154,7 +142,7 @@
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if (endDate < (nowDate-(18*60*60*1000))) {
+        if (endDate < (nowDate - (18 * 60 * 60 * 1000))) {
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;
@@ -170,28 +158,32 @@
             }
         }
     }
-        function checkFile(el){
-            var files = el.files;
-            var allowTypes = ["image/jpeg","image/png","image/jpg","image/gif"];
-            var allowUpload = true;
-            var errorMessage = "";        for(var i=0; i< files.length; i++){
-                var fileName = files[i].name;
-                var fileType = files[i].type;            var typeAccepted = false;
-                for(var j = 0; j < allowTypes.length; j++){
-                    if(allowTypes[j] == fileType){
-                        typeAccepted = true;
-                        break;
-                    }
+
+    function checkFile(el) {
+        var files = el.files;
+        var allowTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+        var allowUpload = true;
+        var errorMessage = "";
+        for (var i = 0; i < files.length; i++) {
+            var fileName = files[i].name;
+            var fileType = files[i].type;
+            var typeAccepted = false;
+            for (var j = 0; j < allowTypes.length; j++) {
+                if (allowTypes[j] == fileType) {
+                    typeAccepted = true;
+                    break;
                 }
-                if(typeAccepted != true){
-                    errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
-                    allowUpload = false;
-                }
-            }        if(allowUpload != true){
-                el.outerHTML = el.outerHTML;
-                alert(errorMessage);
+            }
+            if (typeAccepted != true) {
+                errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
+                allowUpload = false;
             }
         }
+        if (allowUpload != true) {
+            el.outerHTML = el.outerHTML;
+            alert(errorMessage);
+        }
+    }
 
 </script>
 </body>

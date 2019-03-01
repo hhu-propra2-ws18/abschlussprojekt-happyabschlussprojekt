@@ -4,27 +4,33 @@
 <head th:fragment="header">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HappyBay</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>
 <body>
 
 <nav th:fragment="topSiteBarAndMenu" class="navbar navbar-expand-lg navbar-light" style="background-color: deepskyblue">
     <div class="container">
-        <a class="navbar-brand" th:href="@{/admin/}"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png" height="100px"
+        <a class="navbar-brand" th:href="@{/admin/}"><img class="rounded-circle" src="https://i.imgur.com/DAVPylQ.png"
+                                                          height="100px"
                                                           width="100px"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="/admin/allUsers"> Alle Benutzer
-                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfPersons}">4</span>
+                    <span class="badge badge-pill badge-info"
+                          th:text="${informationForMenuBadges.numberOfPersons}">4</span>
                 </a>
             </li>
-            <li sec:authorize="isAuthenticated()"class="nav-item">
+            <li sec:authorize="isAuthenticated()" class="nav-item">
                 <a class="nav-link" th:href="@{/admin/conflicts}"> Konflikte
-                    <span class="badge badge-pill badge-info" th:text="${informationForMenuBadges.numberOfConflicts}">4</span>
+                    <span class="badge badge-pill badge-info"
+                          th:text="${informationForMenuBadges.numberOfConflicts}">4</span>
                 </a>
             </li>
             <li sec:authorize="isAuthenticated()" style="float: right" class="nav-item ml-auto">

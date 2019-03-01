@@ -69,8 +69,8 @@ public class MailServiceTest {
         Mockito.when(sender.createMimeMessage()).thenReturn(msg);
 
         mailService.sendScheduledMail();
-        verify(sender,times(2)).createMimeMessage();
-        verify(sender,times(2)).send((MimeMessage) any());
+        verify(sender, times(2)).createMimeMessage();
+        verify(sender, times(2)).send((MimeMessage) any());
     }
 
 
@@ -88,14 +88,14 @@ public class MailServiceTest {
         fakePerson.setKontakt("kerrie.zhang@qq.com");
         MimeMessage msg = new JavaMailSenderImpl().createMimeMessage();
         Mockito.when(sender.createMimeMessage()).thenReturn(msg);
-        mailService.sendAnfragMail(fakePerson,fakeGeraet,principal);
-        mailService.sendReturnMail(fakePerson,fakeGeraet);
-        mailService.sendAcceptReturnMail(fakePerson,fakeGeraet);
-        mailService.sendRefuseReturnMail(fakePerson,fakeGeraet);
-        mailService.sendAcceptRequestMail(fakePerson,fakeGeraet);
-        mailService.sendRefuseRequestMail(fakePerson,fakeGeraet);
-        verify(sender,times(6)).createMimeMessage();
-        verify(sender,times(6)).send((MimeMessage) any());
+        mailService.sendAnfragMail(fakePerson, fakeGeraet, principal);
+        mailService.sendReturnMail(fakePerson, fakeGeraet);
+        mailService.sendAcceptReturnMail(fakePerson, fakeGeraet);
+        mailService.sendRefuseReturnMail(fakePerson, fakeGeraet);
+        mailService.sendAcceptRequestMail(fakePerson, fakeGeraet);
+        mailService.sendRefuseRequestMail(fakePerson, fakeGeraet);
+        verify(sender, times(6)).createMimeMessage();
+        verify(sender, times(6)).send((MimeMessage) any());
 
     }
 

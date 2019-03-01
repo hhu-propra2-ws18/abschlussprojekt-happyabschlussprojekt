@@ -10,26 +10,33 @@
     </div>
 
     <div class="card" style="padding: 10px; margin-bottom: 10px">
-        <form th:action="@{/user/geraet/edit/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/user/geraet/edit/{id}(id=${geraet.getId()})}" th:object="${geraet}" method="post"
+              enctype="multipart/form-data">
             <label for="titel">Bilder Hochladen(Max. 15MB)</label>
-            <label>(Hinweis:Sie können mehrere Bilder hochladen. Das erste wird zum Cover Ihres Artikels und ersetzt alle Ihre alten Bilder.)</label>
-            <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
+            <label>(Hinweis:Sie können mehrere Bilder hochladen. Das erste wird zum Cover Ihres Artikels und ersetzt
+                alle Ihre alten Bilder.)</label>
+            <input style="padding-top: 10px" type="file" name="files" multiple
+                   accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
             <br>
             <label for="titel">Titel:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel" th:value="${geraet.titel}" />
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
+                   th:value="${geraet.titel}"/>
 
             <label for="beschreibung">Beschreibung:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" th:value="${geraet.beschreibung}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
+                   th:value="${geraet.beschreibung}"/>
 
             <label for="kosten">kosten Pro Tag:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
+                   th:value="${geraet.kosten}"/>
 
             <label for="kaution">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control"
                    name="kaution" id="kaution" th:if="${!geraet.isForsale()}" th:value="${geraet.kaution}"/>
 
             <label for="kaution">Abholort:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
+                   th:value="${geraet.abholort}"/>
 
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
@@ -39,24 +46,27 @@
     </div>
 </div>
 <script type="text/javascript">
-    function checkFile(el){
+    function checkFile(el) {
         var files = el.files;
-        var allowTypes = ["image/jpeg","image/png","image/jpg","image/gif"];
+        var allowTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
         var allowUpload = true;
-        var errorMessage = "";        for(var i=0; i< files.length; i++){
+        var errorMessage = "";
+        for (var i = 0; i < files.length; i++) {
             var fileName = files[i].name;
-            var fileType = files[i].type;            var typeAccepted = false;
-            for(var j = 0; j < allowTypes.length; j++){
-                if(allowTypes[j] == fileType){
+            var fileType = files[i].type;
+            var typeAccepted = false;
+            for (var j = 0; j < allowTypes.length; j++) {
+                if (allowTypes[j] == fileType) {
                     typeAccepted = true;
                     break;
                 }
             }
-            if(typeAccepted != true){
+            if (typeAccepted != true) {
                 errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
                 allowUpload = false;
             }
-        }        if(allowUpload != true){
+        }
+        if (allowUpload != true) {
             el.outerHTML = el.outerHTML;
             alert(errorMessage);
         }

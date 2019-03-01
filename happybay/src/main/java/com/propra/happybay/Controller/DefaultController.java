@@ -1,5 +1,6 @@
 package com.propra.happybay.Controller;
 
+import com.propra.happybay.Model.Geraet;
 import com.propra.happybay.Model.HelperClassesForViews.GeraetWithRentEvent;
 import com.propra.happybay.Model.Person;
 import com.propra.happybay.Model.RentEvent;
@@ -47,32 +48,30 @@ public class DefaultController {
     private PersonService personService;
 
     public DefaultController(UserValidator userValidator, RentEventRepository rentEventRepository, GeraetService geraetService, PersonService personService, PersonRepository personRepository, GeraetRepository geraetRepository, NotificationService notificationService) {
-        this.personRepository=personRepository;
-        this.geraetRepository=geraetRepository;
-        this.personService=personService;
-        this.notificationService=notificationService;
-        this.geraetService=geraetService;
-        this.rentEventRepository=rentEventRepository;
-        this.userValidator=userValidator;
+        this.personRepository = personRepository;
+        this.geraetRepository = geraetRepository;
+        this.personService = personService;
+        this.notificationService = notificationService;
+        this.geraetService = geraetService;
+        this.rentEventRepository = rentEventRepository;
+        this.userValidator = userValidator;
     }
 
     @GetMapping("/")
     public String index(Model model, Principal principal, @RequestParam(value = "key", required = false, defaultValue = "") String key) {
-        if(key.equals("preisAufsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAufsteigendWithBilder(""));
+        List<Geraet> geraet = new ArrayList<>();
+        if (key.equals("preisAufsteigend")) {
+            geraet = geraetService.getAllWithFilterPreisAufsteigendWithBilder("");
+        } else if (key.equals("preisAbsteigend")) {
+            geraet = geraetService.getAllWithFilterPreisAbsteigendWithBilder("");
+        } else if (key.equals("likeAufsteigend")) {
+            geraet = geraetService.getAllWithFilterLikeAufsteigendWithBilder("");
+        } else if (key.equals("likeAbsteigend")) {
+            geraet = geraetService.getAllWithFilterLikeAbsteigendWithBilder("");
+        } else {
+            geraet = geraetService.getAllWithKeyWithBiler(key);
         }
-        else if(key.equals("preisAbsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterPreisAbsteigendWithBilder(""));
-        }
-        else if(key.equals("likeAufsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAufsteigendWithBilder(""));
-        }
-        else if(key.equals("likeAbsteigend")){
-            model.addAttribute("geraete", geraetService.getAllWithFilterLikeAbsteigendWithBilder(""));
-        }
-        else {
-            model.addAttribute("geraete", geraetService.getAllWithKeyWithBiler(key));
-        }
+        model.addAttribute("geraete", geraet);
 
         if (principal == null) {
             return "default/index";
@@ -100,14 +99,14 @@ public class DefaultController {
     }
 
     @PostMapping("/addNewUser")
-    public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
+    public String addToDatabase(@RequestParam(value = "file", name = "file", required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
                                 Model model) {
         userValidator.validate(person, bindingResult);
         model.addAttribute("person", person);
         if (bindingResult.hasErrors()) {
             List<String> errorList = new ArrayList<>();
-            for (int i=0; i< bindingResult.getAllErrors().size(); i++){
+            for (int i = 0; i < bindingResult.getAllErrors().size(); i++) {
                 errorList.add(bindingResult.getAllErrors().get(i).getCode());
             }
             model.addAttribute("errorList", errorList);
@@ -135,7 +134,7 @@ public class DefaultController {
 
     @ExceptionHandler(MultipartException.class)
     @ResponseBody
-    String permittedSizeException (Exception e){
+    String permittedSizeException(Exception e) {
         e.printStackTrace();
         return "<h3>The file exceeds its maximum permitted size of 15 MB. Please reload your page.</h3>" +
                 "    <div>\n" +

@@ -4,7 +4,6 @@
 <body>
 <nav th:replace="admin/fragmentsAdmin.html :: topSiteBarAndMenu"></nav>
 <br/>
-
 <table class="table container">
     <thead>
     <tr>
@@ -22,21 +21,26 @@
         <td th:text="${geraetWithRentEventsWithConflict.rentEvent.grundForReturn}"></td>
         <td>
             <form action="/admin/punishAccount" method="post">
-            <input type="hidden" name="mieter" th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter.username}">
-            <input type="hidden" name="reservationId" th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
-            <br>
-            <input style="background-color: white; color: red" type="submit" value="Punish">
+                <input type="hidden" name="mieter"
+                       th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter.username}">
+                <input type="hidden" name="reservationId"
+                       th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
+                <br>
+                <input style="background-color: white; color: red" type="submit" value="Punish">
             </form>
         </td>
-        <td><form action="/admin/releaseAccount" method="post">
-            <input type="hidden" name="mieter" th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter.username}">
-            <input type="hidden" name="reservationId" th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
-            <br>
-            <input style="background-color: white; color: green" type="submit" value="Release">
-        </form></td>
+        <td>
+            <form action="/admin/releaseAccount" method="post">
+                <input type="hidden" name="mieter"
+                       th:value="${geraetWithRentEventsWithConflict.rentEvent.mieter.username}">
+                <input type="hidden" name="reservationId"
+                       th:value="${geraetWithRentEventsWithConflict.rentEvent.reservationId}">
+                <br>
+                <input style="background-color: white; color: green" type="submit" value="Release">
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
-
 </body>
 </html>

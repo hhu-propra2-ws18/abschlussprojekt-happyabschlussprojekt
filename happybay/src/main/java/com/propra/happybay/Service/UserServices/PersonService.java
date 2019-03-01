@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,15 +49,17 @@ public class PersonService {
     public void splitTimeIntervalsOfGeraetAvailability(Geraet geraet, int index, RentEvent rentEvent) {
         if (geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart().getTime()
                 != rentEvent.getTimeInterval().getStart().getTime()) {
+            Date dateBefore = new Date(rentEvent.getTimeInterval().getStart().getTime() - 24 * 3600 * 1000);
             TimeInterval timeInterval1 = new TimeInterval(geraet.getVerfuegbareEvents().get(index).getTimeInterval().getStart(),
-                    rentEvent.getTimeInterval().getStart());
+                    dateBefore);
             RentEvent rentEvent1 = new RentEvent();
             rentEvent1.setTimeInterval(timeInterval1);
             geraet.getVerfuegbareEvents().add(rentEvent1);
         }
         if (rentEvent.getTimeInterval().getEnd().getTime()
                 != geraet.getVerfuegbareEvents().get(index).getTimeInterval().getEnd().getTime()) {
-            TimeInterval timeInterval2 = new TimeInterval(rentEvent.getTimeInterval().getEnd(),
+            Date dateAfter = new Date(rentEvent.getTimeInterval().getEnd().getTime() + 24 * 3600 * 1000);
+            TimeInterval timeInterval2 = new TimeInterval(dateAfter,
                     geraet.getVerfuegbareEvents().get(index).getTimeInterval().getEnd());
             RentEvent rentEvent2 = new RentEvent();
             rentEvent2.setTimeInterval(timeInterval2);
@@ -80,7 +83,7 @@ public class PersonService {
     public void makeAndSaveNewPerson(MultipartFile file, Person person) throws IOException {
         try {
             proPayService.saveAccount(person.getUsername());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
         Bild bild = new Bild();
@@ -90,6 +93,7 @@ public class PersonService {
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
     }
+
     public void checksActiveOrInActiveRentEvent(List<RentEvent> RentEvents, List<GeraetWithRentEvent> geraete) {
         for (RentEvent rentEvent : RentEvents) {
             GeraetWithRentEvent geraetWithRentEvent = new GeraetWithRentEvent();
@@ -101,6 +105,7 @@ public class PersonService {
             }
         }
     }
+
     public void umwechsleMutifileZumBild(@RequestParam("files") MultipartFile[] files, List<Bild> bilds) throws IOException {
         for (MultipartFile file : files) {
             Bild bild = new Bild();

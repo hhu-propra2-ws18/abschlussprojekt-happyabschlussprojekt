@@ -5,114 +5,129 @@
 </head>
 <body>
 <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-<br/>
-<h2>Aktive Ausleihen</h2>
-<br/>
-<div class="card-group">
-    <div th:each="rentThing: ${activeGeraete}" class="col-sm-3">
-        <div class="clearfix" style="margin-bottom: 20px;">
-            <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
-                <img th:if="${rentThing.geraet.getEncode()==null}" class="card-img-top"
-                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-                <img th:unless="${rentThing.geraet.getEncode()==null}" class="card-img-top"
-                     th:src="@{'data:image/jpeg;base64,'+ ${rentThing.geraet.getEncode()}}">
-                <div class="card-body text-left">
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Titel: </li>
-                        <li class="list-inline-item"  th:text="${rentThing.geraet.getTitel()}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Beschreibung: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.geraet.beschreibung,100)}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Kosten: </li>
-                        <li class="list-inline-item" th:text="${rentThing.geraet.getKosten() + '€/Tag'}"></li>
-                    </ul>
-                    <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >Kaution: </li>
-                        <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
-                    </ul>
-                    <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >Sie haben gebucht: </li>
-                        <li class="list-inline-item" th:text="${#dates.format(rentThing.rentEvent.timeInterval.start, 'dd.MM.')} + ' - ' +
-                        ${#dates.format(rentThing.rentEvent.timeInterval.end, 'dd.MM.yyyy')}"></li>
-                    </ul>
-                    <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}" >Details</a><br/>
-                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
-                       th:if="${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).ACTIVE} OR
-                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_OVER} OR
-                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_CLOSE} OR
-                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).BOOKED}">
-                        Artikel zurückgeben</a><br/>
-                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
-                        Konflikt ausgelöst.</a>
-                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING_FOR_CONFIRMATION}">Ihre Rückgabe
-                        wird bearbeitet</a>
+<div class="container">
+    <br/>
+    <h2>Aktive Ausleihen</h2>
+    <br/>
+    <div class="row justify-content-around">
+        <div class="card-group">
+            <div th:each="rentThing: ${activeGeraete}" class="col-sm-3">
+                <div class="clearfix" style="margin-bottom: 20px;">
+                    <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
+                        <img th:if="${rentThing.geraet.getEncode()==null}" class="card-img-top"
+                             src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                        <img th:unless="${rentThing.geraet.getEncode()==null}" class="card-img-top"
+                             th:src="@{'data:image/jpeg;base64,'+ ${rentThing.geraet.getEncode()}}">
+                        <div class="card-body text-left">
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Titel:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getTitel()}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Beschreibung:</li>
+                                <li class="list-inline-item text-truncate" style="max-width: 200px"
+                                    th:text="${#strings.abbreviate(rentThing.geraet.beschreibung,100)}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Kosten:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getKosten() + '€/Tag'}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Kaution:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Sie haben gebucht:</li>
+                                <li class="list-inline-item" th:text="${#dates.format(rentThing.rentEvent.timeInterval.start, 'dd.MM.')} + ' - ' +
+                                    ${#dates.format(rentThing.rentEvent.timeInterval.end, 'dd.MM.yyyy')}"></li>
+                            </ul>
+                            <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}">Details</a><br/>
+                            <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
+                               th:if="${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).ACTIVE} OR
+                                   ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_OVER} OR
+                                   ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_CLOSE} OR
+                                   ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).BOOKED}">
+                                Artikel zurückgeben</a><br/>
+                            <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer
+                                hat
+                                Konflikt ausgelöst.</a>
+                            <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING_FOR_CONFIRMATION}">Ihre
+                                Rückgabe
+                                wird bearbeitet</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <h2>Gebuchte Ausleihen</h2>
+    <br/>
+    <div class="row justify-content-around">
+        <div class="card-group">
+            <div th:each="rentThing: ${bookedGeraete}" class="col-sm-3">
+                <div class="clearfix" style="margin-bottom: 20px;">
+                    <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
+                        <img th:if="${rentThing.geraet.getEncode()==null}" class="card-img-top"
+                             src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
+                        <img th:unless="${rentThing.geraet.getEncode()==null}" class="card-img-top"
+                             th:src="@{'data:image/jpeg;base64,'+ ${rentThing.geraet.getEncode()}}">
+                        <div class="card-body text-left">
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Titel:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getTitel()}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Beschreibung:</li>
+                                <li class="list-inline-item text-truncate" style="max-width: 200px"
+                                    th:text="${#strings.abbreviate(rentThing.geraet.beschreibung,100)}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Kost:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getKosten() + '€'}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Kaution:</li>
+                                <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
+                            </ul>
+                            <ul class="list-inline card-text">
+                                <li class="list-inline-item font-weight-bold">Sie haben gebucht:</li>
+                                <li class="list-inline-item" th:text="${#dates.format(rentThing.rentEvent.timeInterval.start, 'dd.MM.')} + ' - ' +
+                                    ${#dates.format(rentThing.rentEvent.timeInterval.end, 'dd.MM.yyyy')}"></li>
+                            </ul>
 
+                            <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}">Details</a><br/>
+                            <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
+                               th:if="${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).ACTIVE} OR
+                                   ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_OVER} OR
+                                   ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_CLOSE} OR
+                                    ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).BOOKED}">
+                                Artikel zurückgeben</a><br/>
+                            <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer
+                                hat
+                                Konflikt ausgelöst.</a>
+                            <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING_FOR_CONFIRMATION}">Ihre
+                                Rückgabe
+                                wird bearbeitet</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<br/>
-<br/>
-<h2>Gebuchte Ausleihen</h2>
-<br/>
-<div class="card-group">
-    <div th:each="rentThing: ${bookedGeraete}" class="col-sm-3">
-        <div class="clearfix" style="margin-bottom: 20px;">
-            <div class="card" style="padding-top: 40px;padding-bottom: 40px;">
-                <img th:if="${rentThing.geraet.getEncode()==null}" class="card-img-top"
-                     src="https://avatars2.githubusercontent.com/u/44258883?s=460&v=4">
-                <img th:unless="${rentThing.geraet.getEncode()==null}" class="card-img-top"
-                     th:src="@{'data:image/jpeg;base64,'+ ${rentThing.geraet.getEncode()}}">
-                <div class="card-body text-left">
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold">Titel: </li>
-                        <li class="list-inline-item"  th:text="${rentThing.geraet.getTitel()}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Beschreibung: </li>
-                        <li class="list-inline-item text-truncate" style="max-width: 200px" th:text="${#strings.abbreviate(rentThing.geraet.beschreibung,100)}"></li>
-                    </ul>
-                    <ul class="list-inline card-text">
-                        <li class="list-inline-item font-weight-bold" >Kost: </li>
-                        <li class="list-inline-item" th:text="${rentThing.geraet.getKosten() + '€'}"></li>
-                    </ul>
-                    <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >Kaution: </li>
-                        <li class="list-inline-item" th:text="${rentThing.geraet.getKaution() + '€'}"></li>
-                    </ul>
-                    <ul class="list-inline card-text" >
-                        <li class="list-inline-item font-weight-bold" >Sie haben gebucht: </li>
-                        <li class="list-inline-item" th:text="${#dates.format(rentThing.rentEvent.timeInterval.start, 'dd.MM.')} + ' - ' +
-                        ${#dates.format(rentThing.rentEvent.timeInterval.end, 'dd.MM.yyyy')}"></li>
-                    </ul>
-
-                    <a th:href="@{/user/geraet/{id}(id=${rentThing.geraet.getId()})}" >Details</a><br/>
-                    <a th:href="@{/user/geraet/zurueckgeben/{id}(id=${rentThing.rentEvent.id})}"
-                       th:if="${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).ACTIVE} OR
-                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_OVER} OR
-                       ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).DEADLINE_CLOSE} OR
-                        ${rentThing.rentEvent.getReturnStatus()} == ${T(com.propra.happybay.ReturnStatus).BOOKED}">
-                        Artikel zurückgeben</a><br/>
-                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).KAPUTT}">Besitzer hat
-                        Konflikt ausgelöst.</a>
-                    <a th:if="${rentThing.rentEvent.getReturnStatus()==T(com.propra.happybay.ReturnStatus).WAITING_FOR_CONFIRMATION}">Ihre Rückgabe
-                        wird bearbeitet</a>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
-
 
 
 <!--<script>-->
@@ -170,69 +185,69 @@
 <!--</form><br/>-->
 
 <!--<style>-->
-    <!--.rating {-->
-        <!--display: inline-block;-->
-        <!--position: relative;-->
-        <!--height: 30px;-->
-        <!--line-height: 30px;-->
-        <!--font-size: 30px;-->
-    <!--}-->
+<!--.rating {-->
+<!--display: inline-block;-->
+<!--position: relative;-->
+<!--height: 30px;-->
+<!--line-height: 30px;-->
+<!--font-size: 30px;-->
+<!--}-->
 
-    <!--.rating label {-->
-        <!--position: absolute;-->
-        <!--top: 0;-->
-        <!--left: 0;-->
-        <!--height: 100%;-->
-        <!--cursor: pointer;-->
-    <!--}-->
+<!--.rating label {-->
+<!--position: absolute;-->
+<!--top: 0;-->
+<!--left: 0;-->
+<!--height: 100%;-->
+<!--cursor: pointer;-->
+<!--}-->
 
-    <!--.rating label:last-child {-->
-        <!--position: static;-->
-    <!--}-->
+<!--.rating label:last-child {-->
+<!--position: static;-->
+<!--}-->
 
-    <!--.rating label:nth-child(1) {-->
-        <!--z-index: 5;-->
-    <!--}-->
+<!--.rating label:nth-child(1) {-->
+<!--z-index: 5;-->
+<!--}-->
 
-    <!--.rating label:nth-child(2) {-->
-        <!--z-index: 4;-->
-    <!--}-->
+<!--.rating label:nth-child(2) {-->
+<!--z-index: 4;-->
+<!--}-->
 
-    <!--.rating label:nth-child(3) {-->
-        <!--z-index: 3;-->
-    <!--}-->
+<!--.rating label:nth-child(3) {-->
+<!--z-index: 3;-->
+<!--}-->
 
-    <!--.rating label:nth-child(4) {-->
-        <!--z-index: 2;-->
-    <!--}-->
+<!--.rating label:nth-child(4) {-->
+<!--z-index: 2;-->
+<!--}-->
 
-    <!--.rating label:nth-child(5) {-->
-        <!--z-index: 1;-->
-    <!--}-->
+<!--.rating label:nth-child(5) {-->
+<!--z-index: 1;-->
+<!--}-->
 
-    <!--.rating label input {-->
-        <!--position: absolute;-->
-        <!--top: 0;-->
-        <!--left: 0;-->
-        <!--opacity: 0;-->
-    <!--}-->
+<!--.rating label input {-->
+<!--position: absolute;-->
+<!--top: 0;-->
+<!--left: 0;-->
+<!--opacity: 0;-->
+<!--}-->
 
-    <!--.rating label .icon {-->
-        <!--float: left;-->
-        <!--color: transparent;-->
-    <!--}-->
+<!--.rating label .icon {-->
+<!--float: left;-->
+<!--color: transparent;-->
+<!--}-->
 
-    <!--.rating label:last-child .icon {-->
-        <!--color: #000;-->
-    <!--}-->
+<!--.rating label:last-child .icon {-->
+<!--color: #000;-->
+<!--}-->
 
-    <!--.rating:not(:hover) label input:checked ~ .icon,-->
-    <!--.rating:hover label:hover input ~ .icon {-->
-        <!--color: #09f;-->
-    <!--}-->
+<!--.rating:not(:hover) label input:checked ~ .icon,-->
+<!--.rating:hover label:hover input ~ .icon {-->
+<!--color: #09f;-->
+<!--}-->
 
-    <!--.rating label input:focus:not(:checked) ~ .icon:last-child {-->
-        <!--color: #000;-->
-        <!--text-shadow: 0 0 5px #09f;-->
-    <!--}-->
+<!--.rating label input:focus:not(:checked) ~ .icon:last-child {-->
+<!--color: #000;-->
+<!--text-shadow: 0 0 5px #09f;-->
+<!--}-->
 <!--</style>-->
