@@ -98,6 +98,7 @@ public class AdminControllerTest {
         geraet.setId(2L);
         geraet.setBesitzer(person);
         geraet.setKosten(100);
+        geraet.setKaution(100);
         geraetList.add(geraet);
         //
         rentEvent.setGeraet(geraet);
@@ -152,13 +153,14 @@ public class AdminControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect://localhost:8080/admin/conflicts"));
     }
-//    @Test
-//    public void punishAccountWithErrorPropayService() throws Exception {
-//        when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-//        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect://localhost:8080/admin/conflicts"));
-//    }
+    @Test
+    public void punishAccountWithErrorPropayService() throws Exception {
+        when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
+        doThrow(IOException.class).when(proPayService).punishReservation("user","person1",2,(int)100);
+        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/admin/propayAdminNotAvailable"));
+    }
     @Test
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
