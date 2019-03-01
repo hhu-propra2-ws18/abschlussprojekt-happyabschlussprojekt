@@ -105,17 +105,6 @@ public class AdminServiceTest {
         Assertions.assertThat(geraetWithRentEventsWithConflicts.get(2)).isEqualTo(test);
     }
 
-    @Test
-    public void returnAllPersonsWithAccounts() {
-    }
-
-    @Test
-    public void returnInformationForMenuBadges1() {
-    }
-
-    @Test
-    public void isAdminHasDefaultPassword() {
-    }
 
     @Test
     public void changeAdminPassword() {
@@ -133,7 +122,4 @@ public class AdminServiceTest {
         verify(personRepository, times(1)).findByUsername("admin");
     }
 
-    @Test
-    public void getGeraetWithRentEventsWithConflicts1() {
-    }
 }
