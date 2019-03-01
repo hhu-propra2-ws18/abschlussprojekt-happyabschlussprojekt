@@ -36,6 +36,6 @@ public class RentEventServiceTest {
         RentEvent rentEvent = new RentEvent();
         rentEvent.setGeraet(geraet);
         rentEvent.setTimeInterval(timeInterval);
-        assertEquals(rentEventService.calculatePrice(rentEvent), 40, 0.1);
+        assertEquals(rentEventService.calculatePrice(rentEvent), 50, 0.1);
     }
 }

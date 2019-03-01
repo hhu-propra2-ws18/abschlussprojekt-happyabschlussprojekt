@@ -24,7 +24,7 @@ public class RentEventService {
     }
 
     public double calculatePrice(RentEvent rentEvent) {
-        return rentEvent.getTimeInterval().getDuration() * rentEvent.getGeraet().getKosten();
+        return (rentEvent.getTimeInterval().getDuration()+1) * rentEvent.getGeraet().getKosten();
     }
 
 }

@@ -28,11 +28,11 @@
 
             <label for="kosten">kosten Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
-                   th:value="${geraet.kosten}"/>
+                   onchange="checkKosten()" th:value="${geraet.kosten}" required pattern="[0-9]{1,8}"/>
 
             <label for="kaution">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control"
-                   name="kaution" id="kaution" th:if="${!geraet.isForsale()}" th:value="${geraet.kaution}"/>
+                   name="kaution" id="kaution" th:if="${!geraet.isForsale()}" onchange="checkKaution()" th:value="${geraet.kaution}" required pattern="[0-9]{1,8}"/>
 
             <label for="kaution">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
@@ -45,32 +45,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    function checkFile(el) {
-        var files = el.files;
-        var allowTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
-        var allowUpload = true;
-        var errorMessage = "";
-        for (var i = 0; i < files.length; i++) {
-            var fileName = files[i].name;
-            var fileType = files[i].type;
-            var typeAccepted = false;
-            for (var j = 0; j < allowTypes.length; j++) {
-                if (allowTypes[j] == fileType) {
-                    typeAccepted = true;
-                    break;
-                }
-            }
-            if (typeAccepted != true) {
-                errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
-                allowUpload = false;
-            }
-        }
-        if (allowUpload != true) {
-            el.outerHTML = el.outerHTML;
-            alert(errorMessage);
-        }
-    }
+<script type="text/javascript" src="/edit.js">
 </script>
 </body>
 </html>
