@@ -15,3 +15,7 @@ Die Kaution wird blockiert, wenn Gerät gemietet wird. Außerdem kann der Besitz
 Dann Warten Sie auf Datenbank, dananch noch einmal laufen Sie unsere Application.
 
 Bei Konflict besuchen Sie http:loacalhost:8080/admin
+
+admin_konto
+username: admin 
+password:admin
