@@ -24,13 +24,13 @@ public class NotificationService {
     public List<Notification> findAllByBesitzer(Person besitzer) {
         List<Notification> notifications = notificationRepository.findAllByBesitzer(besitzer);
         for (Notification notification : notifications) {
-            //if (notification.getGeraet()
-            //        .getBilder()
-            //        .get(0)
-            //        .getBild()
-            //        .length > 0) {
-            //    notification.setEncode(notification.getGeraet().getBilder().get(0).encodeBild());
-            //}
+            if (notification.getGeraet()
+                    .getBilder()
+                    .get(0)
+                    .getBild()
+                    .length > 0) {
+                notification.setEncode(notification.getGeraet().getBilder().get(0).encodeBild());
+            }
         }
         return notifications;
     }

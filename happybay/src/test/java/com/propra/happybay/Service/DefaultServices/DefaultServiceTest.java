@@ -18,13 +18,13 @@ public class DefaultServiceTest {
     DefaultService defaultService;
 
     @Test
-    public void encode_bild() {
+    public void encodeBild(){
         Bild fakeBild = new Bild();
         fakeBild.setBild("fake Bild".getBytes());
 
         Base64.Encoder encoder = Base64.getEncoder();
         String testencode = encoder.encodeToString("fake Bild".getBytes());
-        Assert.assertEquals(defaultService.encodeBild(fakeBild), testencode);
+        Assert.assertEquals(defaultService.encodeBild(fakeBild),testencode);
     }
 
 }
