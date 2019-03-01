@@ -47,7 +47,7 @@ public class NotificationServiceTest {
     private NotificationService notificationService;
 
     @Test
-    public void find_all_by_besitzer() {
+    public void find_all_by_besitzer(){
         List<Notification> notificationList = new ArrayList<>();
         Notification fakeNotification1 = new Notification();
         Notification fakeNotification2 = new Notification();
@@ -97,7 +97,7 @@ public class NotificationServiceTest {
     //}
 
     @Test
-    public void update_anzahl() {
+    public void updateAnzahl(){
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(new Notification());
         Person fakePerson = new Person();
@@ -106,13 +106,13 @@ public class NotificationServiceTest {
         //Mockito.when(personService.getByUsername(anyString())).thenReturn(new Person());
 
         notificationService.updateAnzahlOfNotifications(fakePerson);
-        verify(notificationRepository, times(1)).findAllByBesitzer(fakePerson);
+        verify(notificationRepository,times(1)).findAllByBesitzer(fakePerson);
         //verify(personService,times(1)).getByUsername("fakeUsername");
 
     }
 
     @Test
-    public void get_notification_by_id() {
+    public void getNotificationById(){
         Notification fake = new Notification();
         when(notificationRepository.findById(1L)).thenReturn(java.util.Optional.of(fake));
         Assertions.assertThat(notificationService.getNotificationById(1L)).isEqualTo(fake);

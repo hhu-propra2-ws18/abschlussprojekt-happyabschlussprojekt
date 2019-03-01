@@ -139,7 +139,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void one_conflicts_test() throws Exception {
+    public void conflicts() throws Exception {
         when(adminService.getGeraetWithRentEventsWithConflicts()).thenReturn(new ArrayList<>());
         when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
         mvc.perform(get("/admin/conflicts"))

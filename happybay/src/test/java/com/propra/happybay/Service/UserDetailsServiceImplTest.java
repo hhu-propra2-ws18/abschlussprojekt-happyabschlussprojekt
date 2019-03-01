@@ -30,7 +30,7 @@ public class UserDetailsServiceImplTest {
     private UserDetailsServiceImpl userDetailsService;
 
     @Test
-    public void load_user_by_username() {
+    public void loadUserByUsername(){
         UserDetails fakeUserDetails = User.builder()
                 .username("fakeName")
                 .password("fakePassword")

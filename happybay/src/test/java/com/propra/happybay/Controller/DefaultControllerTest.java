@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,14 +75,7 @@ public class DefaultControllerTest {
     NotificationService notificationService;
     @Mock
     UserValidator userValidator;
-    @Mock
-    PictureService pictureService;
-    Principal principal = new Principal() {
-        @Override
-        public String getName() {
-            return "test";
-        }
-    };
+    Principal principal = () -> "test";
     private final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
     private final MockMultipartFile file = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
 
@@ -119,39 +113,39 @@ public class DefaultControllerTest {
     }
 
     @Test
-    public void index_USER_no_key() throws Exception {
+    public void indexUser() throws Exception {
         mvc.perform(get("/").param("key","").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
-    public void index_USER_preisAufsteigend() throws Exception {
+    public void indexUserWithPreisAufsteigendeGereate() throws Exception {
         mvc.perform(get("/").param("key","preisAufsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
-    public void index_USER_preisAbsteigend() throws Exception {
+    public void indexUserWithPreisAbsteigendeGereate() throws Exception {
         mvc.perform(get("/").param("key","preisAbsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
-    public void index_USER_likeAufsteigend() throws Exception {
+    public void indexUserWithLikeAufsteigendGereate() throws Exception {
         mvc.perform(get("/").param("key","likeAufsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
-    public void index_USER_likeAbsteigend() throws Exception {
+    public void indexUserWithLikeAbsteigendeGereate() throws Exception {
         mvc.perform(get("/").param("key","likeAbsteigend").principal(principal))
                 .andExpect(status().isOk());
     }
     @Test
-    public void index_NO_USER() throws Exception {
+    public void indexOhneUser() throws Exception {
         when(geraetService.getAllWithKeyWithBiler(any())).thenReturn(geraetList);
         mvc.perform(get("/"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void addToDatabase_noErrorPassWord() throws Exception {
+    public void addToDatabase() throws Exception {
         doNothing().when(userValidator).validate(any(),any());
         mvc.perform(post("/addNewUser").principal(principal).flashAttr("person",person).requestAttr("file", file))
                 .andExpect(status().isOk());
