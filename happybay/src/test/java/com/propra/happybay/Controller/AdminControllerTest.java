@@ -34,12 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
@@ -118,19 +119,22 @@ public class AdminControllerTest {
     public void adminFunktion() throws Exception {
         when(adminService.isAdminHasDefaultPassword()).thenReturn(false);
         mvc.perform(get("/admin/").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:http://localhost:8080/admin/allUsers"));
     }
     @Test
     public void adminFunktionReturnChangePassword() throws Exception {
         when(adminService.isAdminHasDefaultPassword()).thenReturn(true);
         mvc.perform(get("/admin/").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/changePassword"));
     }
     @Test
     public void allUsers() throws Exception {
         when(adminService.returnAllPersonsWithAccounts()).thenReturn(personMitAccountList);
         mvc.perform(get("/admin/allUsers").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/allUsers"));
     }
     @Test
     public void conflicts() throws Exception {
@@ -138,9 +142,23 @@ public class AdminControllerTest {
         when(adminService.returnInformationForMenuBadges()).thenReturn(informationForMenuBadges);
         mvc.perform(get("/admin/conflicts"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/conflicts"));
     }
-
+    @Test
+    public void punishAccount() throws Exception {
+        when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
+        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/admin/conflicts"));
+    }
+//    @Test
+//    public void punishAccountWithErrorPropayService() throws Exception {
+//        when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
+//        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(view().name("redirect://localhost:8080/admin/conflicts"));
+//    }
     @Test
     public void releaseAccount() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
@@ -148,19 +166,26 @@ public class AdminControllerTest {
         doNothing().when(proPayService).ueberweisen("user","person1", (int) 100.0);
         mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","user").flashAttr("reservationId", 2))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/admin/conflicts"));
     }
     @Test
-    public void punishAccount() throws Exception {
+    public void releaseAccountWithErrorPropayService() throws Exception {
         when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        mvc.perform(post("/admin/punishAccount").flashAttr("mieter","user").flashAttr("reservationId",2).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
+        when(rentEventService.calculatePrice(any())).thenReturn(100.0);
+        doThrow(IOException.class ).when(proPayService).releaseReservation("user",2);
+        mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","user").flashAttr("reservationId", 2))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("/admin/propayAdminNotAvailable"));
     }
+
 
     @Test
     public void changePassword() throws Exception {
         mvc.perform(post("/admin/changePassword").flashAttr("newPassword","testAdmin").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect://localhost:8080/admin"));
     }
 
 
