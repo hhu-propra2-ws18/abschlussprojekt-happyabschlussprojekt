@@ -44,7 +44,7 @@ public class ProPayService {
                 .uri("http://" + propayAdress + ":8888/account/" + username)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
-                .bodyToMono(type).timeout(Duration.ofSeconds(5));
+                .bodyToMono(type).timeout(Duration.ofSeconds(3)).retry(5);
         return mono.block();
     }
 
