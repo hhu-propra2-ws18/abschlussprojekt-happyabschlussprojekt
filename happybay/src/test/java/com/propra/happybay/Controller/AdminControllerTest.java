@@ -171,8 +171,6 @@ public class AdminControllerTest {
     }
     @Test
     public void releaseAccountWithErrorPropayService() throws Exception {
-        when(rentEventRepository.findByReservationId(2)).thenReturn(rentEvent);
-        when(rentEventService.calculatePrice(any())).thenReturn(100.0);
         doThrow(IOException.class ).when(proPayService).releaseReservation("user",2);
         mvc.perform(post("/admin/releaseAccount").flashAttr("mieter","user").flashAttr("reservationId", 2))
                 .andDo(print())
