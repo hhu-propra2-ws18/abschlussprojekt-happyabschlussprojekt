@@ -93,7 +93,7 @@
         var kaution = $("#kautionen").val();
 
         var timeIntervar = Math.round((endDate.getTime()-startDate.getTime())/ (1000 * 60 * 60 * 24));
-        var sumKosten = (timeIntervar * kost) + kaution;
+        var sumKosten = (timeIntervar * kost) + parseInt(kaution);
         var nowDate = Date.now();
 
         if(startDate<startDateMax || startDate>=endDateMax || endDate<=startDateMax || endDate>endDateMax ||startDate>endDate){
@@ -102,7 +102,7 @@
             $("#mietezeitpunktEnd").val("");
             return false;
         }
-        else if(startDate<(nowDate-(18*60*60*1000))){
+        else if(startDate<(nowDate-(24*60*60*1000))){
             alert("Start Datum muss nach heute sein!");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");

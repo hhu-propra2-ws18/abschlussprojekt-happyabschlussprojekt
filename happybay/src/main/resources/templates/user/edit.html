@@ -22,13 +22,13 @@
             <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung" th:value="${geraet.beschreibung}"/>
 
             <label for="kosten">kosten Pro Tag:</label>
-            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" th:value="${geraet.kosten}"/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten" onchange="checkKosten()" th:value="${geraet.kosten}" required pattern="[0-9]{1,8}" />
 
             <label for="kaution">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control"
-                   name="kaution" id="kaution" th:if="${!geraet.isForsale()}" th:value="${geraet.kaution}"/>
+                   name="kaution" id="kaution" th:if="${!geraet.isForsale()}" onchange="checkKaution()" th:value="${geraet.kaution}" required pattern="[0-9]{1,8}" />
 
-            <label for="kaution">Abholort:</label>
+            <label for="abholort">Abholort:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort" th:value="${geraet.abholort}"/>
 
             <button type="submit" class="btn btn-primary">Save</button>
@@ -59,6 +59,50 @@
         }        if(allowUpload != true){
             el.outerHTML = el.outerHTML;
             alert(errorMessage);
+        }
+    }
+
+    function checkKosten() {
+        var kosten = $("#kosten").val();
+        if(kosten==""){
+            alert("Bitte eingabe Kosten pro Tag!");
+            $("#kosten").val("");
+            return false;
+        }else if(kosten<="0"){
+            alert("The nummber must be bigger than 0");
+            $("#kosten").val("");
+            return false;
+        }else{
+            for (i = 0 ; i < kosten.length ; i++) {
+                if ((kosten.charAt(i) < '0') || (kosten.charAt(i) > '9')){
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kosten").val("");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    function checkKaution() {
+        var kaution = $("#kaution").val();
+        if(kaution==""){
+            alert("Bitte eingabe Kaution!");
+            $("#kaution").val("");
+            return false;
+        } else if (kaution < "0") {
+            alert("The nummber must be bigger than 0");
+            $("#kaution").val("");
+            return false;
+        }else{
+            for (i = 0 ; i < kaution.length ; i++) {
+                if ((kaution.charAt(i) < '0') || (kaution.charAt(i) > '9')){
+                    alert("Eingabe muss eine Integer sein!");
+                    $("#kaution").val("");
+                    return false;
+                }
+            }
+            return true;
         }
     }
 </script>

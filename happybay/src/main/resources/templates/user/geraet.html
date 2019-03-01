@@ -62,7 +62,7 @@
                     </form>
                     <form th:if="${geraet.isForsale()}" th:action="@{'/user/sale/' +${geraet.getId()}}" method="post">
                         <p th:if="${account.getAmount()} < ${geraet.getKosten()}">Ihr Kontostand reicht nicht aus. Bitte gehen Sie auf Propay, um sich aufzuladen！</p >
-                        <button class="btn btn-primary" type="submit">Sofort Kaufen</button>
+                        <button th:unless="${account.getAmount()} < ${geraet.getKosten()}" class="btn btn-primary" type="submit">Sofort Kaufen</button>
                     </form>
                 </div>
                 <br/>

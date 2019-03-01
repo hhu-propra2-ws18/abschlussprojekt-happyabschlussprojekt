@@ -22,12 +22,12 @@
             <label for="kosten">Miete Pro Tag:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
                    placeholder="in Euro" th:value="${geraet.getKosten()}" onchange="checkKosten()"
-                   required/>
+                   required pattern="[0-9]{1,8}"/>
 
             <label id="kautionLabel">Kaution:</label>
             <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
                    placeholder="in Euro" th:value="${geraet.getKaution()}" onchange="checkKaution()"
-                   value="0"/>
+                   value="0" required pattern="[0-9]{1,8}" />
 
             <!--why for kaution?-->
             <label for="abholort">Abholort:</label>
@@ -129,7 +129,7 @@
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < (nowDate-(18*60*60*1000))) {
+        if (startDate < (nowDate-(24*60*60*1000))) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
@@ -154,7 +154,7 @@
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if (endDate < (nowDate-(18*60*60*1000))) {
+        if (endDate < (nowDate-(24*60*60*1000))) {
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;

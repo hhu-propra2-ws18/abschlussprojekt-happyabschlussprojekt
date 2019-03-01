@@ -30,7 +30,7 @@ public class ProPayService {
     @Autowired
     TransactionRepository transactionRepository;
 
-    static String propayAdress = "localhost";
+    static String propayAdress = "propay";
 
     public void saveAccount(String username) {
         Account account = getEntity(username, Account.class);
