@@ -76,9 +76,11 @@ public class AdminController {
         RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
         Geraet geraet = rentEvent.getGeraet();
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
+        double preis = rentEventService.calculatePrice(rentEvent);
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
         try {
             proPayService.punishReservation(mieter, geraet.getBesitzer().getUsername(), reservationId, geraet.getKaution());
+            proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) preis);
         } catch (IOException e) {
             return "/admin/propayAdminNotAvailable";
         }
@@ -91,18 +93,18 @@ public class AdminController {
 
     @PostMapping("/releaseAccount")
     public String releaseAccount(@ModelAttribute("mieter") String mieter, @ModelAttribute("reservationId") int reservationId,
-                                 Model model) throws IOException {
+                                 Model model) {
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
         model.addAttribute("informationForMenuBadges", informationForMenuBadges);
+        RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
+        Geraet geraet = rentEvent.getGeraet();
+        double preis = rentEventService.calculatePrice(rentEvent);
         try {
             proPayService.releaseReservation(mieter, reservationId);
+            proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) preis);
         } catch (IOException e) {
             return "/admin/propayAdminNotAvailable";
         }
-        RentEvent rentEvent = rentEventRepository.findByReservationId(reservationId);
-        Geraet geraet = rentEvent.getGeraet();
-        double a = rentEventService.calculatePrice(rentEvent);
-        proPayService.ueberweisen(mieter, geraet.getBesitzer().getUsername(), (int) a);
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);

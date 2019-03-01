@@ -12,6 +12,7 @@ services:
   happybay:
     build: ./happybay
     environment:
+      - PROPAY_URL=propay
       - DATABASE_HOST=happybaydb
       - DATABASE_USER=root
       - DATABASE_PASSWORD=root
@@ -31,4 +32,3 @@ services:
     ports:
       - "8888:8888"
   # ========================================
-
