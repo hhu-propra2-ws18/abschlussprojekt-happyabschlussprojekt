@@ -1,0 +1,435 @@
+== Dokumentation
+## Funktionen von HappyBay App
+
+### Starten der Anwendung
+
+Die HappyBay App kann mit dem Kommandozeilen Befehl “docker-compose up” gestartet werden. Erfahrungsgemäß muss beim ersten Ausführen des Befehls gewartet werden bis die Datenbank hochfährt. Danach soll die Anwendung mit dem Befehl “ctrl+c” heruntergefahren werden. Bei einem nochmaligen Ausführen des Befehls “docker-compose up” startet die Anwendung richtig.
+
+Alternative Startmöglichkeiten sind: +
+
+- Zuerst das Ausführen des Befehls “docker-compose up -d” und nach ca. 3 min “docker-compose up.”
+- Oder wenn die Anwendung nicht als docker image gestartet werden soll: +
+Zuerst das Ausführen der Befehle "docker run -p 3306: 3306 -e MYSQL_PASSWORD = root -e MYSQL_ROOT_PASSWORD = root -e MYSQL_DATABASE = happybay mysql" und "docker run -p 8888: 8888 propra / propay: latest". Anschließend kann die Spring Boot-Anwendung gestartet werden.
+
+### Unsere Anwendung basiert auf der MVC Architektur
+Für die Anwendung haben wir Spring Boot benutzt. Der Code ist entsprechend der MVC Architektur
+unterteilt. Alle Klassen befinden sich im Verzeichnis "Model", alle Views in den Templates und
+die Controller im Verzeichnis "Controller." Die Methoden in den verschiedenen Controller haben wir
+nach derer Funktion in 4 Controller unterteilt. +
+Ein wichtiger Grund wieso wir uns für MVC entschieden haben war, dass wir es
+schon im Projekt 4 verwendet haben und wir mit dieser vertraut sind.
+
+#### Die wichtigste Klasse im Programm ist die Klasse "RentEvent"
+RentEvent (Verleihprocess) speichert Informationen zu einer Ausleihe. Wir haben uns
+entschieden die Anwendung auf dieser Klasse aufzubauen, weil ein Verleihprozess immer
+eindeutig ist und kann sehr einfach alle Informationen, die wir für unsere Anwendung brauchen, speichern.
+Zu erwähnen sind auch die Klassen im Verzeichnis "HelperClassesForViews." Mit Hilfe
+dieser können Informationen leichter an die Views geschickt werden.
+
+#### Viele Probleme haben wir mit Enums gelöst
+Um das aktuelle Status einer Notification (Nachricht) und eines RentEvents verfolgen
+zu können, benutzen wir Enums. So wissen wir immer in welchen Stadium eines Prozesses sich
+eine Notification und ein RentEvent befindet. Ein RentEvent kann z.B. aktiv sein oder kann nur für die Zukunft gebucht sein.
+Wenn diese Zukunft eintritt, ändern wir sein Status in "aktiv". Dies ermöglicht uns,
+dass wir ganz einfach den Status verfolgen können und einfache Anfragen an die Datenbank
+machen können.
+
+#### Zum Darstellen der Informationen verwenden wir Thymeleaf
+In Templetes verwenden wir Thymeleaf in Kombination mit HTML und javascript um
+den Inhalt einfacher darzustellen. Unter anderem benutzen wir Thymeleaf Fragments
+was unsere Arbeit sehr vereinfacht.
+
+#### Wie erzielen eine 81% Test Coverage
+Wir haben versucht möglichst viel mit sinnvollen Tests zu testen.
+So haben wir ein paar Methoden und Felder bestimmter Klassen nicht getestet, da
+es sich um getters/setters handelt, was wir nicht testen brauchen. Bei manchen
+Klassen machen solche Methoden/Felder einen größeren Teil des Codes aus, weswegen
+die Coverage über die Klassen variiert. Beim Testen haben wir das etablierte AAA
+Prinzip benutzt.
+
+Beim Testen haben wir
+Mockmvc benutzt. Wenn Mockmvc gebaut wird (MockMvcBuilders.standaloneSetup(...)), kann man alle Repositories und Services mocken.
+Und weil die meisten Seiten eine Authentifizierung von Benutzer brauchen, benutzen wir hier ein "fake Principal", das in Mockmvc implementiert ist.
+Im ProPayServiceTest haben wir WireMock benutzt,
+das auf Port 8888 laufen muss.
+
+#### Travis
+Bei Travis starten wir zuerst eine Mysql Datenbank und warten 3 min (um der Datenbank
+Zeit zum Hochfahren zu geben). Wir haben vereinbart, dass auf Branch  Master immer
+alle Tests funktionieren müssen.
+
+#### Wir benutzen Spring Security
+Die Anwendung ist mit Spring Security gesichert. Nicht angemeldete Benutzer haben
+zugriff nur auf die Startseite, die Loginseite und die Registrierungssseite. Zudem
+hat nur Admin zugriff auf Administrationsseiten.
+
+#### Mit der Umgebungsvariable PROPAY_URL ändern wir die Adresse von ProPay in der App
+Da unsere Anwendung laufen muss wenn das ProPay auf localhost läuft (für Test Zwecke) und auch
+wenn das ProPay als Container an der Adresse "propay" läuft, ändern wir die richtige Adresse
+mit einer Umgebungsvariable und einer if-Schleife im Programm (ProPayService, zeile 33).
+So laufen unsere Tests auf Travis und die Anwendung kann auch mit docker-compose up
+ausgeführt werden.
+
+#### Extra Funktionalitäten die wir implementiert haben
+Neben der Minimalanforderungen haben wir ein paar Extra "Features" implementiert: +
+- Email Service: Benutzter werden bei Änderungen (z. B. Anfragen von anderen Benutzern) zu ihren Geräten
+per Email benachrichtigt. +
+- Like Button +
+- Möglichkeit der Anordnung der Geräte nach Verschiedenen Filtern (Preis, Likes usw.). +
+- Passwort Authentifizierung +
+- Möglichkeit Bilder von Personen oder Geräten hochzuladen.
+
+Wir haben auch zwei Methoden, die alle 24 Stunden ausgeführt werden (Annotation @Schedule). Zeiten für Mail-Erinnerungen und andere Erinnerungen werden dadurch aktualisiert.
+Wenn Sie die E-Mail-Erinnerung und die Startseite-Erinnerung testen möchten, müssen Sie ein Gerät mieten mit Endedatum innerhalb von drei Tagen. Beim nächsten Aufruf der Startseite bekommen Sie dann eine
+Email und eine Startseiten-Erinnerung angezeigt.
+
+#### Admin Seite
+Neben der normalen Ansicht für Benutzer unserer Anwendung, haben wir
+auch eine Seite für den Administrator entwickelt, wo Konflikte gelöst werden.
+Die Adresse dieser Seite ist: localhost:8080/admin. Aus sicherheits Gründen muss beim
+ersten Anmelden das Passwort geändert werden. Aus technischen Gründen (Proxy Einschränkungen),
+wird Admin zuerst an die normale Startseite der Anwendung geschickt, durch eine weitere Eingabe
+der Adresse localhost:8080/admin gelangt man dann auf die richtige Admin Seite.
+
+#### Lesen der Informationen aus dem ProPay Container
+Um mit der ProPay Api interagieren zu können benutzen wir Webflux WebClient für "get" Anfragen,
+und "HttpURLConnection" für Post Anfragen, weil wir so am meisten Erfolg hatten. Beim Fehlen oder
+Unerreichbarkeit von Propay wird eine neue Seite aufgerufen (propayNotAvailable.html).
+
+#### Vorgenommene Design- und Featureänderungen um Aufgabenstellung Teil II zu implementieren.
+
+Im Modell “Geraet” fügen wir eine boolsche Variable “Forsale” hinzu welcher Anfangswert "false" ist. Wenn wir das Gerät erstellen, fügen wir eine Checkbox hinzu, um auszuwählen,
+ob der zu erstellende Gerät zum Vermieten oder zum Verkaufen bestimmt ist. Der “Forsale” wird dann auf “true” gesetzt.
+
+Nachdem das Objekt erstellt wurde, markieren wir, ob der Artikel vermietet oder verkauft werden soll.
+Wenn ein Benutzer dieses Objekt kauft, geht es in sein Besitz über, und der Käufer kann  es unter anderem weiter vermieten oder löschen.
++
+Zudem müsste unsere Anwendung auch eine Fehlerbehandlung für ProPay Api haben.
+Wir haben diese Aufgabe gelöst indem wir das Timeout() bei WebClients gesetzt haben.
+
+=== Probleme die wir lösen mussten
+Als Grundgerüst unserer Anwendung haben wir Projekt 4 benutzt, da die Aufgabenstellungen
+ähnlich sind. Bei der Entwicklung der App haben wir die ganze Zeit auf eine klare
+Struktur geachtet was es uns sehr einfach gemacht hat, den Code bei Bedarf zu ändern.
+So haben wir bei HTML z.B. Fragments benutzt, was Frontend Änderungen sehr einfach gemacht hat. +
+Ein größeres Problem war das Ausführen des docker-compose up Befehls, da wir zu
+Beginn immer keine Verbindung zur Datenbank herstellen konnten. Es hat sich herausgestellt,
+dass in unserem Fall die Datenbank sehr lange braucht um zu starten. Dabei half auch
+das “wait-for-it” nicht. Das Problem haben wir gelöst indem wir zuerst das Befehl
+docker-compose up -d ausgeführt haben und danach ca. 3 min gewartet haben. Erst
+nach dieser Zeit hat docker-compose up funktioniert. +
+Ein weiteres Problem war, dass die Redirects im Controller nach Umstellung auf
+Proxy nicht mehr funktioniert haben. Hier mussten wir dann bei Redirects den ganzen
+url angeben. +
+Um die Kommunikation im Team zu erleichtern haben wir eine Whatsapp und Slack Gruppe erstellt.
+Wir haben uns im Team immer gut verstanden und haben alle Design-Entscheidungen
+miteinander vorher abgestimmt. Eine Differenz die wir zu Beginn hatten war, ob
+wir ein oder zwei SCS schreiben sollen. Nach einer Abstimmung haben wir uns entschieden
+ein SCS zu schreiben.
+
+## Das Bedienen der Anwendung
+==== Startseite
+Öffnen Sie den Browser und besuchen Sie `http://localhost:8080/`. Dies ist unsere
+Homepage. Wir zeigen alle von den Benutzern hinzugefügten Geräten auf dieser Seite.
+Auf dem Banner oben befinden sich drei Buttons, der `Start` Button, der `Anmelden`
+Button und der `Registrieren` Button sowie ein Textfeld für die Suche.
+
+==== Registrierung und Anmeldung
+Klicken Sie auf den Button `Registrieren` und wechseln Sie zur Registrierungsseite
+`http://localhost:8080/register`. Hier müssen Sie Ihren Name, E-Mail-Adresse,
+Benutzername und Passwort eingeben und können auch das Foto hochladen.
+
+Nach der Registrierung wechseln Sie zur Bestätigungsseite, klicken dann auf die
+`Anmelden` Button und springen zu `http://localhost:8080/login`, um sich anzumelden.
+
+Nach dem Login kommen wir zur Startseite des Benutzers.
+Am oberen Banner befinden sich `Meine Daten`, `Mein Propay`, `Meine Geräte`, `Meine Ausleihen`,
+das Symbol für die Benachrichtigungen und der Button zum Abmelden.
+
+==== Benutzerinformationen anzeigen und ändern
+Klicken Sie auf `Meine Daten`, um die Seite von 'Meine Daten'
+`http://localhost:8080/use/profile` aufzurufen. Auf dieser Seite können Sie Ihr
+eigenes Bild, Namen, E-Mail-Adresse, Adresse, Benutzername und die für die Anmeldung
+verwendete Rolle sehen. Sie können auch Ihre Daten ändern. Klicken Sie auf die
+`Bearbeiten`, um die Seite zu Ändern der Informationen aufzurufen.
+`Http://localhost:8080/user/PersonInfo/Profile/ChangeProfile` Auf dieser Seite können
+Sie Ihre eigenen Informationen ändern.
+
+==== Mein Propay-Konto aufladen und anzeigen
+Klicken Sie auf den Button `Mein Propay`, um zur Propay-Seite
+`http://localhost:8080/user/proPay` zu gelangen. Dort werden Kontoinformationen,
+Kontostand, Reservierungen, Konten sowie vergangene Überweisungen angezeigt.
+Hier können Benutzer auch ihr Konto aufladen. Nach dem Aufladen wird automatisch auf
+die Startseite gewechselt. Jetzt rufen wir die Seite `Mein Propay` erneut auf
+und sehen zu diesem Zeitpunkt den Übertragungssatz und den neuen Kontostand.
+
+==== Geräte hinzufügen und bearbeiten
+Klicken Sie auf `Meine Geräte` und gehen Sie auf 'Meine Geräte' Seite
+`http://localhost:8080/user/myThings`. Diese Seite hat ein Button `Neues Gerät hinzufügen`.
+Klicken Sie auf diesen Button, um zur Seite `Gerät hinzufügen` zu wechseln:
+`http://localhost:8080/user/addGeraet`. Hier können Sie Ihren Artikel hochladen.
+Nachdem die Informationen ausgefüllt worden, kehren Sie zu 'Meine Geräte' Seite zurück.
+Hier zeigen wir jeden Artikel mit Bildern, Namen des Artikels, der Beschreibung des
+Artikels, den Kosten des Artikels, der Kaution des Artikels, der Abholadresse,
+dem Zeitraum, in dem der Artikel gemietet werden kann, und der Person an die das Gerät
+geliehen wurde.
+
+Klicken Sie auf `Bearbeiten` und wechseln Sie zu `http://localhost:8080/user/geraet/edit/{id}``,
+um die Informationen zu ändern. Klicken Sie auf `Löschen`. Das entsprechende
+Gerät wird gelöscht.
+
+Klicken Sie auf `Mehr`, um zur Detailseite dieses Artikels zu gelangen.
+`Http://localhost:8080/user/geraet/{id}`. Hier können wir zu den Informationen des
+Besitzers `http://localhost:8080/user/besitzerInfo/id` wechseln. Auf dieser Seite
+können wir die Informationen und Bewertungen des Benutzers sehen.
+
+==== Miet- und Zahlungsfunktionen
+Auf der Homepage `http://localhost:8080/` gibt es alle Geräte, die gemietet werden können. Wir klicken auf `Mehr`, um die
+spezifische Informationsseite dieses Artikels aufzurufen `http://localhost:8080/user/geraet/{id}` .
+
+Hier können wir das Mieten dieses Gerätes beantragen. Klicken Sie auf die `Anfrage`. Wir wechseln zu
+`http://localhost:8080/user/anfragen/id?`.
+
+Zuerst stellen wir fest, ob der Mietzeitraum passt, und geben das
+Datum an, an dem wir vermieten möchten, und warum wir es vermieten möchten.
+Klicken Sie dann auf den Button `Senden`, und warten Sie auf die Antwort des Besitzers.
+
+Wenn der Besitzer des Objekts eine Mietanfrage von einem anderen Benutzer erhält,
+werden Sie über die oberste `Benachrichtigungen` Button darüber informiert, dass jemand
+das Gerät mieten möchte. Klicken Sie auf die `Benachrichtigungen` Button und wechseln
+Sie zur `http://localhost:8080/User/notification`. Wir können die spezifischen
+Anforderungsinformationen der anderen Benutzer sehen, einschließlich des Namens
+des Mieters, der Informationen sowie der Start- und Endzeit der Verleihe. Der Benutzer
+kann wählen, ob er die Anfrage annehmen wird. Nach Annahme
+der Anfrage wird unter dem entsprechenden Gerät angezeigt, unter welcher Zeitraum
+schon verliehen wird und wer die Ware bereits gemietet hat. Unter 'Verfügerbar'
+werden die übriger Zeiträume angezeigt. Zu diesem Zeitpunkt zeigt die Reservierung des Mieter
+propay die zum Zeitpunkt der Vermietung fällige Kaution und die gemieteten
+Waren unter den Ausleihen an. Klicken Sie auf Artikel zurückgeben, um das Gerät zurückzugeben.
+
+An diesem Punkt erhält der Besitzer des Artikels eine Benachrichtigung. Klicken
+Sie auf das Benachrichtigungssymbol oben, um zu entscheiden, ob Sie den zurückgesendeten
+Artikel annehmen möchten. Und um die Transaktion aufzuzeichnen, wird die Reservierung
+unter vom Mieter Konto der fällige Betrag abgebucht und die Kaution gelöscht.
+
+Wenn der Besitzer  den zurückgesandten Artikel nicht annimmt, wird ein Konflikt ausgelöst. Und es gibt eine Administrationsseite `http:localhost:8080/admin`.
+Diese Schnittstelle kann alle Benutzer und Konflikte zwischen Benutzern anzeigen.
+Der Administrator wählt den entsprechenden Konflikt aus und entscheidet über die Verarbeitung.
+
+=== Presentation Layer
+==== Templates
+===== Admin
+
+[cols="1,2"]
+|===
+|allUsers
+|Zeigen die Fragmente der Benutzer-ID, den Namen des Benutzers und den Kontostand an.
+
+|changePassword
+|Zeigt das Fragment der Passwortänderung an.
+
+|conflicts
+|Zeigt das Fragment von Verarbeitungskonflikten an.
+
+|fragmentsAdmin
+|Alle Benutzer und Konflikte anzeigen.
+
+|propayAdminNotAvailable
+|Zeigt time out der Propay an.
+|===
+
+Diese Templates werden vom AdminController gesteuert.
+
+===== Default
+
+[cols="1,2"]
+|===
+|AboutUs
+|Zeigen das Team.
+
+|confirmationOfRegistration
+|Zeigt die Bestätigungsinformationen an
+
+|index
+|Zeigen die Benachrichtigungen der Erinnerung an, um zurückzukehren.
+
+|login
+|Zeigt die Informationen zum Abmelden, zum Benutzernamen oder zum Kennwort und zum Anmeldetextfeld an.
+
+|register
+|Zeigen Sie die Registrierungsseite an.
+|===
+
+Diese Templates werden vom DefaultController gesteuert.
+
+===== User
+[cols="1,2"]
+|===
+|addGeraet
+|Zeigt die Seite zum Hinzufügen von Geräte an.
+
+|anfragen
+|Anzeige für die Mietanforderungsseite, hier kann der Benutzer das Zeitintervall auswählen und eine Nachricht hinterlassen.
+
+|besitzerInfo
+|Zeigen Sie die Detailinformationen eines Artikelbesitzers an.
+
+|changeProfile
+|Zeigt die Änderungsprofilseite an.
+
+|changeToRent
+|Zeigt die Seite von Gerät für Verkauf in Ferät für Miet umwandeln an.
+
+|confirmBezahlen
+|Zeigt die Bestätigungsinformation der Zahlung an.
+
+|edit
+|Gerätseite bearbeiten anzeigen.
+
+|geraet
+|Informationen zum Gerät anzeigen
+
+|myThings
+|Zeigt die Seite der Geräte
+
+|notifications
+|Zeigen die Benachrichtigungsseite an. Hier können Personen die Anforderungen annehmen oder ablehnen.
+
+|profile
+|Zeigt User’s Information page an.
+
+|proPay
+|Zeigt die Propay Seite an.
+
+|rentThings
+|Zeigt die Seite mit den Mietsachen an, hier können Benutzer die Artikel finden, die sie gemietet haben.
+|===
+addGeraet,changeToRent,geraet,edit,rentThings werden vom GeraetController gesteuert.
+
+anfragen,notifications werden vom NotificationController gesteuert.
+
+Andere Templates werden vom UserController gesteuert.
+
+===== Fragments
+
+[cols="1,2"]
+|===
+|fragments
+|Kleine Fragments für andere Seiten.
+|===
+
+==== Controllers
+===== AdminController
+Der AdminController übernimmt alle Aufgaben des Administrators.
+Es enthält das Ändern des Passworts, die Behandlung von Konflikten, das Abziehen
+der Einzahlung oder die Freigabe der Einzahlung.
+
+===== DefaultController
+Dieser Controller übernimmt die Registrierung, Anmeldung und Anzeige der Startseite der Anwendung.
+
+===== UserController
+Dieser Controller übernimmt alle Aufgaben der Benutzer.
+Es enthält Anzeige der Profile, Informationen zum Besitzer, Informationen zum Mieter,
+ProPay, Benachrichtigungen und Anforderungen, sowie
+das Aufladen von Propay-Konten und Ändern der Profile.
+
+===== NotificationController
+Dieser Controller übernimmt alle Aufgaben der Notification.
+Mietanfragen annehmen oder ablehnen, Rücksendeanfragen annehmen oder ablehnen
+gehört zum diesem Controller.
+
+===== GeraetController
+Dieser Controller übernimmt alle Aufgaben der Geraet.
+Es enthält Anzeige der gemietete Geräte, das Erstellen von Miet Geräte,das Erstellen von Verkaufsgeräte,
+das Bearbeiten von Geräte sowie das Löschen Gerät,
+die Gerät für den Verkauf in Gerät für die Vermietung umwandeln, Gerät zurücksenden
+
+=== Configure the Database
+Es gibt insgesamt 14 Modelle.
+
+==== Helper Classes for Views
+GeraetWithRentEvent, InformationForMenuBadges, NotificationMitAnfragePerson und
+PersonMitAccount sind Klassen die es uns erleichter Daten an Views zu schicken.
+
+==== Account
+Es ist eine Entität für Propay-Konto. Es enthält Konto, Betrag und Reservierungen
+für die Erfassung der Einzahlung.
+
+==== Bild
+Entität für Bilder, enthält ID und wir speichern Bilder als Byte [].
+
+==== Comment
+Benutzer können den Mietern Kommentare geben.
+Es enthält ID, PersonID, geraetTitel, Nachricht, SenderFrom und Daten.
+
+==== Geraet
+Entität für Gerät. Es enthält Id, besitzer, beschreibung, titel, kosten, kaution,
+abholort, mietezeitpunktstart, mieterzeitpunktend, boolean for sale, verfuegbarEvents
+zum Erfassen von Zeiträumen, die gemietet werden können, Mietevents, um bereits
+gemietete Zeiträume aufzuzeichnen, und Bilder.
+
+==== Notification
+Entität zur Benachrichtigung. Benachrichtigungen können an die Rücksendezeit erinnern und
+an die Miet- und Retourenanfragen erinnern.
+
+==== Person
+Diese Entität wird zum Aufzeichnen von Personen verwendet, jede Person hat eine
+Rolle, es kann sich um einen Benutzer oder einen Administrator handeln. Neben der
+Rolle enthält es auch ID, Vorname, Nachname, Kontakt, Adresse, Benutzername, Passwort,
+Foto und Kommentare.
+
+==== RentEvent
+Entity für ein Ausleiheprozess.
+
+==== Reservation
+Diese Entität wird zur Aufnahme einer Kaution verwendet.
+Es hat eine ID, einen Betrag und das entsprechende Konto.
+
+==== TimeInterval
+Entität für einen Zeitraum mit Startzeit, Endzeit und Dauer.
+
+==== Transaction
+Es zeichnete die Transaktion zwischen zwei Benutzern auf.
+
+=== Service Layer
+
+==== AdminServices
+
+===== AdminService
+Das System verwalten, mit Konflikten umgehen und alle Benutzer
+verwalten.
+
+==== DefaultServices
+
+===== DefaultService
+Wandelt Bild aus byte[] in string um.
+
+===== UserValidator
+Wird zur Registrierung von Benutzern verwendet. Die Ausgabe verschiedener Fehler,
+wenn die Benutzereingaben die Anforderungen nicht erfüllen.
+
+==== UserServices
+
+===== GeraetService
+Wird für die Verwaltung von Geräten verwendet.
+
+===== MailService
+Wird für die Zustellung von E-Mails verwendet.
+Benutzer erhalten eine E-Mail als Erinnerung. Es können Erinnerungen an Mietanfragen,
+Rücksendeanfragen und die Ergebnisse von Anfragen angezeigt werden.
+
+===== NotificationService
+Wird für Benachrichtigungen verwendet.
+
+===== PersonService
+Erstellt Kommentare, erstellt und speichert neuen Benutzer.
+
+===== PictrueService
+Wird zur Ausgabe von Bildern verwendet.
+
+==== ProPayService
+Bucht Kautionen,  gibt Kautionen wieder frei und zieht Kautionen ab.
+
+==== UserDetailsServiceImpl
+Wird für die Anmeldung von Benutzern verwendet, wenn der Benutzername nicht
+gefunden wird, wird die Ausnahme "Ungültiger Benutzername" ausgelöst.
