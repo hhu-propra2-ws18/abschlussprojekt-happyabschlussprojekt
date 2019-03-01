@@ -77,13 +77,13 @@ public class GeraetServiceTest {
         Mockito.when(geraetRepository.findAllByTitelLikeOrderByKostenDesc(any())).thenReturn(geraetSortmitabsteigenderPreis);
 
         List<Geraet> geraetSortmitaufsteigenderLike = new ArrayList<>();
-        geraetSortmitaufsteigenderLike.add(fakeGeraet2);
         geraetSortmitaufsteigenderLike.add(fakeGeraet1);
+        geraetSortmitaufsteigenderLike.add(fakeGeraet2);
         Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesAsc(any())).thenReturn(geraetSortmitaufsteigenderLike);
 
         List<Geraet> geraetSortmitabsteigenderLike = new ArrayList<>();
-        geraetSortmitabsteigenderLike.add(fakeGeraet1);
         geraetSortmitabsteigenderLike.add(fakeGeraet2);
+        geraetSortmitabsteigenderLike.add(fakeGeraet1);
         Mockito.when(geraetRepository.findAllByTitelLikeOrderByLikesDesc(any())).thenReturn(geraetSortmitabsteigenderLike);
 
         List<Geraet> geraetsWithEncode = geraetService.getAllWithKeyWithBiler("");
