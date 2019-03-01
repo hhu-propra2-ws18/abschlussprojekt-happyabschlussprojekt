@@ -45,8 +45,6 @@ public class AdminServiceTest {
     @Mock
     AccountRepository accountRepository;
     @Mock
-    GeraetRepository geraetRepository;
-    @Mock
     PasswordEncoder encoder;
     @Mock
     RentEventRepository rentEventRepository;
