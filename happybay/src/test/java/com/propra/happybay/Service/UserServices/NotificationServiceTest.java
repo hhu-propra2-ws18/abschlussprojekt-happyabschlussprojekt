@@ -73,20 +73,6 @@ public class NotificationServiceTest {
 
     }
 
-
-//    @Test
-//    public void make_notification(){
-//        Geraet fakeGeraet = new Geraet();
-//        fakeGeraet.setBesitzer("fakeBesitzer");
-//        fakeGeraet.setZeitraum(5);
-//        Notification notification = new Notification();
-//        notification.setAnfragePerson("fakeName");
-//        notification.setGeraetId(1L);
-//        notification.setBesitzer("fakeBesitzer");
-//        notification.setZeitraum(5);
-//        Assertions.assertThat(notificationService.copyAndEditNotification("fakeName",1L,fakeGeraet)).isEqualTo(notification);
-//    }
-
     @Test
     public void update_anzahl_ofNotifications(){
         List<Notification> notificationList = new ArrayList<>();
