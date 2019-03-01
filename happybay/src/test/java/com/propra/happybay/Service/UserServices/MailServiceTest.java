@@ -42,7 +42,7 @@ public class MailServiceTest {
 
 
     @Test
-    public void send_Scheduled_Mail() throws Exception {
+    public void sendScheduledMail() throws Exception {
         List<RentEvent> rentEventList = new ArrayList<>();
 
         Person fakePerson = new Person();
@@ -75,7 +75,7 @@ public class MailServiceTest {
 
 
     @Test
-    public void send_mail() throws Exception {
+    public void sendMail() throws Exception {
         Principal principal = new Principal() {
             @Override
             public String getName() {

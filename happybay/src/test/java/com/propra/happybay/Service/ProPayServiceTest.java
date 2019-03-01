@@ -78,7 +78,7 @@ public class ProPayServiceTest {
 
     @Test
 
-    public void testErhoeheAmount_CorrectUrl() {
+    public void testErhoeheAmountCorrectUrl() {
         ProPayService propayservice = new ProPayService();
 
         stubFor(post(urlEqualTo("/account/Anton"))
@@ -94,7 +94,7 @@ public class ProPayServiceTest {
 
 
     @Test
-    public void testTransferFunds_CorrectUrl() {
+    public void testTransferFundsCorrectUrl() {
         ProPayService proPayInterface = new ProPayService();
 
         stubFor(post(urlEqualTo("/account/Anton/transfer/Tony"))
@@ -111,7 +111,7 @@ public class ProPayServiceTest {
 
 
     @Test
-    public void testCreateReservation_CorrectUrl() {
+    public void testCreateReservationCorrectUrl() {
         ProPayService proPayInterface = new ProPayService();
 
         stubFor(post(urlEqualTo("/reservation/reserve/Anton/Tony"))
@@ -145,7 +145,7 @@ public class ProPayServiceTest {
 
 
     @Test
-    public void testReleaseReservation_CorrectUrl() {
+    public void testReleaseReservationCorrectUrl() {
         ProPayService proPayInterface = new ProPayService();
 
         stubFor(post(urlEqualTo("/reservation/release/Anton"))
@@ -163,7 +163,7 @@ public class ProPayServiceTest {
 
 
     @Test
-    public void testPunishReservation_CorrectUrl() {
+    public void testPunishReservationCorrectUrl() {
         ProPayService proPayInterface = new ProPayService();
 
         stubFor(post(urlEqualTo("/reservation/punish/Anton"))

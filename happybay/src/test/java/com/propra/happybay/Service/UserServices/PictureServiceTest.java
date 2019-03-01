@@ -26,7 +26,7 @@ public class PictureServiceTest {
     PictureService pictureService;
 
     @Test
-    public void renturnList_of_pic() throws IOException {
+    public void renturnListOfPic() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
         MultipartFile[] files = {file,file,file,file};
         when(file.getBytes()).thenReturn("fake".getBytes());

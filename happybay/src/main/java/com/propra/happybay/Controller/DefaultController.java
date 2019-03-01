@@ -102,7 +102,7 @@ public class DefaultController {
     @PostMapping("/addNewUser")
     public String addToDatabase(@RequestParam(value = "file",name= "file",required = false) MultipartFile file,
                                 @ModelAttribute("person") Person person, BindingResult bindingResult,
-                                Model model) throws IOException {
+                                Model model) {
         userValidator.validate(person, bindingResult);
         model.addAttribute("person", person);
         if (bindingResult.hasErrors()) {

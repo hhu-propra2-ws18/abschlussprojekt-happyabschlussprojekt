@@ -97,7 +97,7 @@ public class NotificationServiceTest {
     //}
 
     @Test
-    public void update_anzahl(){
+    public void updateAnzahl(){
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(new Notification());
         Person fakePerson = new Person();
@@ -112,7 +112,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void get_notification_by_id(){
+    public void getNotificationById(){
         Notification fake = new Notification();
         when(notificationRepository.findById(1L)).thenReturn(java.util.Optional.of(fake));
         Assertions.assertThat(notificationService.getNotificationById(1L)).isEqualTo(fake);

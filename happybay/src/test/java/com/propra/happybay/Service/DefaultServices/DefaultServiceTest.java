@@ -18,7 +18,7 @@ public class DefaultServiceTest {
     DefaultService defaultService;
 
     @Test
-    public void encode_bild(){
+    public void encodeBild(){
         Bild fakeBild = new Bild();
         fakeBild.setBild("fake Bild".getBytes());
 

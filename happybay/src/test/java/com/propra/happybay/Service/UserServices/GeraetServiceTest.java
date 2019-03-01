@@ -174,7 +174,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void return_geraet_with_rentEvents(){
+    public void returnGeraetWithRentEvents(){
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
@@ -203,7 +203,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void convert_to_CET(){
+    public void convertToCET(){
         TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
         TimeInterval newfake = geraetService.convertToCET(fake);
         Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
@@ -212,7 +212,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void save_geraet() throws IOException {
+    public void saveGeraet() throws IOException {
         MultipartFile fakefile = mock(MultipartFile.class);
         MultipartFile[] files = {fakefile,fakefile};
 
@@ -228,7 +228,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void add_like(){
+    public void addLike(){
         Geraet fakegeraet = new Geraet();
         List<Person> fakeLiekedPerson = new ArrayList<>();
         Person fakePerson1 = new Person();

@@ -53,7 +53,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void position_of_free_block(){
+    public void positionOfFreeBlock(){
 
         TimeInterval time1 = new TimeInterval();
         time1.setStart(Date.valueOf("2019-3-20"));
@@ -99,7 +99,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void interval_zerlagen(){
+    public void intervalZerlagen(){
         TimeInterval time = new TimeInterval();
         time.setStart(Date.valueOf("2019-3-20"));
         time.setEnd(Date.valueOf("2019-4-10"));
@@ -122,7 +122,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void make_comment(){
+    public void makeComment(){
         Person fakeSender = new Person();
         fakeSender.setUsername("fake sender");
         Person fakeBesitzer = new Person();
@@ -143,7 +143,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void make_and_save_new_person() throws IOException {
+    public void makeAndSaveNewPerson() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
         Person fakePerson = new Person();
         fakePerson.setUsername("fake Person");
@@ -156,7 +156,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void checks_active_or_in_active_rent_event(){
+    public void checksActiveOrInActiveRentEvent(){
         Bild fakebild = new Bild();
         fakebild.setBild("fake bild".getBytes());
         List<Bild> bildList = new ArrayList<>();
@@ -208,7 +208,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void umwechsel_multiparfile_zum_bild() throws IOException {
+    public void umwechselMultiparfileZumBild() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
         MultipartFile[] files = {file,file,file};
         when(file.getBytes()).thenReturn("fake".getBytes());
