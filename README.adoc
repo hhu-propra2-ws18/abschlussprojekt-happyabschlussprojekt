@@ -11,3 +11,6 @@ Die Kaution wird blockiert, wenn Gerät gemietet wird. Außerdem kann der Besitz
 
 === Wie läuft unsere Application?
  docker-compose up
+
+
+Bei Konflict besuchen Sie http:loacalhost:8080/admin
