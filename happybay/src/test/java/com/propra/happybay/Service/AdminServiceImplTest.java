@@ -33,8 +33,9 @@ public class AdminServiceImplTest {
 
     @Mock
     PasswordEncoder encoder;
+
     @Test
-    public void return_information_for_menuBadges(){
+    public void return_information_for_menuBadges() {
         List<Person> personList = new ArrayList<>();
         Person fakePerson1 = new Person();
         fakePerson1.setUsername("notadmin");

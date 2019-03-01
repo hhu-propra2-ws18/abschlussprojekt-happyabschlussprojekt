@@ -39,6 +39,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
@@ -48,14 +49,14 @@ public class UserControllerTest {
     private Person admin = new Person();
     private Geraet geraet = new Geraet();
     private Account account = new Account();
-    private RentEvent rentEvent=new RentEvent();
-    private List<RentEvent> verfuegbareEvents=new ArrayList<>();
-    List<Transaction> transactions=new ArrayList<>();
-    Transaction transaction=new Transaction();
-    Date start = new Date(2019,10,20);
-    Date end = new Date(2019,11,21);
-    private TimeInterval timeInterval = new TimeInterval(start,end);
-    List<RentEvent> activeRentEvents=new ArrayList<>();
+    private RentEvent rentEvent = new RentEvent();
+    private List<RentEvent> verfuegbareEvents = new ArrayList<>();
+    List<Transaction> transactions = new ArrayList<>();
+    Transaction transaction = new Transaction();
+    Date start = new Date(2019, 10, 20);
+    Date end = new Date(2019, 11, 21);
+    private TimeInterval timeInterval = new TimeInterval(start, end);
+    List<RentEvent> activeRentEvents = new ArrayList<>();
     //Bild
     private Bild bild = new Bild();
     private RentEvent verfuerbar = new RentEvent();
@@ -72,7 +73,7 @@ public class UserControllerTest {
     AccountRepository accountRepository;
     @Mock
     NotificationService notificationService;
-    private Notification notification=new Notification();
+    private Notification notification = new Notification();
     @Mock
     MailService mailService;
     @Mock
@@ -144,11 +145,11 @@ public class UserControllerTest {
         when(personService.findByPrincipal(principal)).thenReturn(user);
         when(personRepository.findByUsername(any())).thenReturn(Optional.ofNullable(user));
         when(personRepository.findById(any())).thenReturn(Optional.ofNullable(user));
-        doNothing().when(personService).checksActiveOrInActiveRentEvent(any(),any());
+        doNothing().when(personService).checksActiveOrInActiveRentEvent(any(), any());
 
 
         when(geraetRepository.findById(any())).thenReturn(Optional.ofNullable(geraet));
-        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService,proPayService,accountRepository,geraetService,mailService,notificationRepository,personService,rentEventRepository, personRepository,geraetRepository,notificationService))
+        mvc2 = MockMvcBuilders.standaloneSetup(new UserController(rentEventService, proPayService, accountRepository, geraetService, mailService, notificationRepository, personService, rentEventRepository, personRepository, geraetRepository, notificationService))
                 .setViewResolvers(viewResolver)
                 .build();
     }
@@ -158,6 +159,7 @@ public class UserControllerTest {
         mvc2.perform(get("/user/profile").principal(principal))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void proflieWithAdmin() throws Exception {
         user.setRole("ROLE_ADMIN");
@@ -170,6 +172,7 @@ public class UserControllerTest {
         mvc2.perform(get("/user/myThings").principal(principal))
                 .andExpect(status().isOk());
     }
+
     @WithMockUser(value = "test", roles = "USER")
     @Test
     public void rentThings() throws Exception {
@@ -177,7 +180,7 @@ public class UserControllerTest {
         when(rentEventService.getActiveEventsForPerson(user)).thenReturn(activeRentEvents);
         mvc2.perform(get("/user/rentThings").principal(principal))
                 .andExpect(status().isOk());
-        verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(),any());
+        verify(rentEventRepository, Mockito.times(1)).findAllByMieterAndReturnStatus(any(), any());
     }
 
     @Test
@@ -189,22 +192,24 @@ public class UserControllerTest {
     @Test
     public void anfragenGet() throws Exception {
 
-       when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
-       when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
+        when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
+        when(accountRepository.findByAccount(user.getUsername())).thenReturn(Optional.ofNullable(account));
 
-       mvc2.perform(get("/user/anfragen/{id}",2L).principal(principal))
+        mvc2.perform(get("/user/anfragen/{id}", 2L).principal(principal))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void anfragenPost() throws Exception {
 
         when(geraetRepository.findById(2L)).thenReturn(Optional.ofNullable(geraet));
-        doNothing().when(mailService).sendAnfragMail(any(),any(),any());
-        mvc2.perform(post("/user/anfragen/{id}",2L).principal(principal)
+        doNothing().when(mailService).sendAnfragMail(any(), any(), any());
+        mvc2.perform(post("/user/anfragen/{id}", 2L).principal(principal)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .flashAttr("notification",notification))
+                .flashAttr("notification", notification))
                 .andExpect(status().is3xxRedirection());
     }
+
     @Test
     public void proPay() throws Exception {
         when(accountRepository.findByAccount(anyString())).thenReturn(Optional.ofNullable(account));
@@ -216,12 +221,13 @@ public class UserControllerTest {
 
     @Test
     public void besitzerInfo() throws Exception {
-        mvc2.perform(get("/user/BesitzerInfo/{id}",1L).principal(principal))
+        mvc2.perform(get("/user/BesitzerInfo/{id}", 1L).principal(principal))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void mieterInfo() throws Exception {
-        mvc2.perform(get("/user/mieterInfo/{id}",1L))
+        mvc2.perform(get("/user/mieterInfo/{id}", 1L))
                 .andExpect(status().isOk());
     }
 
@@ -229,19 +235,21 @@ public class UserControllerTest {
     @Test
     public void aufladenAntragOk() throws Exception {
 
-        mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
+        mvc2.perform(post("/user/propayErhoehung").param("amount", "100").param("account", "test"))
                 .andExpect(status().is3xxRedirection());
     }
+
     @Test
     public void aufladenAntragError() throws Exception {
-        doCallRealMethod().when(proPayService).erhoeheAmount("test",100);
-        mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
+        doCallRealMethod().when(proPayService).erhoeheAmount("test", 100);
+        mvc2.perform(post("/user/propayErhoehung").param("amount", "100").param("account", "test"))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void anfragen() throws Exception {
 
-        mvc2.perform(post("/user/sale/{id}",1L).principal(principal))
+        mvc2.perform(post("/user/sale/{id}", 1L).principal(principal))
                 .andExpect(status().is3xxRedirection());
     }
 
@@ -251,10 +259,11 @@ public class UserControllerTest {
         mvc2.perform(get("/user/PersonInfo/Profile/ChangeProfile").principal(principal))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void chageProfile() throws Exception {
 
-        mvc2.perform(post("/user/PersonInfo/Profile/ChangeProfile").contentType(MediaType.APPLICATION_JSON).flashAttr("person",user).requestAttr("file",multipartFiles).principal(principal))
+        mvc2.perform(post("/user/PersonInfo/Profile/ChangeProfile").contentType(MediaType.APPLICATION_JSON).flashAttr("person", user).requestAttr("file", multipartFiles).principal(principal))
                 .andExpect(status().isOk());
 
     }

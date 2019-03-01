@@ -57,6 +57,7 @@ public class AdminServiceTest {
     Person fakePerson1 = new Person();
     Person fakePerson2 = new Person();
     List<RentEvent> rentEventsWithConflicts = new ArrayList<>();
+
     @Test
     public void return_information_for_menuBadges() {
 
@@ -75,7 +76,6 @@ public class AdminServiceTest {
         rentEventList.add(new RentEvent());
 
 
-
         when(personRepository.findAll()).thenReturn(personList);
         Account fakeAccount = new Account();
         when(accountRepository.findByAccount(any())).thenReturn(java.util.Optional.ofNullable(fakeAccount));
@@ -89,7 +89,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    public void get_geraet_with_rent_events_with_conflicts(){
+    public void get_geraet_with_rent_events_with_conflicts() {
 
         RentEvent fakeRentEvent1 = new RentEvent();
         RentEvent fakeRentEvent2 = new RentEvent();

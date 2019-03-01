@@ -25,17 +25,14 @@ public class PictureServiceTest {
     @Test
     public void renturnList_of_pic() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
-        MultipartFile[] files = {file,file,file,file};
+        MultipartFile[] files = {file, file, file, file};
         when(file.getBytes()).thenReturn("fake".getBytes());
         Assertions.assertThat(pictureService
-                    .returnListOfPictures(files)
-                    .size())
-                    .isEqualTo(4);
+                .returnListOfPictures(files)
+                .size())
+                .isEqualTo(4);
 
     }
-
-
-
 
 
 }

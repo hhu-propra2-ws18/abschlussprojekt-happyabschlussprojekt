@@ -56,14 +56,14 @@ public class ProPayService {
     }
 
     public void ueberweisen(String username, String besizer, int amount) throws IOException {
-        URL url = new URL("http://" + propayAdress + ":8888/account/"  + username + "/transfer/" + besizer);
+        URL url = new URL("http://" + propayAdress + ":8888/account/" + username + "/transfer/" + besizer);
         makeQuery(amount, "amount", url);
         saveAccount(username);
         saveTransaction(amount, besizer, username, TransactionType.ZAHLUNG);
     }
 
     public int erzeugeReservation(String mieter, String besitzer, int amount) throws IOException {
-        URL url = new URL("http://" + propayAdress + ":8888/reservation/reserve/"  + mieter + "/" + besitzer);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/reserve/" + mieter + "/" + besitzer);
         Reader reader = makeQuery(amount, "amount", url);
 
         String response = ((BufferedReader) reader).readLine();
@@ -73,13 +73,13 @@ public class ProPayService {
     }
 
     public void releaseReservation(String mieter, int reservationId) throws IOException {
-        URL url = new URL("http://" + propayAdress + ":8888/reservation/release/"  + mieter);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/release/" + mieter);
         makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
     }
 
     public void punishReservation(String mieter, String besitzer, int reservationId, int kaution) throws IOException {
-        URL url = new URL("http://" + propayAdress + ":8888/reservation/punish/"  + mieter);
+        URL url = new URL("http://" + propayAdress + ":8888/reservation/punish/" + mieter);
         makeQuery(reservationId, "reservationId", url);
         saveAccount(mieter);
         saveTransaction(kaution, besitzer, mieter, TransactionType.KAUTION);

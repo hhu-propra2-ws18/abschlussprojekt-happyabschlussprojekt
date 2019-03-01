@@ -3,61 +3,67 @@
 <html lang="en">
 <head th:replace="fragments.html :: header"></head>
 <body>
-    <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
-    <br>
-    <div class="container">
-        <div class="card" style="padding: 10px; margin-bottom: 10px">
-            <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} "  method="post">
-                <ul class="list-group list-group-flush">
-                    <span class="badge badge-success">Verfügbar</span>
-                    <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
+<br>
+<div class="container">
+    <div class="card" style="padding: 10px; margin-bottom: 10px">
+        <form th:action="@{/user/anfragen/{id}(id=${geraet.getId()})} " method="post">
+            <ul class="list-group list-group-flush">
+                <span class="badge badge-success">Verfügbar</span>
+                <li th:each="verfugbarEvent: ${geraet.getVerfuegbareEvents()}" style="margin: 15px; color: darkgreen;
                         font-weight:  bold; margin-left:  20px">
-                        <input type="radio" name="pickTime[]" onclick="document.getElementById('mietezeitpunktStart').style.display='';document.getElementById('label').style.display='';
+                    <input type="radio" name="pickTime[]" onclick="document.getElementById('mietezeitpunktStart').style.display='';document.getElementById('label').style.display='';
                                                                      document.getElementById('mietezeitpunktEnd').style.display='';document.getElementById('label2').style.display=''"
-                               th:text=" ' ' + ${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                           th:text=" ' ' + ${#dates.format(verfugbarEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                                ' - ' + ${#dates.format(verfugbarEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')}"
-                               th:value="${verfugbarEvent.getTimeInterval().getStart()} +' '+ ${verfugbarEvent.getTimeInterval().getEnd()}">
-                    </li>
-                    <br/>
-                    <span class="badge badge-danger">Schon verliehen</span>
-                    <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
+                           th:value="${verfugbarEvent.getTimeInterval().getStart()} +' '+ ${verfugbarEvent.getTimeInterval().getEnd()}">
+                </li>
+                <br/>
+                <span class="badge badge-danger">Schon verliehen</span>
+                <li th:each="rentEvent: ${geraet.getRentEvents()}" style="margin: 15px; color: darkred;
                         font-weight: bold; margin-left: 20px; opacity: 0.6">
-                        <tr>
-                            <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
+                    <tr>
+                        <td th:text="${#dates.format(rentEvent.getTimeInterval().getStart(), 'dd.MM.')} +
                                 ' - ' + ${#dates.format(rentEvent.getTimeInterval().getEnd(), 'dd.MM.yyyy')} +
                                 ' von ' + ${rentEvent.mieter.username}"></td>
-                        </tr>
-                    </li>
-                </ul>
-                <br>
-                <label id="label" style="display:none" for="mietezeitpunktStart">Mieten ab:</label>
-                <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
-                       id="mietezeitpunktStart"
-                       placeholder="Eingabe start Zeitpunkte."  required/>
-                <label id="label2" style="display:none" for="mietezeitpunktEnd">Mieten bis:</label>
-                <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
-                       id="mietezeitpunktEnd"
-                       placeholder="Eingabe ende Zeitpunkte." required/>
-                <label for="message">Message:</label>
-                <br/>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message"
-                value="Gerne möchte ich Ihr Gerät leihen." placeholder="Gerne möchte ich Ihr Gerät leihen."/>
-                <input type="hidden" name="account" id="account" th:value="${account.getAmount()}">
-                <input type="hidden" name="kost" id="kost" th:value="${geraet.getKosten()}">
-                <input type="hidden" name="kaution" id="kautionen" th:value="${geraet.getKaution()}">
-                <button type="submit" class="btn btn-primary" onclick="checkTimeAndAccount()">Schicken</button>
-            </form>
-        </div>
+                    </tr>
+                </li>
+            </ul>
+            <br>
+            <label id="label" style="display:none" for="mietezeitpunktStart">Mieten ab:</label>
+            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+                   id="mietezeitpunktStart"
+                   placeholder="Eingabe start Zeitpunkte." required/>
+            <label id="label2" style="display:none" for="mietezeitpunktEnd">Mieten bis:</label>
+            <input style="display:none;margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+                   id="mietezeitpunktEnd"
+                   placeholder="Eingabe ende Zeitpunkte." required/>
+            <label for="message">Message:</label>
+            <br/>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="message" id="message"
+                   value="Gerne möchte ich Ihr Gerät leihen." placeholder="Gerne möchte ich Ihr Gerät leihen."/>
+            <input type="hidden" name="account" id="account" th:value="${account.getAmount()}">
+            <input type="hidden" name="kost" id="kost" th:value="${geraet.getKosten()}">
+            <input type="hidden" name="kaution" id="kautionen" th:value="${geraet.getKaution()}">
+            <button type="submit" class="btn btn-primary" onclick="checkTimeAndAccount()">Schicken</button>
+        </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
     function checkTimeAndAccount() {
         obj = document.getElementsByName('pickTime[]');
-        check_val = [];
-        for(k in obj){
-            if(obj[k].checked){
+        check_val = [];
+        for (k in obj) {
+            if (obj[k].checked) {
                 check_val.push(obj[k].value);
             }
         }
@@ -68,48 +74,45 @@
         var endTimeMax = time[1];
 
         var array1 = startTimeMax.split("-");
-        var startDateMax = new Date(array1[0],parseInt(array1[1])-1,array1[2]);
+        var startDateMax = new Date(array1[0], parseInt(array1[1]) - 1, array1[2]);
 
         var array2 = endTimeMax.split("-");
-        var endDateMax = new Date(array2[0],parseInt(array2[1])-1,array2[2])
+        var endDateMax = new Date(array2[0], parseInt(array2[1]) - 1, array2[2])
 
         var startDateString = $("#mietezeitpunktStart").val();
         var endDateString = $("#mietezeitpunktEnd").val();
 
-        var array3=startDateString.split("-");
-        var startDate = new Date(array3[0],parseInt(array3[1])-1,array3[2]);
+        var array3 = startDateString.split("-");
+        var startDate = new Date(array3[0], parseInt(array3[1]) - 1, array3[2]);
 
-        var array4=endDateString.split("-");
-        var endDate = new Date(array4[0],parseInt(array4[1])-1,array4[2]);
+        var array4 = endDateString.split("-");
+        var endDate = new Date(array4[0], parseInt(array4[1]) - 1, array4[2]);
 
         var account = $("#account").val();
         var kost = $("#kost").val();
         var kaution = $("#kautionen").val();
 
-        var timeIntervar = Math.round((endDate.getTime()-startDate.getTime())/ (1000 * 60 * 60 * 24));
+        var timeIntervar = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
         var sumKosten = (timeIntervar * kost) + kaution;
         var nowDate = Date.now();
 
-        if(startDate<startDateMax || startDate>=endDateMax || endDate<=startDateMax || endDate>endDateMax ||startDate>endDate){
+        if (startDate < startDateMax || startDate >= endDateMax || endDate <= startDateMax || endDate > endDateMax || startDate > endDate) {
             alert("Bitte notieren Sie sich die verfügbare Zeit und vergewissern Sie sich, dass das Datum korrekt ist！");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");
             return false;
-        }
-        else if(startDate<(nowDate-(18*60*60*1000))){
+        } else if (startDate < (nowDate - (18 * 60 * 60 * 1000))) {
             alert("Start Datum muss nach heute sein!");
             $("#mietezeitpunktStart").val("");
             $("#mietezeitpunktEnd").val("");
             return false;
-        }
-        else{
+        } else {
             if (parseInt(account) < sumKosten) {
                 $("#mietezeitpunktStart").val("");
                 $("#mietezeitpunktEnd").val("");
                 alert("Ihr Kontostand reicht nicht aus. Bitte gehen Sie auf Propay, um es aufzuladen！" + parseInt(account) + ' ' + sumKosten);
                 return false;
-            }
-            else{
+            } else {
                 return true;
             }
         }

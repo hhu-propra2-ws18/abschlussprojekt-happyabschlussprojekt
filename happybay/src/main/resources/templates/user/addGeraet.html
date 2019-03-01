@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: header"></head>
 <body>
-    <nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
+<nav th:replace="fragments.html :: topSiteBarAndMenu"></nav>
 
-    <div class="container"><br/>
-        <h3 class="text-justify text-center font-weight-normal">Hinzufügen eines Gerätes: </h3>
-        <input type="radio" name="option" id="rent" onclick="document.getElementById('kaution').style.display = '';
+<div class="container"><br/>
+    <h3 class="text-justify text-center font-weight-normal">Hinzufügen eines Gerätes: </h3>
+    <input type="radio" name="option" id="rent" onclick="document.getElementById('kaution').style.display = '';
         document.getElementById('mietezeitpunktStart').style.display = '';
         document.getElementById('mietezeitpunktEnd').style.display = '';
         document.getElementById('kautionLabel').style.display = '';
@@ -15,8 +15,8 @@
         document.getElementById('miete').style.display='';
         document.getElementById('preis').style.display='none';
         makeFalse()" checked/>
-        <label for="rent">Ich möchte verleihen</label>
-        <input type="radio" name="option" id="sale" onclick="document.getElementById('kaution').style.display = 'none';
+    <label for="rent">Ich möchte verleihen</label>
+    <input type="radio" name="option" id="sale" onclick="document.getElementById('kaution').style.display = 'none';
         document.getElementById('mietezeitpunktStart').style.display = 'none';
         document.getElementById('mietezeitpunktEnd').style.display = 'none';
         document.getElementById('kautionLabel').style.display = 'none';
@@ -25,47 +25,56 @@
         document.getElementById('miete').style.display='none';
         document.getElementById('preis').style.display='';
         makeTrue()"/>
-        <label for="sale">Ich möchte verkaufen</label>
-        <div class="row justify-content-md-center">
-            <form th:action="@{/user/geraet/addGeraet}"  method="post" enctype="multipart/form-data"><br/>
-                <label for="titel">Titel:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
-                       placeholder="Eingabe Titel." onchange="check()"required/>
-                <label for="beschreibung">Beschreibung:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
-                       placeholder="Eingabe Beschreibung."  required/>
-                <label for="kosten" id="miete">Miete Pro Tag:</label>
-                <label for="kosten" id="preis" style="display: none">Preis:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
-                       placeholder="in Euro" onchange="checkKosten()" required/>
-                <label id="kautionLabel">Kaution:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
-                       placeholder="in Euro" onblur="checkKaution()" value="0"/>
-                <label for="abholort">Abholort:</label>
-                <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
-                       placeholder="Eingabe Abholort." required/>
+    <label for="sale">Ich möchte verkaufen</label>
+    <div class="row justify-content-md-center">
+        <form th:action="@{/user/geraet/addGeraet}" method="post" enctype="multipart/form-data"><br/>
+            <label for="titel">Titel:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="titel" id="titel"
+                   placeholder="Eingabe Titel." onchange="check()" required/>
+            <label for="beschreibung">Beschreibung:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="beschreibung" id="beschreibung"
+                   placeholder="Eingabe Beschreibung." required/>
+            <label for="kosten" id="miete">Miete Pro Tag:</label>
+            <label for="kosten" id="preis" style="display: none">Preis:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kosten" id="kosten"
+                   placeholder="in Euro" onchange="checkKosten()" required/>
+            <label id="kautionLabel">Kaution:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="kaution" id="kaution"
+                   placeholder="in Euro" onblur="checkKaution()" value="0"/>
+            <label for="abholort">Abholort:</label>
+            <input style="margin-bottom: 10px" type="text" class="form-control" name="abholort" id="abholort"
+                   placeholder="Eingabe Abholort." required/>
 
-                <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
-                <input style="margin-bottom: 10px" type="date"   class="form-control" name="mietezeitpunktStart"
-                       id="mietezeitpunktStart"
-                       placeholder="Eingabe start Zeitpunkte." onblur="checkStartTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
-                <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
-                <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
-                       id="mietezeitpunktEnd"
-                       placeholder="Eingabe ende Zeitpunkte." onblur="checkEndTime()" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
-                <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
-                <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
-                <input style="padding-top: 10px" type = "file" name = "files" multiple  accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
-                <br/><br/>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </form>
-        </div>
+            <label id="mietezeitpunktStartLabel">Verfügbar ab:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktStart"
+                   id="mietezeitpunktStart"
+                   placeholder="Eingabe start Zeitpunkte." onblur="checkStartTime()" required
+                   pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
+            <label id="mietezeitpunktEndLabel">Verfügbar bis:</label>
+            <input style="margin-bottom: 10px" type="date" class="form-control" name="mietezeitpunktEnd"
+                   id="mietezeitpunktEnd"
+                   placeholder="Eingabe ende Zeitpunkte." onblur="checkEndTime()" required
+                   pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
+            <input type="hidden" class="form-control" name="forsale" id="forsale" th:value="${false}"/>
+            <label for="titel">Bilder Hochladen (Max. 15MB): </label><br/>
+            <input style="padding-top: 10px" type="file" name="files" multiple
+                   accept="image/png, image/jpeg, image/gif, image/jpg" onchange="checkFile(this)"/>
+            <br/><br/>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
     $(document).ready(function () {
         var time = new Date();
@@ -88,17 +97,17 @@
 
     function checkKosten() {
         var kosten = $("#kosten").val();
-        if(kosten==""){
+        if (kosten == "") {
             alert("Bitte eingabe Kosten pro Tag!");
             $("#kosten").val("");
             return false;
-        }else if(kosten<="0"){
+        } else if (kosten <= "0") {
             alert("The nummber must be bigger than 0");
             $("#kosten").val("");
             return false;
-        }else{
-            for (i = 0 ; i < kosten.length ; i++) {
-                if ((kosten.charAt(i) < '0') || (kosten.charAt(i) > '9')){
+        } else {
+            for (i = 0; i < kosten.length; i++) {
+                if ((kosten.charAt(i) < '0') || (kosten.charAt(i) > '9')) {
                     alert("Eingabe muss eine Integer sein!");
                     $("#kosten").val("");
                     return false;
@@ -110,7 +119,7 @@
 
     function checkKaution() {
         var kaution = $("#kaution").val();
-        if(kaution==""){
+        if (kaution == "") {
             alert("Bitte eingabe Kaution!");
             $("#kaution").val("");
             return false;
@@ -118,9 +127,9 @@
             alert("The nummber must be bigger than 0");
             $("#kaution").val("");
             return false;
-        }else{
-            for (i = 0 ; i < kaution.length ; i++) {
-                if ((kaution.charAt(i) < '0') || (kaution.charAt(i) > '9')){
+        } else {
+            for (i = 0; i < kaution.length; i++) {
+                if ((kaution.charAt(i) < '0') || (kaution.charAt(i) > '9')) {
                     alert("Eingabe muss eine Integer sein!");
                     $("#kaution").val("");
                     return false;
@@ -130,27 +139,26 @@
         }
     }
 
-    function checkStartTime(){
+    function checkStartTime() {
         var startTime = $("#mietezeitpunktStart").val();
         var array = startTime.split("-");
-        var startDate =new Date(array[0],parseInt(array[1])-1,array[2]);
+        var startDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
 
         var endTime = $("#mietezeitpunktEnd").val().toString();
 
         var nowDate = Date.now();
-        if (startDate < (nowDate-(18*60*60*1000))) {
+        if (startDate < (nowDate - (18 * 60 * 60 * 1000))) {
             alert("Das Startdatum darf nicht vor heute liegen.");
             $("#mietezeitpunktStart").val("");
             return false;
         } else {
             var arrayForEndTime = endTime.split("-");
-            var endDate =new Date(arrayForEndTime[0],parseInt(arrayForEndTime[1])-1,arrayForEndTime[2]);
-            if(startDate > endDate){
+            var endDate = new Date(arrayForEndTime[0], parseInt(arrayForEndTime[1]) - 1, arrayForEndTime[2]);
+            if (startDate > endDate) {
                 alert("Das StartDatum muss vor dem EndDatum liegen.");
                 $("#mietezeitpunktStart").val("");
                 return false;
-            }
-            else{
+            } else {
                 return true;
             }
         }
@@ -159,46 +167,49 @@
     function checkEndTime() {
         var endTime = $("#mietezeitpunktEnd").val();
         var array = endTime.split("-");
-        var endDate =new Date(array[0],parseInt(array[1])-1,array[2]);
+        var endDate = new Date(array[0], parseInt(array[1]) - 1, array[2]);
 
         var startTime = $("#mietezeitpunktStart").val().toString();
 
         var nowDate = Date.now();
-        if (endDate < (nowDate-(18*60*60*1000))) {
+        if (endDate < (nowDate - (18 * 60 * 60 * 1000))) {
             alert("Das Enddatum darf nicht vor heute liegen.");
             $("#mietezeitpunktEnd").val("");
             return false;
         } else {
             var arrayForStartTime = startTime.split("-");
-            var startDate =new Date(arrayForStartTime[0],parseInt(arrayForStartTime[1])-1,arrayForStartTime[2]);
-            if(startDate > endDate){
+            var startDate = new Date(arrayForStartTime[0], parseInt(arrayForStartTime[1]) - 1, arrayForStartTime[2]);
+            if (startDate > endDate) {
                 alert("Das EndDatum muss nach dem StartDatum liegen.");
                 $("#mietezeitpunktEnd").val("");
                 return false;
-            }
-            else{
+            } else {
                 return true;
             }
         }
     }
-    function checkFile(el){
+
+    function checkFile(el) {
         var files = el.files;
-        var allowTypes = ["image/jpeg","image/png","image/jpg","image/gif"];
+        var allowTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
         var allowUpload = true;
-        var errorMessage = "";        for(var i=0; i< files.length; i++){
+        var errorMessage = "";
+        for (var i = 0; i < files.length; i++) {
             var fileName = files[i].name;
-            var fileType = files[i].type;            var typeAccepted = false;
-            for(var j = 0; j < allowTypes.length; j++){
-                if(allowTypes[j] == fileType){
+            var fileType = files[i].type;
+            var typeAccepted = false;
+            for (var j = 0; j < allowTypes.length; j++) {
+                if (allowTypes[j] == fileType) {
                     typeAccepted = true;
                     break;
                 }
             }
-            if(typeAccepted != true){
+            if (typeAccepted != true) {
                 errorMessage += fileName + " nicht erlaubt. Nur jpeg,jpg,png,gif.";
                 allowUpload = false;
             }
-        }        if(allowUpload != true){
+        }
+        if (allowUpload != true) {
             el.outerHTML = el.outerHTML;
             alert(errorMessage);
         }

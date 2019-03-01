@@ -9,9 +9,14 @@ import java.util.List;
 
 public interface RentEventRepository extends CrudRepository<RentEvent, Long> {
     List<RentEvent> findAll();
+
     List<RentEvent> findAllByMieter(Person mieter);
+
     List<RentEvent> findAllByReturnStatus(ReturnStatus returnStatus);
+
     RentEvent findByReservationId(int reservationId);
+
     void delete(RentEvent rentEvent);
+
     List<RentEvent> findAllByMieterAndReturnStatus(Person mieter, ReturnStatus returnStatus);
 }

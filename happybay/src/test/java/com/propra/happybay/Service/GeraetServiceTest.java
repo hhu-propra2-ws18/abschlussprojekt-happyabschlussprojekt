@@ -40,7 +40,7 @@ public class GeraetServiceTest {
 
 
     @Test
-    public void  get_all_with_bilder(){
+    public void get_all_with_bilder() {
         Geraet fakeGeraet1 = new Geraet();
         List<Bild> bilder1 = new ArrayList<>();
         Bild fakeBild1 = new Bild();
@@ -113,7 +113,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void testGeraetBilder(){
+    public void testGeraetBilder() {
         Geraet fakeGeraet1 = new Geraet();
 
         Bild fakeBild1 = new Bild();
@@ -143,7 +143,7 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void check_Rent_EventStatus(){
+    public void check_Rent_EventStatus() {
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
@@ -170,11 +170,11 @@ public class GeraetServiceTest {
         Mockito.when(rentEventRepository.findAll()).thenReturn(rentEventList);
 
         geraetService.checkRentEventStatus();
-        verify(rentEventRepository,times(4)).save(any());
+        verify(rentEventRepository, times(4)).save(any());
     }
 
     @Test
-    public void return_geraet_with_rentEvents(){
+    public void return_geraet_with_rentEvents() {
 
         List<RentEvent> rentEventList = new ArrayList<>();
         RentEvent rentEvent1 = new RentEvent();
@@ -203,18 +203,18 @@ public class GeraetServiceTest {
     }
 
     @Test
-    public void convert_to_CET(){
-        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"),Date.valueOf("2019-2-28"));
+    public void convert_to_CET() {
+        TimeInterval fake = new TimeInterval(Date.valueOf("2019-2-25"), Date.valueOf("2019-2-28"));
         TimeInterval newfake = geraetService.convertToCET(fake);
-        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60*60*6000));
-        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60*60*6000));
+        Assertions.assertThat(fake.getStart()).isEqualTo(new Date(newfake.getStart().getTime() - 60 * 60 * 6000));
+        Assertions.assertThat(fake.getEnd()).isEqualTo(new Date(newfake.getEnd().getTime() - 60 * 60 * 6000));
 
     }
 
     @Test
     public void save_geraet() throws IOException {
         MultipartFile fakefile = mock(MultipartFile.class);
-        MultipartFile[] files = {fakefile,fakefile};
+        MultipartFile[] files = {fakefile, fakefile};
 
         Geraet fakegeraet = new Geraet();
         fakegeraet.setTitel("fake geraet");
@@ -223,12 +223,12 @@ public class GeraetServiceTest {
         fakegeraet.setKaution(1);
         fakegeraet.setAbholort("fake Ort");
         when(geraetRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(fakegeraet));
-        geraetService.editGeraet(files,fakegeraet,1L,true);
+        geraetService.editGeraet(files, fakegeraet, 1L, true);
 
     }
 
     @Test
-    public void add_like(){
+    public void add_like() {
         Geraet fakegeraet = new Geraet();
         List<Person> fakeLiekedPerson = new ArrayList<>();
         Person fakePerson1 = new Person();
@@ -242,8 +242,8 @@ public class GeraetServiceTest {
         fakegeraet.setLikedPerson(fakeLiekedPerson);
         fakegeraet.setLikes(2);
         Mockito.when(geraetRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(fakegeraet));
-        geraetService.addLike(1L,fakePerson1);
-        geraetService.addLike(1L,fakePerson3);
-        verify(geraetRepository,times(2)).save(any());
+        geraetService.addLike(1L, fakePerson1);
+        geraetService.addLike(1L, fakePerson3);
+        verify(geraetRepository, times(2)).save(any());
     }
 }

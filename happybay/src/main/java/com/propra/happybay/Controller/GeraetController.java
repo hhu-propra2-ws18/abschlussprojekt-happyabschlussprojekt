@@ -42,14 +42,14 @@ public class GeraetController {
     private PersonRepository personRepository;
 
     public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, NotificationService notificationService, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
-        this.geraetRepository=geraetRepository;
-        this.rentEventRepository=rentEventRepository;
-        this.notificationService=notificationService;
-        this.mailService=mailService;
-        this.personService=personService;
-        this.geraetService=geraetService;
-        this.accountRepository=accountRepository;
-        this.personRepository=personRepository;
+        this.geraetRepository = geraetRepository;
+        this.rentEventRepository = rentEventRepository;
+        this.notificationService = notificationService;
+        this.mailService = mailService;
+        this.personService = personService;
+        this.geraetService = geraetService;
+        this.accountRepository = accountRepository;
+        this.personRepository = personRepository;
     }
 
     @GetMapping("/edit/{id}")
@@ -89,7 +89,7 @@ public class GeraetController {
 
     @PostMapping("/edit/{id}")
     public String geraetEdit(Model model, @PathVariable Long id, @ModelAttribute(value = "geraet") Geraet geraet,
-                             @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
+                             @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException {
         geraetService.editGeraet(files, geraet, id, false);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);
@@ -105,7 +105,7 @@ public class GeraetController {
 
         List<String> encodes = geraetService.geraetBilder(geraet);
         Account account = accountRepository.findByAccount(person.getUsername()).get();
-        model.addAttribute("account",account);
+        model.addAttribute("account", account);
         model.addAttribute("encodes", encodes);
         model.addAttribute("person", person);
         model.addAttribute("geraet", geraet);
@@ -122,7 +122,7 @@ public class GeraetController {
     }
 
     @PostMapping("/changeToRent/{id}")
-    public String changeToRent(@PathVariable Long id, @ModelAttribute("geraet") Geraet geraet, @RequestParam(value = "files",required = false) MultipartFile[] files) throws IOException {
+    public String changeToRent(@PathVariable Long id, @ModelAttribute("geraet") Geraet geraet, @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException {
         RentEvent verfuegbar = new RentEvent();
         TimeInterval timeIntervalWithout = new TimeInterval(geraet.getMietezeitpunktStart(), geraet.getMietezeitpunktEnd());
         TimeInterval timeInterval = geraetService.convertToCET(timeIntervalWithout);
@@ -143,7 +143,7 @@ public class GeraetController {
     }
 
     @PostMapping("/addGeraet")
-    public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet, @RequestParam(name = "files",value = "files",
+    public String confirmGeraet(@ModelAttribute("geraet") Geraet geraet, @RequestParam(name = "files", value = "files",
             required = false) MultipartFile[] files, Principal principal) throws IOException {
         List<Bild> bilds = new ArrayList<>();
         personService.umwechsleMutifileZumBild(files, bilds);

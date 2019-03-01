@@ -29,30 +29,34 @@ public class GeraetService {
     @Autowired
     PersonService personService;
 
-    public List<Geraet> getAllWithKeyWithBiler(String key){
-        return setEncode(geraetRepository.findAllByTitelLike("%"+key+"%"));
+    public List<Geraet> getAllWithKeyWithBiler(String key) {
+        return setEncode(geraetRepository.findAllByTitelLike("%" + key + "%"));
     }
 
-    public List<Geraet> getAllByBesitzerWithBilder(Person besitzer){
+    public List<Geraet> getAllByBesitzerWithBilder(Person besitzer) {
         return setEncode(geraetRepository.findAllByBesitzer(besitzer));
     }
-    public List<Geraet> getAllWithFilterPreisAufsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenAsc("%"+key+"%") );
-    }
-    public List<Geraet> getAllWithFilterPreisAbsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%"+key+"%"));
-    }
-    public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%"+key+"%"));
-    }
-    public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key){
-        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%"+key+"%"));
+
+    public List<Geraet> getAllWithFilterPreisAufsteigendWithBilder(String key) {
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenAsc("%" + key + "%"));
     }
 
-    public List<String> geraetBilder(Geraet geraet){
+    public List<Geraet> getAllWithFilterPreisAbsteigendWithBilder(String key) {
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByKostenDesc("%" + key + "%"));
+    }
+
+    public List<Geraet> getAllWithFilterLikeAufsteigendWithBilder(String key) {
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesAsc("%" + key + "%"));
+    }
+
+    public List<Geraet> getAllWithFilterLikeAbsteigendWithBilder(String key) {
+        return setEncode(geraetRepository.findAllByTitelLikeOrderByLikesDesc("%" + key + "%"));
+    }
+
+    public List<String> geraetBilder(Geraet geraet) {
         List<Bild> bilds = geraet.getBilder();
         List<String> encodes = new ArrayList<>();
-        for(int i=1;i<bilds.size();i++){
+        for (int i = 1; i < bilds.size(); i++) {
             encodes.add(bilds.get(i).encodeBild());
         }
         if (geraet.getBilder().get(0).getBild().length > 0) {
@@ -62,7 +66,7 @@ public class GeraetService {
     }
 
     private List<Geraet> setEncode(List<Geraet> geraets) {
-        for (Geraet geraet: geraets){
+        for (Geraet geraet : geraets) {
             if (geraet.getBilder().get(0).getBild().length > 0) {
                 geraet.setEncode(geraet.getBilder().get(0).encodeBild());
             }
@@ -125,11 +129,11 @@ public class GeraetService {
         geraetRepository.save(geraet1);
     }
 
-    public void addLike(Long id,Person person) {
+    public void addLike(Long id, Person person) {
         Geraet geraet = geraetRepository.findById(id).get();
         List<Person> likedPerson = geraet.getLikedPerson();
         boolean hasAlreadyLiked = false;
-        for(int i = 0; i < likedPerson.size(); i++) {
+        for (int i = 0; i < likedPerson.size(); i++) {
             if (likedPerson.get(i).getUsername().equals(person.getUsername())) {
                 hasAlreadyLiked = true;
             }
@@ -137,8 +141,7 @@ public class GeraetService {
         if (!hasAlreadyLiked) {
             geraet.getLikedPerson().add(person);
             geraet.setLikes(geraet.getLikes() + 1);
-        }
-        else{
+        } else {
             geraet.getLikedPerson().remove(person);
             geraet.setLikes(geraet.getLikes() - 1);
         }
