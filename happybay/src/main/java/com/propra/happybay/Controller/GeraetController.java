@@ -41,6 +41,15 @@ public class GeraetController {
     @Autowired
     private PersonRepository personRepository;
 
+    static String redirectAdress = System.getenv("REDIRECT_URL");
+
+    private static String returnRedirectAdress() {
+        if (redirectAdress == null) {
+            return "localhost";
+        }
+        return redirectAdress;
+    }
+
     public GeraetController(GeraetRepository geraetRepository, RentEventRepository rentEventRepository, NotificationService notificationService, MailService mailService, PersonService personService, GeraetService geraetService, AccountRepository accountRepository, PersonRepository personRepository) {
         this.geraetRepository = geraetRepository;
         this.rentEventRepository = rentEventRepository;
@@ -70,13 +79,13 @@ public class GeraetController {
         notificationService.makeNewNotification(geraet, rentEvent, "return");
         Person besitzer = geraet.getBesitzer();
         mailService.sendReturnMail(besitzer, geraet);
-        return "redirect://localhost:8080/user/rentThings";
+        return "redirect:" + returnRedirectAdress() + "/user/rentThings";
     }
 
     @PostMapping("/delete/{id}")
     public String geraetDelete(@PathVariable Long id) {
         geraetRepository.deleteById(id);
-        return "redirect://localhost:8080/user/myThings";
+        return "redirect:" + returnRedirectAdress() + "/user/myThings";
     }
 
 
@@ -84,7 +93,7 @@ public class GeraetController {
     public String like(@PathVariable Long id, Principal principal) {
         Person person = personService.findByPrincipal(principal);
         geraetService.addLike(id, person);
-        return "redirect://localhost:8080";
+        return "redirect:" + returnRedirectAdress() + "/";
     }
 
     @PostMapping("/edit/{id}")
@@ -93,7 +102,7 @@ public class GeraetController {
         geraetService.editGeraet(files, geraet, id, false);
         List<Geraet> geraete = null;
         model.addAttribute("geraete", geraete);
-        return "redirect://localhost:8080/user/myThings";
+        return "redirect:" + returnRedirectAdress() + "/user/myThings";
     }
 
     @GetMapping("/{id}")
@@ -132,7 +141,7 @@ public class GeraetController {
         geraetService.editGeraet(files, geraet, id, false);
         geraet1.getVerfuegbareEvents().add(verfuegbar);
         geraetRepository.save(geraet1);
-        return "redirect://localhost:8080/user/myThings";
+        return "redirect:" + returnRedirectAdress() + "/user/myThings";
     }
 
     @GetMapping("/addGeraet")
@@ -159,6 +168,6 @@ public class GeraetController {
         Person person = personRepository.findByUsername(principal.getName()).get();
         geraet.setBesitzer(person);
         geraetRepository.save(geraet);
-        return "redirect://localhost:8080/user/myThings";
+        return "redirect:" + returnRedirectAdress() + "/user/myThings";
     }
 }

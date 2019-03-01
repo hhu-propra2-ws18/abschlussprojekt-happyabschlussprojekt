@@ -24,6 +24,17 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    static String redirectAdress = System.getenv("REDIRECT_URL");
+
+    private static String returnRedirectAdress() {
+        if (redirectAdress == null) {
+            return "localhost";
+        }
+        return redirectAdress;
+    }
+
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -39,13 +50,13 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http.logout()
                 .permitAll()
-                .logoutSuccessUrl("http://localhost:8080");
+                .logoutSuccessUrl(returnRedirectAdress());
         http.userDetailsService(userDetailsService);
         http.csrf().disable();
         http.formLogin()
-                .loginPage("http://localhost:8080/login")
+                .loginPage(returnRedirectAdress() + "/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("http://localhost:8080", true)
+                .defaultSuccessUrl(returnRedirectAdress() + "/", true)
                 .permitAll();
     }
 

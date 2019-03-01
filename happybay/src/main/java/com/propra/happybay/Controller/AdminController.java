@@ -40,6 +40,15 @@ public class AdminController {
     @Autowired
     private RentEventService rentEventService;
 
+    static String redirectAdress = System.getenv("REDIRECT_URL");
+
+    private static String returnRedirectAdress() {
+        if (redirectAdress == null) {
+            return "localhost";
+        }
+        return redirectAdress;
+    }
+
     @GetMapping(value = {"/", ""})
     public String adminFunktion(Model model) {
         InformationForMenuBadges informationForMenuBadges = adminService.returnInformationForMenuBadges();
@@ -48,7 +57,7 @@ public class AdminController {
         if (adminService.isAdminHasDefaultPassword()) {
             return "admin/changePassword";
         }
-        return "redirect:http://localhost:8080/admin/allUsers";
+        return "redirect:" + returnRedirectAdress() + "/admin/allUsers";
     }
 
     @GetMapping("/allUsers")
@@ -87,7 +96,7 @@ public class AdminController {
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
-        return "redirect://localhost:8080/admin/conflicts";
+        return "redirect:" + returnRedirectAdress() + "/admin/conflicts";
     }
 
 
@@ -108,13 +117,13 @@ public class AdminController {
         geraet.getRentEvents().remove(rentEvent);
         geraetRepository.save(geraet);
         rentEventRepository.delete(rentEvent);
-        return "redirect://localhost:8080/admin/conflicts";
+        return "redirect:" + returnRedirectAdress() + "/admin/conflicts";
     }
 
     @PostMapping("/changePassword")
     public String changePassword(@ModelAttribute("newPassword") String newPassword) {
         adminService.changeAdminPassword(newPassword);
-        return "redirect://localhost:8080/admin";
+        return "redirect:" + returnRedirectAdress() + "/admin";
     }
 
     public AdminController(RentEventService rentEventService, ProPayService proPayService, AdminService adminService, GeraetRepository geraetRepository, RentEventRepository rentEventRepository, GeraetService geraetService) {

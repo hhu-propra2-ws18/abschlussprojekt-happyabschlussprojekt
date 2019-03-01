@@ -48,6 +48,15 @@ public class UserController {
     @Autowired
     private RentEventService rentEventService;
 
+    static String redirectAdress = System.getenv("REDIRECT_URL");
+
+    private static String returnRedirectAdress() {
+        if (redirectAdress == null) {
+            return "localhost";
+        }
+        return redirectAdress;
+    }
+
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         Person person = personService.findByPrincipal(principal);
@@ -56,7 +65,7 @@ public class UserController {
         model.addAttribute("person", person);
 
         if (person.getRole().equals("ROLE_ADMIN")) {
-            return "redirect://localhost:8080/admin";
+            return "redirect:" + returnRedirectAdress() + "/admin";
         }
         return "user/profile";
     }
@@ -119,7 +128,7 @@ public class UserController {
 
         Person besitzer = geraet.getBesitzer();
         mailService.sendAnfragMail(besitzer, geraet, principal);
-        return "redirect://localhost:8080";
+        return "redirect:" + returnRedirectAdress() + "/";
     }
 
     @PostMapping("/sale/{id}")
@@ -131,7 +140,7 @@ public class UserController {
         geraet.setBesitzer(buyer);
         geraetRepository.save(geraet);
         mailService.sendAnfragMail(besitzer, geraet, principal);
-        return "redirect://localhost:8080";
+        return "redirect:" + returnRedirectAdress() + "/";
     }
 
     @GetMapping("/proPay")
@@ -158,7 +167,7 @@ public class UserController {
         } catch (IOException e) {
             return "user/propayNotAvailable";
         }
-        return "redirect://localhost:8080";
+        return "redirect:" + returnRedirectAdress() + "/";
     }
 
     @GetMapping("/BesitzerInfo/{id}")

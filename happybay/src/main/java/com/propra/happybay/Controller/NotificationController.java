@@ -40,6 +40,16 @@ public class NotificationController {
     @Autowired
     private RentEventService rentEventService;
 
+    static String redirectAdress = System.getenv("REDIRECT_URL");
+
+    private static String returnRedirectAdress() {
+        if (redirectAdress == null) {
+            return "localhost";
+        }
+        return redirectAdress;
+    }
+
+
     public NotificationController(NotificationService notificationService, MailService mailService, ProPayService proPayService, PersonService personService, GeraetRepository geraetRepository, NotificationRepository notificationRepository, RentEventRepository rentEventRepository, RentEventService rentEventService) {
         this.notificationService = notificationService;
         this.mailService = mailService;
@@ -72,7 +82,7 @@ public class NotificationController {
         geraetRepository.save(geraet);
         notificationRepository.deleteById(id);
         rentEventRepository.delete(rentEvent);
-        return "redirect://localhost:8080/user/notifications";
+        return "redirect:" + returnRedirectAdress() + "/user/notifications";
     }
 
     @PostMapping("/refuseReturn/{id}")
@@ -88,7 +98,7 @@ public class NotificationController {
         mailService.sendRefuseReturnMail(mieter, geraet);
         personService.makeComment(geraet, mieter, grund);
         notificationRepository.deleteById(id);
-        return "redirect://localhost:8080/user/notifications";
+        return "redirect:" + returnRedirectAdress() + "/user/notifications";
     }
 
     @PostMapping("/acceptRequest/{id}")
@@ -123,7 +133,7 @@ public class NotificationController {
 
         Person person = mieter;
         mailService.sendAcceptRequestMail(person, geraet);
-        return "redirect://localhost:8080/user/notifications";
+        return "redirect:" + returnRedirectAdress() + "/user/notifications";
     }
 
     @PostMapping("/refuseRequest/{id}")
@@ -134,6 +144,6 @@ public class NotificationController {
 
         mailService.sendRefuseRequestMail(mieter, geraet);
         notificationRepository.deleteById(id);
-        return "redirect://localhost:8080/user/notifications";
+        return "redirect:" + returnRedirectAdress() + "/user/notifications";
     }
 }
