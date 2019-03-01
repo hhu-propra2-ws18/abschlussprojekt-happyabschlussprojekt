@@ -81,7 +81,6 @@ public class UserControllerTest {
     RentEventService rentEventService;
     @Mock
     GeraetService geraetService;
-
     @Mock
     NotificationRepository notificationRepository;
     @Mock
@@ -237,8 +236,8 @@ public class UserControllerTest {
                 .andExpect(status().is3xxRedirection());
     }
     @Test
-    public void aufladenAntragError() throws Exception {
-        doCallRealMethod().when(proPayService).erhoeheAmount("test",100);
+    public void aufladenAntragWithErrorPropayService() throws Exception {
+        doThrow(IOException.class).when(proPayService).erhoeheAmount("test",100);
         mvc2.perform(post("/user/propayErhoehung").param("amount","100").param("account","test"))
                 .andExpect(status().isOk());
     }
